@@ -1,5 +1,5 @@
 // =====================================================================
-//  UI Kit generator for Figma · v3 — приложение без названия (пока)
+//  ФОЛК · UI Kit generator for Figma · v8
 //  Приложение для изучения языков народов России.
 //  UX-паттерны — по мотивам Duolingo UI Kit (Marvilo); яркая палитра
 //  в духе Duolingo; маскот — Лиса (живёт во всех регионах России).
@@ -9,10 +9,12 @@
 // =====================================================================
 
 const FONT_FAMILY = 'Nunito';   // можно заменить, напр. 'PT Root UI', 'Rubik'
-const APP_NAME = '';            // название продукта — впишите, когда появится
-const KIT = 'UI Kit';           // префикс переменных, стилей и фреймов кита
-const LEGACY_KITS = ['Тамыр'];  // префиксы прошлых версий — убираются при пересоздании
+const APP_NAME = 'ФОЛК';        // название продукта
+const KIT = 'ФОЛК';             // префикс переменных, стилей и фреймов кита
+const LEGACY_KITS = ['Тамыр', 'UI Kit'];  // префиксы прошлых версий — убираются при пересоздании
 const PAGES = { found: 'Основы', comps: 'Компоненты', screens: 'Экраны' };
+// Старые имена страниц: такие страницы будут переименованы и переиспользованы
+const LEGACY_PAGES = { 'Основы': '🎨 Основы', 'Компоненты': '🧩 Компоненты', 'Экраны': '📱 Экраны' };
 
 // ---------------------------------------------------------------------
 // КУРСЫ — единственное место, которое нужно менять при добавлении языка
@@ -27,24 +29,22 @@ const LANGS = [
     extra: ['читаю', 'дом'],                  // лишние плитки
     typo: 'Ме велода коми кыв',               // пример ошибки (без спецбуквы)
     picture: 'руч', pictureRu: 'лиса',
-    unit: 'Знакомство и приветствия',
+    // Учебный путь: темы по 7 шагов. Значки шагов: Звезда (урок), Книга (история), Наушники (аудирование),
+    // Гантель (практика), Микрофон (говорение), Кубок (итог темы); 'Сундук' — награда на пути.
+    // place — место (достопримечательность) рядом с путём; по нажатию открывается «Задание места».
+    units: [
+      { title: 'Знакомство и приветствия', color: 'Зелёный',
+        steps: ['Звезда', 'Звезда', 'Наушники', 'Сундук', 'Гантель', 'Микрофон', 'Кубок'],
+        place: { name: 'Маньпупунёр', sub: 'Столбы выветривания', art: 'manpupuner', task: 'Выучите 6 слов о горах и камнях' } },
+      { title: 'Природа и горы', color: 'Фиолетовый',
+        steps: ['Звезда', 'Книга', 'Звезда', 'Сундук', 'Наушники', 'Гантель', 'Кубок'],
+        place: { name: 'Уральские горы', sub: 'Приполярный Урал', art: 'ural', task: 'Опишите погоду в горах: 5 фраз' } },
+    ],
     flag: `<rect width="44" height="10.7" fill="#2E86D1"/><rect y="10.7" width="44" height="10.6" fill="#13A538"/><rect y="21.3" width="44" height="10.7" fill="#FFFFFF"/>`,
-  },
-  {
-    ru: 'Чувашский', native: 'Чӑвашла',
-    chars: ['ӑ', 'ӗ', 'ҫ', 'ӳ'],
-    hello: 'Салам!', helloRu: 'Привет!',
-    phrase: 'Эпӗ чӑвашла вӗренетӗп.',
-    answer: ['Я', 'учу', 'чувашский'],
-    extra: ['читаю', 'язык', 'дом'],
-    typo: 'Эпе чавашла веренетеп',
-    picture: 'тилӗ', pictureRu: 'лиса',
-    unit: 'Знакомство и приветствия',
-    flag: `<rect width="44" height="32" fill="#FFD200"/><rect y="25" width="44" height="7" fill="#6B2C91"/><path d="M22 7l4.5 7.5L22 22l-4.5-7.5z" fill="#6B2C91"/>`,
   },
 ];
 const SOON = {
-  ru: 'Скоро новые языки', native: 'Удмуртский, марийский и другие',
+  ru: 'Новые языки',   // карточка «Скоро»: серый флаг, название и метка — больше ничего
   flag: `<rect width="44" height="32" fill="#E5E5E5"/><path d="M22 10v12M16 16h12" stroke="#AFAFAF" stroke-width="3" stroke-linecap="round" fill="none"/>`,
 };
 
@@ -121,73 +121,56 @@ const ICONS = [
   ['Замок', `<rect x="5" y="10" width="14" height="11" rx="3" fill="#AFAFAF"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" stroke="#AFAFAF" stroke-width="2.4" fill="none"/>`],
   ['Динамик', `<path d="M4 9h4l5-4v14l-5-4H4z" fill="#1CB0F6"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="#1CB0F6" stroke-width="2" stroke-linecap="round" fill="none"/>`],
   ['Микрофон', `<rect x="9" y="3" width="6" height="11" rx="3" fill="#1CB0F6"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6" stroke="#1CB0F6" stroke-width="2" stroke-linecap="round" fill="none"/>`],
-  ['Дом', `<path d="M3.5 10.5L12 3.5l8.5 7V20a1 1 0 0 1-1 1H15v-6h-6v6H4.5a1 1 0 0 1-1-1z" fill="#FF4B4B"/><path d="M9 21v-6h6v6z" fill="#FFC800"/>`],
+  ['Нора', `<path d="M2.5 20.5C2.5 11 6.8 5.5 12 5.5S21.5 11 21.5 20.5Z" fill="#F08A3C"/><path d="M2.5 20.5C2.5 11 6.8 5.5 12 5.5C8.6 7.4 6.6 12.5 6.6 20.5Z" fill="#FFAA5E"/><path d="M7.6 20.5V16.2a4.4 4.4 0 0 1 8.8 0V20.5Z" fill="#6E3810"/><path d="M8.6 7.6C9.6 5.4 10.8 4 12 3.6c.4 1 .4 1.8 0 2.6M12 6.2c1.4-1.8 2.6-2.6 3.8-2.6-.1 1.2-.7 2.2-1.6 2.8" fill="#58CC02" stroke="#58CC02" stroke-width="1.4" stroke-linejoin="round"/><rect x="1.5" y="19.6" width="21" height="2.4" rx="1.2" fill="#D9701F"/>`],
+  ['Сундук', `<rect x="3" y="5" width="18" height="15" rx="2" fill="#B2651A"/><rect x="3" y="5" width="4" height="15" rx="1.4" fill="#FFC800"/><rect x="17" y="5" width="4" height="15" rx="1.4" fill="#FFC800"/><rect x="3" y="9.4" width="18" height="3.4" fill="#FFC800"/><rect x="9.6" y="8.2" width="4.8" height="6" rx="1.4" fill="#FFE14A"/><circle cx="12" cy="10.6" r="1" fill="#8A4A0C"/><path d="M11.4 11h1.2l.3 2h-1.8z" fill="#8A4A0C"/>`],
+  ['Рейтинг', `<path d="M4.4 9.2C3 6.6 4.9 4 7.4 4.6 8 2.6 10 2 12 2s4 .6 4.6 2.6c2.5-.6 4.4 2 3 4.6-.9 1.8-2.3 4.4-5.3 6H9.7c-3-1.6-4.4-4.2-5.3-6z" fill="#1CB0F6"/><path d="M4.4 9.2C3 6.6 4.9 4 7.4 4.6 8 2.6 10 2 12 2c-1.6.6-3 2-3.2 4.4-.2 2.6.4 5.8 1 8.8h-.1c-3-1.6-4.4-4.2-5.3-6z" fill="#5FCBFB"/><rect x="10.6" y="15" width="2.8" height="3.4" fill="#1899D6"/><rect x="7" y="18.4" width="10" height="3" rx="1.5" fill="#1899D6"/>`],
+  ['Лента', `<path d="M3 6.5A3.5 3.5 0 0 1 6.5 3h11A3.5 3.5 0 0 1 21 6.5v8a3.5 3.5 0 0 1-3.5 3.5H9.4l-4.4 3.4V18A3.5 3.5 0 0 1 3 14.5z" fill="#F287C2"/><path d="M12 15.2s-4.6-2.6-4.6-5.6c0-1.6 1.2-2.6 2.5-2.6 1 0 1.7.5 2.1 1.2.4-.7 1.1-1.2 2.1-1.2 1.3 0 2.5 1 2.5 2.6 0 3-4.6 5.6-4.6 5.6z" fill="#FFE8F4"/>`],
   ['Книга', `<path d="M3 5.5C5.5 4.5 8.5 4.5 11 6v14c-2.5-1.5-5.5-1.5-8-.5z" fill="#1CB0F6"/><path d="M21 5.5c-2.5-1-5.5-1-8 .5v14c2.5-1.5 5.5-1.5 8-.5z" fill="#1899D6"/>`],
-  ['Чум', `<path d="M12 3L2.5 20.5h19z" fill="#FF9600"/><path d="M12 3l-3.2 17.5h6.4z" fill="#D97A00"/><path d="M5.2 15.5h13.6" stroke="#FF4B4B" stroke-width="1.6" fill="none"/><path d="M10 3.5l2-1.8 2 1.8" stroke="#8B4A00" stroke-width="1.4" stroke-linecap="round" fill="none"/>`],
   ['Кубок', `<path d="M7 3h10v5a5 5 0 0 1-10 0z" fill="#FFC800"/><path d="M7 5H4v1.5A3.5 3.5 0 0 0 7.5 10M17 5h3v1.5A3.5 3.5 0 0 1 16.5 10" stroke="#FFC800" stroke-width="2" fill="none"/><rect x="10.5" y="12.5" width="3" height="4" fill="#E6A700"/><rect x="7" y="16.5" width="10" height="4" rx="1.5" fill="#E6A700"/>`],
-  ['Профиль', `<circle cx="12" cy="8" r="4.5" fill="#CE82FF"/><path d="M3.5 21a8.5 8.5 0 0 1 17 0z" fill="#CE82FF"/>`],
+  ['Профиль', `<circle cx="12" cy="8" r="4.6" fill="#1CB0F6"/><path d="M3.5 21a8.5 7.5 0 0 1 17 0z" fill="#1CB0F6"/><path d="M8.8 5.4A4.6 4.6 0 0 1 12 3.4c-1.3 1-2 2.6-2 4.6s.7 3.6 2 4.6a4.6 4.6 0 0 1-3.2-7.2zM3.5 21a8.5 7.5 0 0 1 8.5-7.5c-2.4 1.6-4 4.4-4 7.5z" fill="#5FCBFB"/>`],
   ['Лапка', `<ellipse cx="12" cy="15.5" rx="5" ry="4.5" fill="#FF9600"/><circle cx="5.8" cy="10" r="2.3" fill="#FF9600"/><circle cx="9.4" cy="6.2" r="2.3" fill="#FF9600"/><circle cx="14.6" cy="6.2" r="2.3" fill="#FF9600"/><circle cx="18.2" cy="10" r="2.3" fill="#FF9600"/>`],
   ['Изображение', `<rect x="2.5" y="4" width="19" height="16" rx="3" fill="#DDF4FF"/><circle cx="16.5" cy="9" r="2" fill="#FFC800"/><path d="M3.5 18.5l5-6 4 4.5 3-3 5 4.5z" fill="#58CC02"/>`],
   ['Орнамент', `<path d="M12 2l3 5-3 5-3-5z M12 12l3 5-3 5-3-5z M2 12l5-3 5 3-5 3z M12 12l5-3 5 3-5 3z" fill="#FF4B4B"/><circle cx="12" cy="12" r="1.6" fill="#FFC800"/>`],
 ];
 
 const EMOTIONS = ['Спокойствие', 'Радость', 'Грусть', 'Удивление'];
-// Лиса-маскот: SVG 120×120, эмоция = Спокойствие | Радость | Грусть | Удивление
-function foxSvg(emotion) {
-  const O = '#FF9600', OD = '#E07800', W = '#FFFFFF', D = '#3C2415', BR = '#5A2E12';
-  const eyes = (o = {}) => {
-    const rx = o.big ? 9.5 : 8.5, ry = o.big ? 10.5 : 9.5, pr = o.big ? 4.2 : 5.5, dy = o.down ? 2.5 : 1;
-    return [45, 75].map((cx) => `<ellipse cx="${cx}" cy="54" rx="${rx}" ry="${ry}" fill="${W}"/><circle cx="${cx + 1}" cy="${54 + dy}" r="${pr}" fill="${D}"/><circle cx="${cx + 2.6}" cy="${54 + dy - 2}" r="1.8" fill="${W}"/>`).join('');
-  };
-  let face = '';
-  if (emotion === 'Радость') {
-    face = `<path d="M37.5 56.5Q45 47 52.5 56.5M67.5 56.5Q75 47 82.5 56.5" stroke="${D}" stroke-width="3.6" stroke-linecap="round" fill="none"/>`
-      + `<path d="M51 70.5Q60 84 69 70.5Z" fill="${D}"/><path d="M54.5 76Q60 81.5 65.5 76Q60 73 54.5 76Z" fill="#FF7A8A"/>`;
-  } else if (emotion === 'Грусть') {
-    face = eyes({ down: true })
-      + `<path d="M36 45.5L52 41M84 45.5L68 41" stroke="${D}" stroke-width="3" stroke-linecap="round" fill="none"/>`
-      + `<path d="M53.5 76Q60 70.5 66.5 76" stroke="${D}" stroke-width="2.6" stroke-linecap="round" fill="none"/>`
-      + `<path d="M37 64q-3.2 4.4 0 6.6q3.2-2.2 0-6.6z" fill="#1CB0F6"/>`;
-  } else if (emotion === 'Удивление') {
-    face = eyes({ big: true })
-      + `<path d="M37 41Q45 36 53 41M67 41Q75 36 83 41" stroke="${D}" stroke-width="3" stroke-linecap="round" fill="none"/>`
-      + `<ellipse cx="60" cy="76" rx="4.2" ry="5.2" fill="${D}"/>`;
-  } else {
-    face = eyes() + `<path d="M53.5 71Q60 76 66.5 71" stroke="${D}" stroke-width="2.6" stroke-linecap="round" fill="none"/>`;
-  }
-  // scarf ornament: small rhombi along the scarf curve
-  let orn = '';
-  for (let i = 1; i <= 5; i++) {
-    const t = i / 6, x = (1 - t) * (1 - t) * 38 + 2 * (1 - t) * t * 60 + t * t * 82, y = (1 - t) * (1 - t) * 83.5 + 2 * (1 - t) * t * 95.5 + t * t * 83.5;
-    orn += `<path d="M${x.toFixed(1)} ${(y - 2.4).toFixed(1)}l2.2 2.4-2.2 2.4-2.2-2.4z" fill="#FFC800"/>`;
-  }
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" fill="none">`
-    // tail
-    + `<path d="M76 105C102 113 121 96 115 77C112 69 104 68 100 74C104 87 96 97 79 96Z" fill="${O}"/>`
-    + `<path d="M115 77C112 69 104 68 100 74C101.5 78.5 104 81.5 107.5 83C111 84 114 82.5 115 77Z" fill="${W}"/>`
-    + `<path d="M100 74C104 87 96 97 79 96L78 101C97 101 106 91 103.5 79Z" fill="${OD}" fill-opacity="0.35"/>`
-    // body
-    + `<ellipse cx="60" cy="97" rx="25" ry="21" fill="${O}"/>`
-    + `<ellipse cx="60" cy="101" rx="14" ry="15" fill="${W}"/>`
-    + `<ellipse cx="48.5" cy="115.5" rx="8" ry="4.5" fill="${BR}"/><ellipse cx="71.5" cy="115.5" rx="8" ry="4.5" fill="${BR}"/>`
-    // ears
-    + `<path d="M30 48L34 10L58 30Z" fill="${O}" stroke="${O}" stroke-width="5" stroke-linejoin="round"/>`
-    + `<path d="M90 48L86 10L62 30Z" fill="${O}" stroke="${O}" stroke-width="5" stroke-linejoin="round"/>`
-    + `<path d="M35 39L37 19L50 31Z" fill="${BR}" stroke="${BR}" stroke-width="2" stroke-linejoin="round"/>`
-    + `<path d="M85 39L83 19L70 31Z" fill="${BR}" stroke="${BR}" stroke-width="2" stroke-linejoin="round"/>`
-    // head
-    + `<path d="M60 24C80 24 94 36 98 52L108 62C98 73 84 82 60 82C36 82 22 73 12 62L22 52C26 36 40 24 60 24Z" fill="${O}" stroke="${O}" stroke-width="3" stroke-linejoin="round"/>`
-    + `<path d="M12 62C24 57 38 58 47 65C52 69 56 71 60 71C64 71 68 69 73 65C82 58 96 57 108 62C98 73 84 82 60 82C36 82 22 73 12 62Z" fill="${W}" stroke="${W}" stroke-width="3" stroke-linejoin="round"/>`
-    + `<circle cx="31" cy="67" r="5" fill="#FF7A8A" fill-opacity="0.35"/><circle cx="89" cy="67" r="5" fill="#FF7A8A" fill-opacity="0.35"/>`
-    + face
-    + `<ellipse cx="60" cy="66.5" rx="5.2" ry="3.8" fill="${D}"/><ellipse cx="58.6" cy="65.3" rx="1.6" ry="1" fill="${W}" fill-opacity="0.7"/>`
-    // scarf
-    + `<path d="M38 81Q60 93 82 81L83.5 88Q60 101 36.5 88Z" fill="#FF4B4B"/>`
-    + `<path d="M68 92L76 108L67.5 106.5L62.5 94Z" fill="#EA2B2B"/>`
-    + orn
-    + `</svg>`;
-}
+// Лиса-маскот 120×120 — плоская геометрия в духе Duolingo по референсу:
+// узкая мордочка, хитрый прищур, тёмные кончики ушей, хвост-пламя со светлым кончиком, тёмные лапы
+const FOX_ART = {
+  "Спокойствие": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"120\" viewBox=\"0 0 120 120\" fill=\"none\"><ellipse cx=\"72\" cy=\"114\" rx=\"40\" ry=\"5\" fill=\"#E5E5E5\"/><path d=\"M74 110C60 92 46 72 48 50C50 34 56 20 44 5C28 18 18 40 21 62C24 86 36 104 52 112Z\" fill=\"#F7752A\"/><path d=\"M74 110C60 92 46 72 48 50C48.6 45.2 49.6 40.6 50.3 36.1C40 44 36 70 60 106Z\" fill=\"#D9581B\"/><path d=\"M50.3 36.1C52 25.5 52.4 15.5 44 5C34.1 13.1 26.5 24.6 22.8 37.4C30 44 40 38 50.3 36.1Z\" fill=\"#FFF3DE\"/><path d=\"M50.3 36.1C52 25.5 52.4 15.5 44 5C44 14 44 30 50.3 36.1Z\" fill=\"#F0DAB6\"/><ellipse cx=\"66\" cy=\"102\" rx=\"12\" ry=\"10\" fill=\"#D9581B\"/><ellipse cx=\"96\" cy=\"102\" rx=\"12\" ry=\"10\" fill=\"#F7752A\"/><path d=\"M62 112L65 82Q67 68 81 68Q95 68 97 82L100 112Z\" fill=\"#F7752A\"/><path d=\"M81 68Q95 68 97 82L100 112H86Z\" fill=\"#D9581B\" opacity=\".35\"/><path d=\"M70 72Q81 66 92 72L87 98Q81 104 75 98Z\" fill=\"#FFF3DE\"/><path d=\"M81 70Q88 69 92 72L87 98Q84 101 81 101Z\" fill=\"#F0DAB6\"/><rect x=\"71\" y=\"90\" width=\"8\" height=\"22\" rx=\"4\" fill=\"#4A2A1A\"/><ellipse cx=\"75\" cy=\"112\" rx=\"6\" ry=\"3.5\" fill=\"#4A2A1A\"/><rect x=\"84\" y=\"90\" width=\"8\" height=\"22\" rx=\"4\" fill=\"#4A2A1A\"/><ellipse cx=\"88\" cy=\"112\" rx=\"6\" ry=\"3.5\" fill=\"#4A2A1A\"/><path d=\"M56 40L55 3L84 27Z\" fill=\"#F7752A\" stroke=\"#F7752A\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M59.8 36L59.2 14.5L76 28.5Z\" fill=\"#FFF3DE\" stroke=\"#FFF3DE\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M55 3L55.3 15.6L64.9 11.2Z\" fill=\"#4A2A1A\" stroke=\"#4A2A1A\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M104 40L105 3L76 27Z\" fill=\"#D9581B\" stroke=\"#D9581B\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M100.2 36L100.8 14.5L84 28.5Z\" fill=\"#FFF3DE\" stroke=\"#FFF3DE\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M105 3L104.7 15.6L95.1 11.2Z\" fill=\"#4A2A1A\" stroke=\"#4A2A1A\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M58 40C58 28 68 22 80 22C92 22 102 28 102 40L109 50C101 53 95 57 91 64L83.5 78.5Q80 83 76.5 78.5L69 64C65 57 59 53 51 50Z\" fill=\"#F7752A\" stroke=\"#F7752A\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M80 22C92 22 102 28 102 40L109 50C101 53 95 57 91 64L83.5 78.5Q81.8 80.8 80 81.2Z\" fill=\"#D9581B\" opacity=\".28\"/><path d=\"M51 50C59 53 65 57 69 64L76.5 78.5Q80 83 83.5 78.5L91 64C95 57 101 53 109 50C101 51 95 54 91 58L85 67Q80 72 75 67L69 58C65 54 59 51 51 50Z\" fill=\"#FFF3DE\" stroke=\"#FFF3DE\" stroke-width=\"1.5\" stroke-linejoin=\"round\"/><path d=\"M76.8 77.6Q80 75.6 83.2 77.6Q81.6 82.6 80 82.6Q78.4 82.6 76.8 77.6Z\" fill=\"#2B1A12\"/><path d=\"M64 44.8Q70.5 40 77 47Q70.5 50.6 64 44.8Z\" fill=\"#FFF3DE\"/><path d=\"M66.9 45.6Q70.5 43.6 74.1 46.8\" stroke=\"#2B1A12\" stroke-width=\"2.4\" stroke-linecap=\"round\" fill=\"none\"/><path d=\"M96 44.8Q89.5 40 83 47Q89.5 50.6 96 44.8Z\" fill=\"#FFF3DE\"/><path d=\"M93.1 45.6Q89.5 43.6 85.9 46.8\" stroke=\"#2B1A12\" stroke-width=\"2.4\" stroke-linecap=\"round\" fill=\"none\"/></svg>",
+  "Радость": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"120\" viewBox=\"0 0 120 120\" fill=\"none\"><ellipse cx=\"72\" cy=\"114\" rx=\"40\" ry=\"5\" fill=\"#E5E5E5\"/><path d=\"M74 110C60 92 46 72 48 50C50 34 56 20 44 5C28 18 18 40 21 62C24 86 36 104 52 112Z\" fill=\"#F7752A\"/><path d=\"M74 110C60 92 46 72 48 50C48.6 45.2 49.6 40.6 50.3 36.1C40 44 36 70 60 106Z\" fill=\"#D9581B\"/><path d=\"M50.3 36.1C52 25.5 52.4 15.5 44 5C34.1 13.1 26.5 24.6 22.8 37.4C30 44 40 38 50.3 36.1Z\" fill=\"#FFF3DE\"/><path d=\"M50.3 36.1C52 25.5 52.4 15.5 44 5C44 14 44 30 50.3 36.1Z\" fill=\"#F0DAB6\"/><ellipse cx=\"66\" cy=\"102\" rx=\"12\" ry=\"10\" fill=\"#D9581B\"/><ellipse cx=\"96\" cy=\"102\" rx=\"12\" ry=\"10\" fill=\"#F7752A\"/><path d=\"M62 112L65 82Q67 68 81 68Q95 68 97 82L100 112Z\" fill=\"#F7752A\"/><path d=\"M81 68Q95 68 97 82L100 112H86Z\" fill=\"#D9581B\" opacity=\".35\"/><path d=\"M70 72Q81 66 92 72L87 98Q81 104 75 98Z\" fill=\"#FFF3DE\"/><path d=\"M81 70Q88 69 92 72L87 98Q84 101 81 101Z\" fill=\"#F0DAB6\"/><rect x=\"71\" y=\"90\" width=\"8\" height=\"22\" rx=\"4\" fill=\"#4A2A1A\"/><ellipse cx=\"75\" cy=\"112\" rx=\"6\" ry=\"3.5\" fill=\"#4A2A1A\"/><rect x=\"84\" y=\"90\" width=\"8\" height=\"22\" rx=\"4\" fill=\"#4A2A1A\"/><ellipse cx=\"88\" cy=\"112\" rx=\"6\" ry=\"3.5\" fill=\"#4A2A1A\"/><path d=\"M56 40L55 3L84 27Z\" fill=\"#F7752A\" stroke=\"#F7752A\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M59.8 36L59.2 14.5L76 28.5Z\" fill=\"#FFF3DE\" stroke=\"#FFF3DE\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M55 3L55.3 15.6L64.9 11.2Z\" fill=\"#4A2A1A\" stroke=\"#4A2A1A\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M104 40L105 3L76 27Z\" fill=\"#D9581B\" stroke=\"#D9581B\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M100.2 36L100.8 14.5L84 28.5Z\" fill=\"#FFF3DE\" stroke=\"#FFF3DE\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M105 3L104.7 15.6L95.1 11.2Z\" fill=\"#4A2A1A\" stroke=\"#4A2A1A\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M58 40C58 28 68 22 80 22C92 22 102 28 102 40L109 50C101 53 95 57 91 64L83.5 78.5Q80 83 76.5 78.5L69 64C65 57 59 53 51 50Z\" fill=\"#F7752A\" stroke=\"#F7752A\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M80 22C92 22 102 28 102 40L109 50C101 53 95 57 91 64L83.5 78.5Q81.8 80.8 80 81.2Z\" fill=\"#D9581B\" opacity=\".28\"/><path d=\"M51 50C59 53 65 57 69 64L76.5 78.5Q80 83 83.5 78.5L91 64C95 57 101 53 109 50C101 51 95 54 91 58L85 67Q80 72 75 67L69 58C65 54 59 51 51 50Z\" fill=\"#FFF3DE\" stroke=\"#FFF3DE\" stroke-width=\"1.5\" stroke-linejoin=\"round\"/><path d=\"M76.8 77.6Q80 75.6 83.2 77.6Q81.6 82.6 80 82.6Q78.4 82.6 76.8 77.6Z\" fill=\"#2B1A12\"/><path d=\"M64.5 48Q70.5 40.5 76.5 48M83.5 48Q89.5 40.5 95.5 48\" stroke=\"#2B1A12\" stroke-width=\"2.8\" stroke-linecap=\"round\" fill=\"none\"/><ellipse cx=\"63\" cy=\"55\" rx=\"4\" ry=\"2.6\" fill=\"#FF8A8A\" opacity=\".55\"/><ellipse cx=\"97\" cy=\"55\" rx=\"4\" ry=\"2.6\" fill=\"#FF8A8A\" opacity=\".55\"/></svg>",
+  "Грусть": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"120\" viewBox=\"0 0 120 120\" fill=\"none\"><ellipse cx=\"72\" cy=\"114\" rx=\"40\" ry=\"5\" fill=\"#E5E5E5\"/><path d=\"M74 110C60 92 46 72 48 50C50 34 56 20 44 5C28 18 18 40 21 62C24 86 36 104 52 112Z\" fill=\"#F7752A\"/><path d=\"M74 110C60 92 46 72 48 50C48.6 45.2 49.6 40.6 50.3 36.1C40 44 36 70 60 106Z\" fill=\"#D9581B\"/><path d=\"M50.3 36.1C52 25.5 52.4 15.5 44 5C34.1 13.1 26.5 24.6 22.8 37.4C30 44 40 38 50.3 36.1Z\" fill=\"#FFF3DE\"/><path d=\"M50.3 36.1C52 25.5 52.4 15.5 44 5C44 14 44 30 50.3 36.1Z\" fill=\"#F0DAB6\"/><ellipse cx=\"66\" cy=\"102\" rx=\"12\" ry=\"10\" fill=\"#D9581B\"/><ellipse cx=\"96\" cy=\"102\" rx=\"12\" ry=\"10\" fill=\"#F7752A\"/><path d=\"M62 112L65 82Q67 68 81 68Q95 68 97 82L100 112Z\" fill=\"#F7752A\"/><path d=\"M81 68Q95 68 97 82L100 112H86Z\" fill=\"#D9581B\" opacity=\".35\"/><path d=\"M70 72Q81 66 92 72L87 98Q81 104 75 98Z\" fill=\"#FFF3DE\"/><path d=\"M81 70Q88 69 92 72L87 98Q84 101 81 101Z\" fill=\"#F0DAB6\"/><rect x=\"71\" y=\"90\" width=\"8\" height=\"22\" rx=\"4\" fill=\"#4A2A1A\"/><ellipse cx=\"75\" cy=\"112\" rx=\"6\" ry=\"3.5\" fill=\"#4A2A1A\"/><rect x=\"84\" y=\"90\" width=\"8\" height=\"22\" rx=\"4\" fill=\"#4A2A1A\"/><ellipse cx=\"88\" cy=\"112\" rx=\"6\" ry=\"3.5\" fill=\"#4A2A1A\"/><path d=\"M58 42L30 26L78 28Z\" fill=\"#F7752A\" stroke=\"#F7752A\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M56.9 40.8L40.6 31.5L68.5 32.7Z\" fill=\"#FFF3DE\" stroke=\"#FFF3DE\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M30 26L39.5 31.4L46.3 26.7Z\" fill=\"#4A2A1A\" stroke=\"#4A2A1A\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M102 42L130 26L82 28Z\" fill=\"#D9581B\" stroke=\"#D9581B\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M103.1 40.8L119.4 31.5L91.5 32.7Z\" fill=\"#FFF3DE\" stroke=\"#FFF3DE\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M130 26L120.5 31.4L113.7 26.7Z\" fill=\"#4A2A1A\" stroke=\"#4A2A1A\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M58 40C58 28 68 22 80 22C92 22 102 28 102 40L109 50C101 53 95 57 91 64L83.5 78.5Q80 83 76.5 78.5L69 64C65 57 59 53 51 50Z\" fill=\"#F7752A\" stroke=\"#F7752A\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M80 22C92 22 102 28 102 40L109 50C101 53 95 57 91 64L83.5 78.5Q81.8 80.8 80 81.2Z\" fill=\"#D9581B\" opacity=\".28\"/><path d=\"M51 50C59 53 65 57 69 64L76.5 78.5Q80 83 83.5 78.5L91 64C95 57 101 53 109 50C101 51 95 54 91 58L85 67Q80 72 75 67L69 58C65 54 59 51 51 50Z\" fill=\"#FFF3DE\" stroke=\"#FFF3DE\" stroke-width=\"1.5\" stroke-linejoin=\"round\"/><path d=\"M76.8 77.6Q80 75.6 83.2 77.6Q81.6 82.6 80 82.6Q78.4 82.6 76.8 77.6Z\" fill=\"#2B1A12\"/><path d=\"M64 44.8Q70.5 40 77 47Q70.5 50.6 64 44.8Z\" fill=\"#FFF3DE\"/><path d=\"M66.9 47Q70.5 45 74.1 48.2\" stroke=\"#2B1A12\" stroke-width=\"2.4\" stroke-linecap=\"round\" fill=\"none\"/><path d=\"M96 44.8Q89.5 40 83 47Q89.5 50.6 96 44.8Z\" fill=\"#FFF3DE\"/><path d=\"M93.1 47Q89.5 45 85.9 48.2\" stroke=\"#2B1A12\" stroke-width=\"2.4\" stroke-linecap=\"round\" fill=\"none\"/><path d=\"M63 37.5L76 40.5M97 37.5L84 40.5\" stroke=\"#4A2A1A\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><path d=\"M64 52q-2.6 3.6 0 5.4q2.6-1.8 0-5.4z\" fill=\"#1CB0F6\"/></svg>",
+  "Удивление": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"120\" viewBox=\"0 0 120 120\" fill=\"none\"><ellipse cx=\"72\" cy=\"114\" rx=\"40\" ry=\"5\" fill=\"#E5E5E5\"/><path d=\"M74 110C60 92 46 72 48 50C50 34 56 20 44 5C28 18 18 40 21 62C24 86 36 104 52 112Z\" fill=\"#F7752A\"/><path d=\"M74 110C60 92 46 72 48 50C48.6 45.2 49.6 40.6 50.3 36.1C40 44 36 70 60 106Z\" fill=\"#D9581B\"/><path d=\"M50.3 36.1C52 25.5 52.4 15.5 44 5C34.1 13.1 26.5 24.6 22.8 37.4C30 44 40 38 50.3 36.1Z\" fill=\"#FFF3DE\"/><path d=\"M50.3 36.1C52 25.5 52.4 15.5 44 5C44 14 44 30 50.3 36.1Z\" fill=\"#F0DAB6\"/><ellipse cx=\"66\" cy=\"102\" rx=\"12\" ry=\"10\" fill=\"#D9581B\"/><ellipse cx=\"96\" cy=\"102\" rx=\"12\" ry=\"10\" fill=\"#F7752A\"/><path d=\"M62 112L65 82Q67 68 81 68Q95 68 97 82L100 112Z\" fill=\"#F7752A\"/><path d=\"M81 68Q95 68 97 82L100 112H86Z\" fill=\"#D9581B\" opacity=\".35\"/><path d=\"M70 72Q81 66 92 72L87 98Q81 104 75 98Z\" fill=\"#FFF3DE\"/><path d=\"M81 70Q88 69 92 72L87 98Q84 101 81 101Z\" fill=\"#F0DAB6\"/><rect x=\"71\" y=\"90\" width=\"8\" height=\"22\" rx=\"4\" fill=\"#4A2A1A\"/><ellipse cx=\"75\" cy=\"112\" rx=\"6\" ry=\"3.5\" fill=\"#4A2A1A\"/><rect x=\"84\" y=\"90\" width=\"8\" height=\"22\" rx=\"4\" fill=\"#4A2A1A\"/><ellipse cx=\"88\" cy=\"112\" rx=\"6\" ry=\"3.5\" fill=\"#4A2A1A\"/><path d=\"M56 40L55 3L84 27Z\" fill=\"#F7752A\" stroke=\"#F7752A\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M59.8 36L59.2 14.5L76 28.5Z\" fill=\"#FFF3DE\" stroke=\"#FFF3DE\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M55 3L55.3 15.6L64.9 11.2Z\" fill=\"#4A2A1A\" stroke=\"#4A2A1A\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M104 40L105 3L76 27Z\" fill=\"#D9581B\" stroke=\"#D9581B\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M100.2 36L100.8 14.5L84 28.5Z\" fill=\"#FFF3DE\" stroke=\"#FFF3DE\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M105 3L104.7 15.6L95.1 11.2Z\" fill=\"#4A2A1A\" stroke=\"#4A2A1A\" stroke-width=\"4\" stroke-linejoin=\"round\"/><path d=\"M58 40C58 28 68 22 80 22C92 22 102 28 102 40L109 50C101 53 95 57 91 64L83.5 78.5Q80 83 76.5 78.5L69 64C65 57 59 53 51 50Z\" fill=\"#F7752A\" stroke=\"#F7752A\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M80 22C92 22 102 28 102 40L109 50C101 53 95 57 91 64L83.5 78.5Q81.8 80.8 80 81.2Z\" fill=\"#D9581B\" opacity=\".28\"/><path d=\"M51 50C59 53 65 57 69 64L76.5 78.5Q80 83 83.5 78.5L91 64C95 57 101 53 109 50C101 51 95 54 91 58L85 67Q80 72 75 67L69 58C65 54 59 51 51 50Z\" fill=\"#FFF3DE\" stroke=\"#FFF3DE\" stroke-width=\"1.5\" stroke-linejoin=\"round\"/><path d=\"M76.8 77.6Q80 75.6 83.2 77.6Q81.6 82.6 80 82.6Q78.4 82.6 76.8 77.6Z\" fill=\"#2B1A12\"/><ellipse cx=\"70.5\" cy=\"46\" rx=\"5.6\" ry=\"6.2\" fill=\"#FFF3DE\"/><circle cx=\"70.5\" cy=\"46.6\" r=\"3\" fill=\"#2B1A12\"/><circle cx=\"71.7\" cy=\"45.2\" r=\"1\" fill=\"#FFFFFF\"/><ellipse cx=\"89.5\" cy=\"46\" rx=\"5.6\" ry=\"6.2\" fill=\"#FFF3DE\"/><circle cx=\"89.5\" cy=\"46.6\" r=\"3\" fill=\"#2B1A12\"/><circle cx=\"90.7\" cy=\"45.2\" r=\"1\" fill=\"#FFFFFF\"/></svg>"
+};
+function foxSvg(emotion) { return FOX_ART[emotion] || FOX_ART['Спокойствие']; }
 
+// Места 120×116 — пухлый предмет на серой тени-эллипсе, как сова и куст на карте Duolingo
+const ART = {
+  "manpupuner": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"116\" viewBox=\"0 0 120 116\" fill=\"none\"><ellipse cx=\"60\" cy=\"104\" rx=\"50\" ry=\"9\" fill=\"#E5E5E5\"/><path d=\"M81.3 102L80.1 90.6L78.1 77.3L79.6 67.8L85.6 62.1L94.3 61.1L100.5 67.8L100.8 79.2L96.3 90.6L95.6 102Z\" fill=\"#DCCBB6\" stroke=\"#DCCBB6\" stroke-width=\"4.75\" stroke-linejoin=\"round\"/><path d=\"M89 102L90.7 88.7L92.6 73.5L94.3 61.1L94.3 61.1L100.5 67.8L100.8 79.2L96.3 90.6L95.6 102Z\" fill=\"#BCA68C\" stroke=\"#BCA68C\" stroke-width=\"3.8\" stroke-linejoin=\"round\"/><path d=\"M85.6 62.1L94.3 61.1L97.8 65L89.2 65.9Z\" fill=\"#F2E9DD\" stroke=\"#F2E9DD\" stroke-width=\"2.8499999999999996\" stroke-linejoin=\"round\"/><path d=\"M82.3 90.6L87 77.3\" stroke=\"#FFFFFF\" stroke-opacity=\".8\" stroke-width=\"2.5\" stroke-linecap=\"round\"/><path d=\"M91.8 81.1l4.8 1.9\" stroke=\"#A38C72\" stroke-width=\"2.1\" stroke-linecap=\"round\"/><path d=\"M21.5 104L19 88.8L21.3 75.5L19 64.1L23.4 56.5L31.9 54.6L38.8 61.2L41.2 73.6L38.9 86.9L41.5 104Z\" fill=\"#DCCBB6\" stroke=\"#DCCBB6\" stroke-width=\"4.75\" stroke-linejoin=\"round\"/><path d=\"M32.9 104L33.1 85L30.6 69.8L31.9 54.6L31.9 54.6L38.8 61.2L41.2 73.6L38.9 86.9L41.5 104Z\" fill=\"#BCA68C\" stroke=\"#BCA68C\" stroke-width=\"3.8\" stroke-linejoin=\"round\"/><path d=\"M23.4 56.5L31.9 54.6L35.8 58.4L27.4 60.3Z\" fill=\"#F2E9DD\" stroke=\"#F2E9DD\" stroke-width=\"2.8499999999999996\" stroke-linejoin=\"round\"/><path d=\"M25.3 92.6L30.1 79.3\" stroke=\"#FFFFFF\" stroke-opacity=\".8\" stroke-width=\"2.5\" stroke-linecap=\"round\"/><path d=\"M34.8 83.1l4.8 1.9\" stroke=\"#A38C72\" stroke-width=\"2.1\" stroke-linecap=\"round\"/><path d=\"M47.8 107L45.2 89.5L49 73.2L44 55.8L42.8 38.2L49 24.5L60.2 19.5L71.5 27L75.2 42L70.2 59.5L74 77L70.2 94.5L71.5 107Z\" fill=\"#DCCBB6\" stroke=\"#DCCBB6\" stroke-width=\"6.25\" stroke-linejoin=\"round\"/><path d=\"M61.5 107L64 84.5L60.2 62L64 42L60.2 19.5L60.2 19.5L71.5 27L75.2 42L70.2 59.5L74 77L70.2 94.5L71.5 107Z\" fill=\"#BCA68C\" stroke=\"#BCA68C\" stroke-width=\"5.0\" stroke-linejoin=\"round\"/><path d=\"M49 24.5L60.2 19.5L66.5 24.5L56.5 29.5Z\" fill=\"#F2E9DD\" stroke=\"#F2E9DD\" stroke-width=\"3.75\" stroke-linejoin=\"round\"/><path d=\"M51.5 74.5L57.8 57\" stroke=\"#FFFFFF\" stroke-opacity=\".8\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M64 79.5l6.2 2.5\" stroke=\"#A38C72\" stroke-width=\"2.8\" stroke-linecap=\"round\"/></svg>",
+  "ural": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"116\" viewBox=\"0 0 120 116\" fill=\"none\"><ellipse cx=\"60\" cy=\"104\" rx=\"52\" ry=\"9\" fill=\"#E5E5E5\"/><path d=\"M42 100L76 28L110 100Z\" fill=\"#CE82FF\" stroke=\"#CE82FF\" stroke-width=\"10\" stroke-linejoin=\"round\"/><path d=\"M42 100L76 28L70.6 100Z\" fill=\"#E3B2FF\" stroke=\"#E3B2FF\" stroke-width=\"10\" stroke-linejoin=\"round\"/><path d=\"M76 28L91.2 51L82.9 46.4L76.5 52.9L69.1 46.4L60.8 51Z\" fill=\"#FFFFFF\" stroke=\"#FFFFFF\" stroke-width=\"7.0\" stroke-linejoin=\"round\"/><path d=\"M7 102L44 38L81 102Z\" fill=\"#1CB0F6\" stroke=\"#1CB0F6\" stroke-width=\"10\" stroke-linejoin=\"round\"/><path d=\"M7 102L44 38L38.1 102Z\" fill=\"#6FD2FF\" stroke=\"#6FD2FF\" stroke-width=\"10\" stroke-linejoin=\"round\"/><path d=\"M44 38L57.5 58.5L50.1 54.4L44.4 60.1L37.9 54.4L30.5 58.5Z\" fill=\"#FFFFFF\" stroke=\"#FFFFFF\" stroke-width=\"7.0\" stroke-linejoin=\"round\"/><path d=\"M28 76L40 52\" stroke=\"#FFFFFF\" stroke-opacity=\".6\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><rect x=\"14.4\" y=\"98.8\" width=\"3.1\" height=\"5.7\" rx=\"1\" fill=\"#A0612A\"/><path d=\"M16 78L7.2 99.3L24.8 99.3Z\" fill=\"#58CC02\" stroke=\"#58CC02\" stroke-width=\"4.16\" stroke-linejoin=\"round\"/><path d=\"M16 78L7.2 99.3L15.5 99.3Z\" fill=\"#89E219\" stroke=\"#89E219\" stroke-width=\"4.16\" stroke-linejoin=\"round\"/><rect x=\"102.7\" y=\"99.6\" width=\"2.6\" height=\"4.8\" rx=\"1\" fill=\"#A0612A\"/><path d=\"M104 82L96.5 100L111.5 100Z\" fill=\"#58CC02\" stroke=\"#58CC02\" stroke-width=\"3.52\" stroke-linejoin=\"round\"/><path d=\"M104 82L96.5 100L103.6 100Z\" fill=\"#89E219\" stroke=\"#89E219\" stroke-width=\"3.52\" stroke-linejoin=\"round\"/></svg>"
+};
+// Широкие сцены 343×180 для листа «Задание места» — расширенные версии иконок
+const ART_WIDE = {
+  "manpupuner": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"343\" height=\"180\" viewBox=\"0 0 343 180\" fill=\"none\"><rect x=\"0\" y=\"0\" width=\"343\" height=\"180\" rx=\"0\" fill=\"#DDF4FF\"/><rect x=\"0\" y=\"0\" width=\"343\" height=\"180\" rx=\"0\" fill=\"#58A700\"/><circle cx=\"-10\" cy=\"70\" r=\"26\" fill=\"#62B70F\"/><circle cx=\"28\" cy=\"78\" r=\"26\" fill=\"#62B70F\"/><circle cx=\"66\" cy=\"70\" r=\"26\" fill=\"#62B70F\"/><circle cx=\"104\" cy=\"78\" r=\"26\" fill=\"#62B70F\"/><circle cx=\"142\" cy=\"70\" r=\"26\" fill=\"#62B70F\"/><circle cx=\"180\" cy=\"78\" r=\"26\" fill=\"#62B70F\"/><circle cx=\"218\" cy=\"70\" r=\"26\" fill=\"#62B70F\"/><circle cx=\"256\" cy=\"78\" r=\"26\" fill=\"#62B70F\"/><circle cx=\"294\" cy=\"70\" r=\"26\" fill=\"#62B70F\"/><circle cx=\"332\" cy=\"78\" r=\"26\" fill=\"#62B70F\"/><rect x=\"0\" y=\"0\" width=\"343\" height=\"66\" rx=\"0\" fill=\"#DDF4FF\"/><circle cx=\"-10\" cy=\"74\" r=\"24\" fill=\"#58A700\"/><circle cx=\"28\" cy=\"82\" r=\"24\" fill=\"#58A700\"/><circle cx=\"66\" cy=\"74\" r=\"24\" fill=\"#58A700\"/><circle cx=\"104\" cy=\"82\" r=\"24\" fill=\"#58A700\"/><circle cx=\"142\" cy=\"74\" r=\"24\" fill=\"#58A700\"/><circle cx=\"180\" cy=\"82\" r=\"24\" fill=\"#58A700\"/><circle cx=\"218\" cy=\"74\" r=\"24\" fill=\"#58A700\"/><circle cx=\"256\" cy=\"82\" r=\"24\" fill=\"#58A700\"/><circle cx=\"294\" cy=\"74\" r=\"24\" fill=\"#58A700\"/><circle cx=\"332\" cy=\"82\" r=\"24\" fill=\"#58A700\"/><rect x=\"0\" y=\"120\" width=\"343\" height=\"60\" rx=\"0\" fill=\"#89E219\"/><path d=\"M30 140L35 130L40 140Z\" fill=\"#58CC02\" stroke=\"#58CC02\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M92 140L97 130L102 140Z\" fill=\"#58CC02\" stroke=\"#58CC02\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M250 140L255 130L260 140Z\" fill=\"#58CC02\" stroke=\"#58CC02\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M312 140L317 130L322 140Z\" fill=\"#58CC02\" stroke=\"#58CC02\" stroke-width=\"2\" stroke-linejoin=\"round\"/><g transform=\"translate(78 -4) scale(1.55)\"><ellipse cx=\"60\" cy=\"104\" rx=\"50\" ry=\"9\" fill=\"#6CC417\"/><path d=\"M81.3 102L80.1 90.6L78.1 77.3L79.6 67.8L85.6 62.1L94.3 61.1L100.5 67.8L100.8 79.2L96.3 90.6L95.6 102Z\" fill=\"#DCCBB6\" stroke=\"#DCCBB6\" stroke-width=\"4.75\" stroke-linejoin=\"round\"/><path d=\"M89 102L90.7 88.7L92.6 73.5L94.3 61.1L94.3 61.1L100.5 67.8L100.8 79.2L96.3 90.6L95.6 102Z\" fill=\"#BCA68C\" stroke=\"#BCA68C\" stroke-width=\"3.8\" stroke-linejoin=\"round\"/><path d=\"M85.6 62.1L94.3 61.1L97.8 65L89.2 65.9Z\" fill=\"#F2E9DD\" stroke=\"#F2E9DD\" stroke-width=\"2.8499999999999996\" stroke-linejoin=\"round\"/><path d=\"M82.3 90.6L87 77.3\" stroke=\"#FFFFFF\" stroke-opacity=\".8\" stroke-width=\"2.5\" stroke-linecap=\"round\"/><path d=\"M91.8 81.1l4.8 1.9\" stroke=\"#A38C72\" stroke-width=\"2.1\" stroke-linecap=\"round\"/><path d=\"M21.5 104L19 88.8L21.3 75.5L19 64.1L23.4 56.5L31.9 54.6L38.8 61.2L41.2 73.6L38.9 86.9L41.5 104Z\" fill=\"#DCCBB6\" stroke=\"#DCCBB6\" stroke-width=\"4.75\" stroke-linejoin=\"round\"/><path d=\"M32.9 104L33.1 85L30.6 69.8L31.9 54.6L31.9 54.6L38.8 61.2L41.2 73.6L38.9 86.9L41.5 104Z\" fill=\"#BCA68C\" stroke=\"#BCA68C\" stroke-width=\"3.8\" stroke-linejoin=\"round\"/><path d=\"M23.4 56.5L31.9 54.6L35.8 58.4L27.4 60.3Z\" fill=\"#F2E9DD\" stroke=\"#F2E9DD\" stroke-width=\"2.8499999999999996\" stroke-linejoin=\"round\"/><path d=\"M25.3 92.6L30.1 79.3\" stroke=\"#FFFFFF\" stroke-opacity=\".8\" stroke-width=\"2.5\" stroke-linecap=\"round\"/><path d=\"M34.8 83.1l4.8 1.9\" stroke=\"#A38C72\" stroke-width=\"2.1\" stroke-linecap=\"round\"/><path d=\"M47.8 107L45.2 89.5L49 73.2L44 55.8L42.8 38.2L49 24.5L60.2 19.5L71.5 27L75.2 42L70.2 59.5L74 77L70.2 94.5L71.5 107Z\" fill=\"#DCCBB6\" stroke=\"#DCCBB6\" stroke-width=\"6.25\" stroke-linejoin=\"round\"/><path d=\"M61.5 107L64 84.5L60.2 62L64 42L60.2 19.5L60.2 19.5L71.5 27L75.2 42L70.2 59.5L74 77L70.2 94.5L71.5 107Z\" fill=\"#BCA68C\" stroke=\"#BCA68C\" stroke-width=\"5.0\" stroke-linejoin=\"round\"/><path d=\"M49 24.5L60.2 19.5L66.5 24.5L56.5 29.5Z\" fill=\"#F2E9DD\" stroke=\"#F2E9DD\" stroke-width=\"3.75\" stroke-linejoin=\"round\"/><path d=\"M51.5 74.5L57.8 57\" stroke=\"#FFFFFF\" stroke-opacity=\".8\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M64 79.5l6.2 2.5\" stroke=\"#A38C72\" stroke-width=\"2.8\" stroke-linecap=\"round\"/></g></svg>",
+  "ural": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"343\" height=\"180\" viewBox=\"0 0 343 180\" fill=\"none\"><rect x=\"0\" y=\"0\" width=\"343\" height=\"180\" rx=\"0\" fill=\"#F4E3FF\"/><rect x=\"0\" y=\"120\" width=\"343\" height=\"60\" rx=\"0\" fill=\"#89E219\"/><path d=\"M30 140L35 130L40 140Z\" fill=\"#58CC02\" stroke=\"#58CC02\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M92 140L97 130L102 140Z\" fill=\"#58CC02\" stroke=\"#58CC02\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M250 140L255 130L260 140Z\" fill=\"#58CC02\" stroke=\"#58CC02\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M312 140L317 130L322 140Z\" fill=\"#58CC02\" stroke=\"#58CC02\" stroke-width=\"2\" stroke-linejoin=\"round\"/><g transform=\"translate(82 -2) scale(1.5)\"><ellipse cx=\"60\" cy=\"104\" rx=\"52\" ry=\"9\" fill=\"#6CC417\"/><path d=\"M42 100L76 28L110 100Z\" fill=\"#CE82FF\" stroke=\"#CE82FF\" stroke-width=\"10\" stroke-linejoin=\"round\"/><path d=\"M42 100L76 28L70.6 100Z\" fill=\"#E3B2FF\" stroke=\"#E3B2FF\" stroke-width=\"10\" stroke-linejoin=\"round\"/><path d=\"M76 28L91.2 51L82.9 46.4L76.5 52.9L69.1 46.4L60.8 51Z\" fill=\"#FFFFFF\" stroke=\"#FFFFFF\" stroke-width=\"7.0\" stroke-linejoin=\"round\"/><path d=\"M7 102L44 38L81 102Z\" fill=\"#1CB0F6\" stroke=\"#1CB0F6\" stroke-width=\"10\" stroke-linejoin=\"round\"/><path d=\"M7 102L44 38L38.1 102Z\" fill=\"#6FD2FF\" stroke=\"#6FD2FF\" stroke-width=\"10\" stroke-linejoin=\"round\"/><path d=\"M44 38L57.5 58.5L50.1 54.4L44.4 60.1L37.9 54.4L30.5 58.5Z\" fill=\"#FFFFFF\" stroke=\"#FFFFFF\" stroke-width=\"7.0\" stroke-linejoin=\"round\"/><path d=\"M28 76L40 52\" stroke=\"#FFFFFF\" stroke-opacity=\".6\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><rect x=\"14.4\" y=\"98.8\" width=\"3.1\" height=\"5.7\" rx=\"1\" fill=\"#A0612A\"/><path d=\"M16 78L7.2 99.3L24.8 99.3Z\" fill=\"#58CC02\" stroke=\"#58CC02\" stroke-width=\"4.16\" stroke-linejoin=\"round\"/><path d=\"M16 78L7.2 99.3L15.5 99.3Z\" fill=\"#89E219\" stroke=\"#89E219\" stroke-width=\"4.16\" stroke-linejoin=\"round\"/><rect x=\"102.7\" y=\"99.6\" width=\"2.6\" height=\"4.8\" rx=\"1\" fill=\"#A0612A\"/><path d=\"M104 82L96.5 100L111.5 100Z\" fill=\"#58CC02\" stroke=\"#58CC02\" stroke-width=\"3.52\" stroke-linejoin=\"round\"/><path d=\"M104 82L96.5 100L103.6 100Z\" fill=\"#89E219\" stroke=\"#89E219\" stroke-width=\"3.52\" stroke-linejoin=\"round\"/></g></svg>"
+};
+
+// Белые значки шагов пути 32×32 и золотой сундук 104×104 (тень — серая плита, как у Duolingo)
+const NODE_GLYPHS = {
+  "Звезда": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\" fill=\"none\"><path d=\"M16 3.5l3.9 8 8.8 1.2-6.4 6.1 1.6 8.7L16 23.2l-7.9 4.3 1.6-8.7-6.4-6.1 8.8-1.2z\" fill=\"#FFFFFF\"/></svg>",
+  "Книга": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\" fill=\"none\"><path d=\"M4 7.5C8 6 12 6 15 8v18c-3-2-7-2-11-.5z\" fill=\"#FFFFFF\"/><path d=\"M28 7.5C24 6 20 6 17 8v18c3-2 7-2 11-.5z\" fill=\"#FFFFFF\"/></svg>",
+  "Наушники": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\" fill=\"none\"><path d=\"M6 19v-3a10 10 0 0 1 20 0v3\" stroke=\"#FFFFFF\" stroke-width=\"3.4\" stroke-linecap=\"round\" fill=\"none\"/><rect x=\"4\" y=\"17\" width=\"7\" height=\"11\" rx=\"3\" fill=\"#FFFFFF\"/><rect x=\"21\" y=\"17\" width=\"7\" height=\"11\" rx=\"3\" fill=\"#FFFFFF\"/></svg>",
+  "Гантель": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\" fill=\"none\"><g transform=\"rotate(-35 16 16)\"><rect x=\"9\" y=\"14\" width=\"14\" height=\"4\" rx=\"2\" fill=\"#FFFFFF\"/><rect x=\"3\" y=\"9\" width=\"5\" height=\"14\" rx=\"2.5\" fill=\"#FFFFFF\"/><rect x=\"24\" y=\"9\" width=\"5\" height=\"14\" rx=\"2.5\" fill=\"#FFFFFF\"/><rect x=\"7\" y=\"11\" width=\"3\" height=\"10\" rx=\"1.5\" fill=\"#FFFFFF\"/><rect x=\"22\" y=\"11\" width=\"3\" height=\"10\" rx=\"1.5\" fill=\"#FFFFFF\"/></g></svg>",
+  "Микрофон": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\" fill=\"none\"><rect x=\"11.5\" y=\"3\" width=\"9\" height=\"16\" rx=\"4.5\" fill=\"#FFFFFF\"/><path d=\"M7 15a9 9 0 0 0 18 0M16 24v5M11 29h10\" stroke=\"#FFFFFF\" stroke-width=\"3\" stroke-linecap=\"round\" fill=\"none\"/></svg>",
+  "Кубок": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\" fill=\"none\"><path d=\"M9 4h14v8a7 7 0 0 1-14 0z\" fill=\"#FFFFFF\"/><path d=\"M9 7H5v2a5 5 0 0 0 5 5M23 7h4v2a5 5 0 0 1-5 5\" stroke=\"#FFFFFF\" stroke-width=\"2.6\" fill=\"none\"/><rect x=\"14\" y=\"18\" width=\"4\" height=\"6\" fill=\"#FFFFFF\"/><rect x=\"9\" y=\"24\" width=\"14\" height=\"5\" rx=\"2\" fill=\"#FFFFFF\"/></svg>"
+};
+const CHEST = {
+  "Закрыт": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"104\" height=\"104\" viewBox=\"0 0 104 104\" fill=\"none\"><rect x=\"4\" y=\"58\" width=\"84\" height=\"44\" rx=\"10\" fill=\"#E5E5E5\"/><path d=\"M28 8L80 8L80 26L28 26Z\" fill=\"#F0A800\" stroke=\"#F0A800\" stroke-width=\"2\" stroke-linejoin=\"round\"/><rect x=\"14\" y=\"4\" width=\"16\" height=\"94\" rx=\"3\" fill=\"#FFC800\"/><rect x=\"14\" y=\"4\" width=\"16\" height=\"14\" rx=\"3\" fill=\"#FFF27A\"/><rect x=\"25\" y=\"18\" width=\"5\" height=\"80\" rx=\"0\" fill=\"#F0A800\"/><rect x=\"78\" y=\"4\" width=\"16\" height=\"94\" rx=\"3\" fill=\"#FFC800\"/><rect x=\"78\" y=\"4\" width=\"16\" height=\"14\" rx=\"3\" fill=\"#FFF27A\"/><rect x=\"89\" y=\"18\" width=\"5\" height=\"80\" rx=\"0\" fill=\"#F0A800\"/><rect x=\"30\" y=\"40\" width=\"48\" height=\"44\" rx=\"0\" fill=\"#955A10\"/><rect x=\"30\" y=\"40\" width=\"48\" height=\"14\" rx=\"0\" fill=\"#7E4A0A\"/><rect x=\"30\" y=\"72\" width=\"48\" height=\"12\" rx=\"0\" fill=\"#AC6D1A\"/><rect x=\"14\" y=\"82\" width=\"80\" height=\"8\" rx=\"2\" fill=\"#F0A800\"/><rect x=\"14\" y=\"90\" width=\"80\" height=\"8\" rx=\"2\" fill=\"#FFC800\"/><rect x=\"8\" y=\"26\" width=\"92\" height=\"18\" rx=\"4\" fill=\"#FFE14A\"/><rect x=\"8\" y=\"38\" width=\"92\" height=\"6\" rx=\"3\" fill=\"#FFC800\"/><path d=\"M56 26L68 26L58 44L46 44Z\" fill=\"#FFF27A\" fill-opacity=\"0.9\"/><rect x=\"45\" y=\"25\" width=\"18\" height=\"22\" rx=\"5\" fill=\"#FFE600\"/><rect x=\"45\" y=\"40\" width=\"18\" height=\"7\" rx=\"4\" fill=\"#FFC800\"/><circle cx=\"54\" cy=\"33\" r=\"3.4\" fill=\"#9A5A06\"/><path d=\"M52.2 34L55.8 34L56.6 41L51.4 41Z\" fill=\"#9A5A06\" stroke=\"#9A5A06\" stroke-width=\"1\" stroke-linejoin=\"round\"/></svg>",
+  "Открыт": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"104\" height=\"104\" viewBox=\"0 0 104 104\" fill=\"none\"><rect x=\"4\" y=\"58\" width=\"84\" height=\"44\" rx=\"10\" fill=\"#E5E5E5\"/><path d=\"M24 2L84 2L80 24L28 24Z\" fill=\"#D99200\" stroke=\"#D99200\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M30 6L78 6L75 20L33 20Z\" fill=\"#B87800\" stroke=\"#B87800\" stroke-width=\"2\" stroke-linejoin=\"round\"/><rect x=\"28\" y=\"24\" width=\"52\" height=\"18\" rx=\"2\" fill=\"#5A3205\"/><circle cx=\"40\" cy=\"32\" r=\"6\" fill=\"#FFC800\"/><circle cx=\"38.4\" cy=\"30.4\" r=\"2.4\" fill=\"#FFF27A\"/><circle cx=\"52\" cy=\"29\" r=\"6\" fill=\"#FFC800\"/><circle cx=\"50.4\" cy=\"27.4\" r=\"2.4\" fill=\"#FFF27A\"/><circle cx=\"64\" cy=\"32\" r=\"6\" fill=\"#FFC800\"/><circle cx=\"62.4\" cy=\"30.4\" r=\"2.4\" fill=\"#FFF27A\"/><rect x=\"14\" y=\"4\" width=\"16\" height=\"94\" rx=\"3\" fill=\"#FFC800\"/><rect x=\"14\" y=\"4\" width=\"16\" height=\"14\" rx=\"3\" fill=\"#FFF27A\"/><rect x=\"25\" y=\"18\" width=\"5\" height=\"80\" rx=\"0\" fill=\"#F0A800\"/><rect x=\"78\" y=\"4\" width=\"16\" height=\"94\" rx=\"3\" fill=\"#FFC800\"/><rect x=\"78\" y=\"4\" width=\"16\" height=\"14\" rx=\"3\" fill=\"#FFF27A\"/><rect x=\"89\" y=\"18\" width=\"5\" height=\"80\" rx=\"0\" fill=\"#F0A800\"/><rect x=\"30\" y=\"40\" width=\"48\" height=\"44\" rx=\"0\" fill=\"#955A10\"/><rect x=\"30\" y=\"40\" width=\"48\" height=\"14\" rx=\"0\" fill=\"#7E4A0A\"/><rect x=\"30\" y=\"72\" width=\"48\" height=\"12\" rx=\"0\" fill=\"#AC6D1A\"/><rect x=\"14\" y=\"82\" width=\"80\" height=\"8\" rx=\"2\" fill=\"#F0A800\"/><rect x=\"14\" y=\"90\" width=\"80\" height=\"8\" rx=\"2\" fill=\"#FFC800\"/><rect x=\"8\" y=\"38\" width=\"92\" height=\"8\" rx=\"3\" fill=\"#FFE14A\"/></svg>"
+};
+
+// Блик-полоса на верхней грани узла пути
+const NODE_GLARE = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"100\" viewBox=\"0 0 100 100\" fill=\"none\"><path d=\"M19.6 61.4L19.1 60.6L18.5 59.6L18 58.6L17.5 57.6L17.1 56.6L16.7 55.6L16.4 54.5L16 53.5L15.8 52.4L15.7 52.3L52.9 15.1L53.7 15.2L54.9 15.3L56.1 15.5L57.3 15.7L58.5 15.9L59.6 16.2L60.8 16.5L62 16.9L63.1 17.3L63.6 17.4Z\" fill=\"#FFFFFF\" fill-opacity=\".22\"/></svg>";
 
 const GLYPH = {
   star: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z" fill="#FFFFFF"/></svg>`,
@@ -195,6 +178,7 @@ const GLYPH = {
   lock: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="11" rx="3" fill="#AFAFAF"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" stroke="#AFAFAF" stroke-width="2.4" fill="none"/></svg>`,
   notebook: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="5" y="3" width="14" height="18" rx="2.5" stroke="#FFFFFF" stroke-width="2.2" fill="none"/><path d="M9 8h6M9 12h6" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>`,
   checkSmall: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#58A700" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
+  starSmall: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z" fill="#FFFFFF"/></svg>`,
   closeSmall: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#EA2B2B" stroke-width="3.4" stroke-linecap="round" fill="none"/></svg>`,
 };
 const TAIL_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="18" viewBox="0 0 12 18" fill="none"><path d="M12 1.5L2 9l10 7.5" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2" stroke-linejoin="round"/></svg>`;
@@ -382,8 +366,8 @@ async function buildTextStyles(F) {
 // 3. Страницы
 // ---------------------------------------------------------------------
 async function getPage(name) {
-  let p = figma.root.children.find((x) => x.name === name);
-  if (p) return p;
+  let p = figma.root.children.find((x) => x.name === name) || figma.root.children.find((x) => x.name === LEGACY_PAGES[name]);
+  if (p) { p.name = name; return p; }
   const first = figma.root.children[0];
   await first.loadAsync();
   if (figma.root.children.length === 1 && first.children.length === 0 && !first.name.startsWith('🎨')) { first.name = name; return first; }
@@ -427,7 +411,7 @@ async function buildFoundations(page, family) {
   root.appendChild(cover);
   const m = svgNode(foxSvg('Радость'), 'Лиса'); m.rescale(1.8); cover.appendChild(m);
   const ct = AL('VERTICAL', 'Текст'); ct.itemSpacing = 8; cover.appendChild(ct);
-  ct.appendChild(await T('Языки народов России · v3', 'overline', 'color/text/on-color', { opacity: 0.85 }));
+  ct.appendChild(await T('UI Kit · v8', 'overline', 'color/text/on-color', { opacity: 0.85 }));
   ct.appendChild(await T(APP_NAME || 'UI Kit', 'display', 'color/text/on-color'));
   if (!APP_NAME) ct.appendChild(await T('Название продукта — в работе', 'bodyBold', 'color/text/on-color', { opacity: 0.85 }));
   ct.appendChild(await T(`Учим языки народов России. Курсы: ${LANGS.map((l) => l.ru.toLowerCase()).join(', ')} — и это только начало.`, 'h3', 'color/text/on-color', { width: 620 }));
@@ -514,9 +498,11 @@ async function buildFoundations(page, family) {
   const rules = [
     ['Объём', 'Интерактивные элементы «стоят» на нижней грани 4 px более тёмного оттенка. Нажатие убирает грань.'],
     ['Яркость', 'Цвета насыщенные, как у Duolingo. Белый текст на ярком — только крупный и жирный (кнопки, заголовки). Мелкий текст — тёмным или оттенком shadow.'],
-    ['Лиса-проводник', 'Лиса живёт по всей России — от Коми до Чувашии. Эмоции подкрепляют ответы: Радость — верно, Грусть — ошибка, Удивление — новое слово.'],
+    ['Лиса-проводник', 'Лиса живёт по всей России — от Коми до Кавказа. Эмоции подкрепляют ответы: Радость — верно, Грусть — ошибка, Удивление — новое слово.'],
     ['Язык — герой', 'Слова на изучаемом языке — стилем «Слово урока», русский — обычным текстом.'],
-    ['Культура рядом', 'Орнаменты, флаги и сюжеты — из культуры народа курса. Без стереотипов и карикатур.'],
+    ['Графика', 'Как у Duolingo: пухлые плоские фигуры, три тона (светлый верх, основной фронт, тёмный бок), белые косые блики, серая тень под предметом. Никаких мелких деталей и текстур.'],
+    ['Культура рядом', 'Места, флаги и сюжеты — из культуры народа курса. Без стереотипов и карикатур.'],
+    ['Путь', 'Тема — 6–7 шагов: уроки, аудирование, практика, сундук с наградой и итог. Рядом — настоящее место края без подписей: по нажатию открывается задание о нём.'],
     ['Похвала', 'Ошибка — не наказание: всегда показываем правильный ответ, Лиса сочувствует, а не ругает.'],
   ];
   for (const [h, d] of rules) {
@@ -538,7 +524,7 @@ async function buildComponents(page) {
 
   // ---- Маскот
   {
-    const body = await section(root, 'Маскот · Лиса', 'Четыре эмоции, свойство «Эмоция». Лиса встроена в реплики персонажа, учебный путь и экран итогов — замена варианта здесь обновит все экраны.');
+    const body = await section(root, 'Маскот · Лиса', 'Лиса по референсу в духе Duolingo: узкая мордочка, хитрый прищур, тёмные кончики ушей, хвост-пламя, тёмные лапы. Четыре эмоции, свойство «Эмоция». Замена варианта здесь обновит все экраны.');
     const vs = [];
     for (const e of EMOTIONS) {
       const c = figma.createComponentFromNode(svgNode(foxSvg(e), e));
@@ -701,7 +687,7 @@ async function buildComponents(page) {
 
   // ---- Плитки слов
   {
-    const body = await section(root, 'Плитка слова', 'Банк слов в упражнениях «собери предложение». «Пустая» — место, откуда слово уже забрали.');
+    const body = await section(root, 'Плитка слова', 'Банк слов в упражнениях «собери предложение». «Пустая» — место, откуда слово уже забрали. Выбранные слова ложатся в «Поле ответа» — лоток с пунктирной рамкой (см. экраны уроков), без линий под словами.');
     const vs = [];
     for (const st of ['Обычная', 'Пустая', 'Недоступна']) {
       const c = COMP(`Состояние=${st}`); center(c); pad(c, 'sm', 'md'); rad(c, 'md');
@@ -791,7 +777,7 @@ async function buildComponents(page) {
       const f = inst(K.flag, { 'Язык': soon ? 'Скоро' : LANGS[0].ru }); f.name = 'Флаг'; c.appendChild(f);
       const tx = AL('VERTICAL', 'Тексты'); append(c, tx, { grow: true });
       tx.appendChild(await T(soon ? SOON.ru : LANGS[0].ru, 'h3', sel ? 'color/secondary/shadow' : soon ? 'color/text/secondary' : 'color/text/primary', { name: 'Язык' }));
-      tx.appendChild(await T(soon ? SOON.native : LANGS[0].native, 'caption', sel ? 'color/secondary/default' : soon ? 'color/text/disabled' : 'color/text/secondary', { name: 'Самоназвание' }));
+      if (!soon) tx.appendChild(await T(LANGS[0].native, 'caption', sel ? 'color/secondary/default' : soon ? 'color/text/disabled' : 'color/text/secondary', { name: 'Самоназвание' }));
       if (soon) { const tg = inst(K.tag, { 'Цвет': 'Серый' }); tg.setProperties({ [K.tagText]: 'Скоро' }); tg.name = 'Метка'; c.appendChild(tg); }
       else { const ch = inst(K.icon['Шеврон']); ch.name = 'Шеврон'; c.appendChild(ch); }
       if (sel) { fill(c, 'color/secondary/subtle'); depth(c, 'color/secondary/muted', 2, 4); }
@@ -874,74 +860,202 @@ async function buildComponents(page) {
     K.resultText = textProp(K.result, 'Значение', '+15', 'Значение');
   }
 
+  // ---- Значки шагов
+  {
+    const body = await section(root, 'Значки шагов', 'Белые значки 32×32 внутри узлов пути: урок, история, аудирование, практика, говорение, итог темы.');
+    K.glyph = {};
+    for (const [name, svg] of Object.entries(NODE_GLYPHS)) {
+      const cell = AL('VERTICAL', name); cell.itemSpacing = 8; cell.counterAxisAlignItems = 'CENTER'; pad(cell, 'sm', 'sm'); fill(cell, 'color/primary/default'); rad(cell, 'md');
+      body.appendChild(cell);
+      const c = figma.createComponentFromNode(svgNode(svg, name));
+      c.name = `Значок шага/${name}`; c.fills = []; STATS.components++;
+      cell.appendChild(c);
+      cell.appendChild(await T(name, 'caption', 'color/text/on-color'));
+      K.glyph[name] = c;
+    }
+  }
+
   // ---- Узел пути
   {
-    const body = await section(root, 'Узел пути', 'Шаги учебного пути на главном экране.');
+    const body = await section(root, 'Узел пути', 'Объёмная «таблетка» шага. Цвет — цвет темы, Состояние: Открыт (пройден или доступен), Текущий (с кольцом прогресса), Закрыт (серый). Значок меняется через Instance swap.');
+    const COLORS = [['Зелёный', 'primary'], ['Синий', 'secondary'], ['Оранжевый', 'brand'], ['Фиолетовый', 'premium']];
     const vs = [];
-    for (const [st, bg, sh, g] of [['Пройден', 'color/reward/default', 'color/reward/shadow', GLYPH.check], ['Текущий', 'color/primary/default', 'color/primary/shadow', GLYPH.star], ['Заблокирован', 'color/bg/muted', 'color/border/strong', GLYPH.lock]]) {
-      const c = COMP(`Состояние=${st}`); center(c);
+    const STATES = ['Открыт', ...Array.from({ length: LESSONS_PER_STEP }, (_, k) => `Текущий ${k}/${LESSONS_PER_STEP}`), 'Закрыт'];
+    for (const [cl, role] of COLORS) for (const st of STATES) {
+      const locked = st === 'Закрыт';
+      const c = figma.createComponent(); c.name = `Цвет=${cl}, Состояние=${st}`; c.resize(100, 100); c.fills = []; c.clipsContent = false;
+      STATS.components++;
       body.appendChild(c);
-      fixBox(c, 72, 72); fill(c, bg); depth(c, sh, 0, 6); rad(c, 'full');
-      c.appendChild(svgNode(g, 'Глиф'));
+      if (st.startsWith('Текущий')) {
+        // кольцо из сегментов: по одному на задание шага; пройденные — цветом темы, остальные — серые
+        const done = +st.split(' ')[1].split('/')[0];
+        const N = LESSONS_PER_STEP, gap = 0.26, sector = 2 * Math.PI / N;
+        for (let k = 0; k < N; k++) {
+          const seg = figma.createEllipse(); seg.name = `Сегмент ${k + 1}`; seg.resize(100, 100);
+          seg.fills = [vpaint(k < done ? `color/${role}/default` : 'color/bg/muted')];
+          const a0 = -Math.PI / 2 + k * sector + gap / 2;
+          seg.arcData = { startingAngle: a0, endingAngle: a0 + sector - gap, innerRadius: 0.84 };
+          c.appendChild(seg);
+        }
+      }
+      const bot = figma.createEllipse(); bot.name = 'Грань'; bot.resize(70, 62); bot.x = 15; bot.y = 23; bot.fills = [vpaint(locked ? 'color/border/strong' : `color/${role}/shadow`)]; c.appendChild(bot);
+      const top = figma.createEllipse(); top.name = 'Верх'; top.resize(70, 62); top.x = 15; top.y = 15; top.fills = [vpaint(locked ? 'color/bg/muted' : `color/${role}/default`)]; c.appendChild(top);
+      c.appendChild(svgNode(NODE_GLARE, 'Блик'));
+      const g = inst(K.glyph['Звезда']); g.name = 'Значок'; c.appendChild(g); g.x = 34; g.y = 30;
+      if (locked) for (const n of g.findAll((x) => 'fills' in x)) { if (n.fills.length) n.fills = [solid('#B5B5B5')]; if ('strokes' in n && n.strokes.length) n.strokes = [solid('#B5B5B5')]; }
       vs.push(c);
     }
-    K.node = combine(vs, body, 'Узел пути', 3, 'Узел учебного пути. Свойство «Состояние».');
+    K.node = combine(vs, body, 'Узел пути', 2 + LESSONS_PER_STEP, 'Шаг учебного пути. Свойства: Цвет (цвет темы), Состояние, Значок. У текущего шага кольцо из сегментов — по одному на задание (Текущий 0/3, 1/3, 2/3).');
+    K.nodeGlyph = swapProp(K.node, 'Значок', K.glyph['Звезда'], 'Значок');
   }
 
-  // ---- Баннер раздела
+  // ---- Сундук
   {
-    const body = await section(root, 'Баннер раздела', 'Заголовок блока на учебном пути. Цвет раздела помогает ориентироваться.');
+    const body = await section(root, 'Сундук', 'Награда посреди темы: закрыт, пока до него не дошли, и открыт после.');
+    const vs = [];
+    for (const [st, svg] of Object.entries(CHEST)) {
+      const c = figma.createComponentFromNode(svgNode(svg, st)); c.name = `Состояние=${st}`; c.fills = [];
+      STATS.components++;
+      body.appendChild(c); vs.push(c);
+    }
+    K.chest = combine(vs, body, 'Сундук', 2, 'Сундук на учебном пути. Свойство «Состояние».');
+  }
+
+  // ---- Разделитель темы
+  {
+    const body = await section(root, 'Разделитель темы', 'Название следующей темы между линиями — как граница между темами на пути.');
+    const c = COMP('Разделитель темы'); c.itemSpacing = 12; c.counterAxisAlignItems = 'CENTER';
+    body.appendChild(c);
+    const l1 = figma.createRectangle(); l1.name = 'Линия'; l1.resize(40, 2); l1.fills = [vpaint('color/bg/muted')]; c.appendChild(l1);
+    const t = await T(LANGS[0].units[1] ? LANGS[0].units[1].title : 'Тема 2', 'h3', 'color/text/disabled', { name: 'Тема' }); c.appendChild(t);
+    const l2 = figma.createRectangle(); l2.name = 'Линия'; l2.resize(40, 2); l2.fills = [vpaint('color/bg/muted')]; c.appendChild(l2);
+    fixW(c, 343);
+    l1.layoutGrow = 1; l2.layoutGrow = 1;
+    c.description = 'Граница между темами. Свойство «Тема».';
+    K.divider = c;
+    K.dividerText = textProp(c, 'Тема', t.characters, 'Тема');
+  }
+
+  // ---- Баннер темы
+  {
+    const body = await section(root, 'Баннер темы', 'Закреплённый заголовок над путём: раздел и тема слева, справочник справа за вертикальным разделителем.');
     const vs = [];
     for (const [cl, role] of [['Зелёный', 'primary'], ['Синий', 'secondary'], ['Оранжевый', 'brand'], ['Фиолетовый', 'premium']]) {
-      const c = COMP(`Цвет=${cl}`); c.itemSpacing = 16; c.counterAxisAlignItems = 'CENTER'; pad(c, 'md', 'md'); rad(c, 'lg');
+      const c = COMP(`Цвет=${cl}`); c.counterAxisAlignItems = 'CENTER'; rad(c, 'lg');
       body.appendChild(c);
       fill(c, `color/${role}/default`); depth(c, `color/${role}/shadow`, 0, 4);
-      const tx = AL('VERTICAL', 'Тексты'); tx.itemSpacing = 4; append(c, tx, { grow: true });
-      tx.appendChild(await T('Раздел 1', 'overline', 'color/text/on-color', { name: 'Раздел', opacity: 0.85 }));
-      const topic = await T(LANGS[0].unit, 'h2', 'color/text/on-color', { name: 'Тема' }); tx.appendChild(topic);
-      const bt = AL('HORIZONTAL', 'Кнопка-справочник'); center(bt); fixBox(bt, 48, 48);
-      bt.cornerRadius = 12; bt.strokes = [solid('#FFFFFF', 0.45)]; bt.strokeWeight = 2; bt.strokeAlign = 'INSIDE';
-      c.appendChild(bt);
+      const tx = AL('VERTICAL', 'Тексты'); tx.itemSpacing = 4; pad(tx, 'md', 'md'); c.appendChild(tx);
+      tx.appendChild(await T('Раздел 1, тема 1', 'overline', 'color/text/on-color', { name: 'Раздел', opacity: 0.85 }));
+      const topic = await T(LANGS[0].units[0].title, 'h2', 'color/text/on-color', { name: 'Тема' }); tx.appendChild(topic);
+      const sep = figma.createRectangle(); sep.name = 'Разделитель'; sep.resize(2, 40); sep.fills = [vpaint(`color/${role}/shadow`)]; c.appendChild(sep);
+      const bt = AL('HORIZONTAL', 'Справочник'); center(bt); c.appendChild(bt);
       bt.appendChild(svgNode(GLYPH.notebook, 'Глиф'));
       fixW(c, 343);
-      tx.layoutSizingHorizontal = 'FILL'; wrap(topic);
+      tx.layoutGrow = 1; wrap(topic);
+      sep.layoutSizingVertical = 'FILL';
+      bt.resize(64, 40); bt.primaryAxisSizingMode = 'FIXED'; bt.layoutSizingVertical = 'FILL';
       vs.push(c);
     }
-    K.unit = combine(vs, body, 'Баннер раздела', 4, 'Баннер раздела. Свойства: Цвет, Раздел, Тема.');
-    K.unitNum = textProp(K.unit, 'Раздел', 'Раздел 1', 'Раздел');
-    K.unitTopic = textProp(K.unit, 'Тема', LANGS[0].unit, 'Тема');
+    K.unit = combine(vs, body, 'Баннер темы', 2, 'Баннер темы. Свойства: Цвет, Раздел, Тема.');
+    K.unitNum = textProp(K.unit, 'Раздел', 'Раздел 1, тема 1', 'Раздел');
+    K.unitTopic = textProp(K.unit, 'Тема', LANGS[0].units[0].title, 'Тема');
   }
 
-  // ---- Навигация
+  // ---- Достопримечательности + задание места
+  const allLm = []; for (const l of LANGS) for (const u of (l.units || [])) if (u.place && !allLm.some((x) => x.art === u.place.art)) allLm.push(Object.assign({ lang: l.ru }, u.place));
+  if (allLm.length) {
+    const body = await section(root, 'Достопримечательности', 'Место края стоит рядом с путём темы — только картинка и три звезды прогресса, без подписей. По нажатию открывается «Задание места». Места — в LANGS[].units[].place, картинки — в ART и ART_WIDE.');
+    K.art = {};
+    const arts = AL('HORIZONTAL', 'Иллюстрации'); arts.itemSpacing = 24; body.appendChild(arts);
+    for (const lm of allLm) {
+      const c = figma.createComponentFromNode(svgNode(ART[lm.art], lm.name));
+      c.name = `Место/${lm.name}`; c.fills = []; c.description = `${lm.name} · ${lm.sub}`;
+      STATS.components++;
+      arts.appendChild(c); K.art[lm.art] = c;
+    }
+    const lm0 = allLm[0];
+    // Метка места на карте: картинка + три звезды прогресса, без подписей
+    const vs = [];
+    for (const n of [0, 1, 2, 3]) {
+      const c = COMP(`Звёзды=${n}`, 'VERTICAL'); c.itemSpacing = 0; c.counterAxisAlignItems = 'CENTER';
+      body.appendChild(c);
+      const art = K.art[lm0.art].createInstance(); art.name = 'Иллюстрация'; c.appendChild(art);
+      const row = figma.createFrame(); row.name = 'Звёзды'; row.resize(78, 30); row.fills = []; row.clipsContent = false; c.appendChild(row);
+      for (let k = 0; k < 3; k++) {   // три звезды, средняя ниже — как под персонажами Duolingo
+        const on = k < n;
+        const st = svgNode(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" fill="${on ? '#FFC800' : '#E5E5E5'}" stroke="${on ? '#FFC800' : '#E5E5E5'}" stroke-width="2.6" stroke-linejoin="round"/></svg>`, 'Звезда');
+        row.appendChild(st); st.x = k * 27; st.y = k === 1 ? 6 : 0;
+      }
+      vs.push(c);
+    }
+    K.landmark = combine(vs, body, 'Достопримечательность', 4, 'Место рядом с путём. Свойства: Звёзды (0–3), Иллюстрация. По нажатию — «Задание места».');
+    K.lmArt = swapProp(K.landmark, 'Иллюстрация', K.art[lm0.art], 'Иллюстрация');
+
+    // Широкие сцены для листа — расширенные версии иконок с карты
+    K.artWide = {};
+    const wides = AL('HORIZONTAL', 'Широкие иллюстрации'); wides.itemSpacing = 24; body.appendChild(wides);
+    for (const lm of allLm) {
+      const c = figma.createComponentFromNode(svgNode(ART_WIDE[lm.art], lm.name));
+      c.name = `Место/${lm.name} · широкая`; c.fills = []; c.clipsContent = true; c.cornerRadius = 16;
+      STATS.components++;
+      wides.appendChild(c); K.artWide[lm.art] = c;
+    }
+
+    // Нижний лист «Задание места»: картинка во всю ширину → название → подзаголовок → задание → кнопка
+    const sh = COMP('Задание места', 'VERTICAL'); sh.itemSpacing = 16; sh.paddingTop = 10; sh.paddingBottom = 32; sh.paddingLeft = 16; sh.paddingRight = 16;
+    body.appendChild(sh);
+    fill(sh, 'color/bg/default');
+    for (const k of ['topLeftRadius', 'topRightRadius']) sh.setBoundVariable(k, V['radius/xl']);
+    const hrow = AL('HORIZONTAL', 'Ручка'); hrow.primaryAxisAlignItems = 'CENTER'; sh.appendChild(hrow);
+    const handle = figma.createRectangle(); handle.name = 'Ручка'; handle.resize(40, 5); handle.cornerRadius = 3; handle.fills = [vpaint('color/bg/muted')]; hrow.appendChild(handle);
+    const pic = K.artWide[lm0.art].createInstance(); pic.name = 'Иллюстрация'; sh.appendChild(pic);
+    const tx = AL('VERTICAL', 'Тексты'); tx.itemSpacing = 2; sh.appendChild(tx);
+    const tName = await T(lm0.name, 'h1', 'color/text/primary', { name: 'Название' }); tx.appendChild(tName);
+    const tSub = await T(lm0.sub, 'body', 'color/text/secondary', { name: 'Подзаголовок' }); tx.appendChild(tSub);
+    const task = AL('HORIZONTAL', 'Задание'); task.itemSpacing = 12; task.counterAxisAlignItems = 'CENTER'; pad(task, 'sm', 'md'); fill(task, 'color/bg/subtle'); rad(task, 'lg');
+    sh.appendChild(task);
+    const ti = inst(K.icon['Мишень']); ti.name = 'Иконка'; task.appendChild(ti);
+    const taskText = await T(lm0.task, 'bodyBold', 'color/text/primary', { name: 'Задание' }); task.appendChild(taskText);
+    const b1 = inst(K.button, { 'Стиль': 'Брендовая', 'Состояние': 'Обычное' }); b1.setProperties({ [K.buttonText]: 'Начать задание' }); sh.appendChild(b1);
+    fixW(sh, 375);
+    for (const n of [hrow, tx, task, b1]) n.layoutSizingHorizontal = 'FILL';
+    wrap(tName); wrap(tSub); wrap(taskText);
+    sh.description = 'Нижний лист: открывается по нажатию на место. Свойства: Название, Подзаголовок, Задание, Иллюстрация (широкая сцена).';
+    K.sheet = sh;
+    K.shName = textProp(sh, 'Название', lm0.name, 'Название');
+    K.shSub = textProp(sh, 'Подзаголовок', lm0.sub, 'Подзаголовок');
+    K.shTask = textProp(sh, 'Задание', lm0.task, 'Задание');
+    K.shArt = swapProp(sh, 'Иллюстрация', K.artWide[lm0.art], 'Иллюстрация');
+  }
+
+  // ---- Навигация: только значки, как у Duolingo
   {
-    const body = await section(root, 'Нижняя навигация', 'Обучение · Словарь · Культура · Рейтинг · Профиль. «Культура» — традиции, сказки и музыка народа курса.');
+    const body = await section(root, 'Нижняя навигация', 'Нора (учебный путь) · Задания · Рейтинг · Лента новостей · Профиль. Только значки, без подписей; активная вкладка — голубая плашка с рамкой.');
     const vs = [];
     for (const st of ['Активна', 'Неактивна']) {
       const act = st === 'Активна';
-      const c = COMP(`Состояние=${st}`, 'VERTICAL'); c.itemSpacing = 4; c.counterAxisAlignItems = 'CENTER'; pad(c, 'xs', 'xs'); rad(c, 'md');
+      const c = COMP(`Состояние=${st}`); center(c); rad(c, 'md');
       body.appendChild(c);
-      const ic = inst(K.icon['Дом']); ic.name = 'Иконка'; ic.rescale(1.25); c.appendChild(ic);
-      c.appendChild(await T('Обучение', 'caption', act ? 'color/secondary/default' : 'color/text/secondary', { name: 'Подпись' }));
+      const ic = inst(K.icon['Нора']); ic.name = 'Иконка'; ic.rescale(1.25); c.appendChild(ic);
       if (act) { fill(c, 'color/secondary/subtle'); depth(c, 'color/secondary/muted', 2, 2); }
-      fixW(c, 68);
+      fixBox(c, 58, 54);
       vs.push(c);
     }
-    K.tab = combine(vs, body, 'Вкладка', 2, 'Пункт нижней навигации. Свойства: Состояние, Подпись, Иконка.');
-    K.tabText = textProp(K.tab, 'Подпись', 'Обучение', 'Подпись');
-    K.tabIcon = swapProp(K.tab, 'Иконка', K.icon['Дом'], 'Иконка');
+    K.tab = combine(vs, body, 'Вкладка', 2, 'Пункт нижней навигации: только значок. Свойства: Состояние, Иконка.');
+    K.tabIcon = swapProp(K.tab, 'Иконка', K.icon['Нора'], 'Иконка');
 
     const bar = COMP('Нижняя навигация'); bar.primaryAxisAlignItems = 'SPACE_BETWEEN'; bar.counterAxisAlignItems = 'CENTER';
-    bar.paddingTop = 8; bar.paddingBottom = 24; bar.paddingLeft = 8; bar.paddingRight = 8;
+    bar.paddingTop = 10; bar.paddingBottom = 26; bar.paddingLeft = 14; bar.paddingRight = 14;
     body.appendChild(bar);
     fill(bar, 'color/bg/default'); bar.strokes = [vpaint('color/border/default')]; bar.strokeAlign = 'INSIDE'; bar.strokeTopWeight = 2; bar.strokeBottomWeight = 0; bar.strokeLeftWeight = 0; bar.strokeRightWeight = 0;
-    [['Обучение', 'Дом'], ['Словарь', 'Книга'], ['Культура', 'Чум'], ['Рейтинг', 'Кубок'], ['Профиль', 'Профиль']].forEach(([label, icon], i) => {
+    [['Изучение', 'Нора'], ['Задания', 'Сундук'], ['Рейтинг', 'Рейтинг'], ['Лента новостей', 'Лента'], ['Профиль', 'Профиль']].forEach(([label, icon], i) => {
       const it = inst(K.tab, { 'Состояние': i === 0 ? 'Активна' : 'Неактивна' });
-      it.setProperties({ [K.tabText]: label, [K.tabIcon]: K.icon[icon].id });
+      it.setProperties({ [K.tabIcon]: K.icon[icon].id });
       it.name = label;
       bar.appendChild(it);
     });
     bar.resize(375, bar.height); bar.counterAxisSizingMode = 'AUTO';
-    bar.description = 'Нижняя навигация, 5 вкладок.';
+    bar.description = 'Нижняя навигация: Нора · Задания · Рейтинг · Лента новостей · Профиль.';
     K.tabbar = bar;
   }
 
@@ -991,14 +1105,12 @@ async function lessonScreen(root, K, L, correct) {
 
   const placed = L.answer.slice();
   if (!correct) placed[1] = L.extra[0];
-  const ans = AL('VERTICAL', 'Ответ'); append(c, ans, { fillW: true });
-  for (const words of [placed.slice(0, 3), placed.slice(3)]) {
-    const line = AL('HORIZONTAL', 'Строка'); line.itemSpacing = 8; line.counterAxisAlignItems = 'MAX'; line.paddingBottom = 8;
-    append(ans, line, { fillW: true });
-    line.minHeight = 64;
-    line.strokes = [vpaint('color/border/default')]; line.strokeAlign = 'INSIDE'; line.strokeTopWeight = 0; line.strokeLeftWeight = 0; line.strokeRightWeight = 0; line.strokeBottomWeight = 2;
-    for (const w of words) { const t = inst(K.tile); t.setProperties({ [K.tileText]: w }); line.appendChild(t); }
-  }
+  // Поле ответа — «лоток» с пунктирной рамкой: слова переносятся сами, линии не пересекают плитки
+  const ans = AL('HORIZONTAL', 'Поле ответа'); ans.itemSpacing = 8; pad(ans, 'sm', 'sm'); rad(ans, 'lg');
+  fill(ans, 'color/bg/subtle'); ans.strokes = [vpaint('color/border/default')]; ans.strokeWeight = 2; ans.strokeAlign = 'INSIDE'; ans.dashPattern = [8, 6];
+  append(c, ans, { fillW: true });
+  ans.layoutWrap = 'WRAP'; ans.counterAxisSpacing = 8; ans.minHeight = 132;
+  for (const w of placed) { const t = inst(K.tile); t.setProperties({ [K.tileText]: w }); ans.appendChild(t); }
 
   const bank = AL('HORIZONTAL', 'Банк слов'); bank.itemSpacing = 8; bank.primaryAxisAlignItems = 'CENTER';
   append(c, bank, { fillW: true });
@@ -1014,6 +1126,83 @@ async function lessonScreen(root, K, L, correct) {
   const fb = inst(K.feedback, { 'Тип': correct ? 'Верно' : 'Ошибка' });
   if (!correct) fb.setProperties({ [K.feedbackAnswer]: L.answer.join(' ') });
   append(s, fb, { fillW: true });
+}
+
+// Учебный путь: шаги темы «змейкой», сундук на пути, место — сбоку без подписей
+const ZIG = [0, -44, -64, -44, 0, 44, 0];
+const LESSONS_PER_STEP = 3;   // заданий в одном шаге = сегментов кольца у текущего шага
+const STEP = 78;
+function placeUnit(K, path, unit, y0, o) {
+  // o: { from, to, mirror, done (сколько шагов пройдено), current (индекс текущего) | -1, lessons (заданий пройдено в текущем), place }
+  const color = unit.color;
+  let y = y0, firstCy = null, cys = [];
+  for (let i = o.from; i <= o.to; i++) {
+    if (i === o.current) y += 40;                                  // место под «Начать» и кольцо
+    const kind = unit.steps[i];
+    if (kind === 'Сундук') y += 14;                                 // сундуку нужно больше воздуха
+    const dx = (o.mirror ? -1 : 1) * ZIG[i % ZIG.length];
+    const cx = 171.5 + dx, cy = y + 44;
+    cys[i] = [cx, cy]; if (firstCy === null) firstCy = cy;
+    if (kind === 'Сундук') y += 14;
+    if (kind === 'Сундук') {
+      const ch = inst(K.chest, { 'Состояние': i < o.done ? 'Открыт' : 'Закрыт' }); ch.name = 'Сундук';
+      ch.rescale(0.72); path.appendChild(ch); ch.x = cx - ch.width / 2 + 3; ch.y = cy - ch.height / 2 - 2;
+    } else {
+      const st = i < o.done ? 'Открыт' : i === o.current ? `Текущий ${Math.min(o.lessons || 0, LESSONS_PER_STEP - 1)}/${LESSONS_PER_STEP}` : 'Закрыт';
+      const n = inst(K.node, { 'Цвет': color, 'Состояние': st });
+      n.setProperties({ [K.nodeGlyph]: K.glyph[kind].id }); n.name = `Шаг ${i + 1} · ${kind}`;
+      if (st === 'Закрыт') for (const v of n.findAll((x) => x.name === 'Значок')) for (const p of v.findAll((x) => 'fills' in x)) { if (p.fills.length) p.fills = [solid('#B5B5B5')]; if ('strokes' in p && p.strokes.length) p.strokes = [solid('#B5B5B5')]; }
+      path.appendChild(n); n.x = cx - 50; n.y = cy - 48;
+      if (st.startsWith('Текущий')) {
+        const tag = inst(K.tag, { 'Цвет': color === 'Фиолетовый' ? 'Фиолетовый' : 'Зелёный' }); tag.setProperties({ [K.tagText]: 'Начать' });
+        path.appendChild(tag); tag.x = cx - tag.width / 2; tag.y = cy - 48 - tag.height - 2;
+      }
+    }
+    if (i === o.current) y += 10;                                  // кольцо снизу не должно касаться следующего шага
+    y += STEP;
+  }
+  if (o.place && unit.place && K.landmark && cys[2]) {
+    const right = !o.mirror;                                       // место — с противоположной от изгиба стороны
+    const m = inst(K.landmark, { 'Звёзды': String(o.stars || 0) }); m.name = unit.place.name;
+    m.setProperties({ [K.lmArt]: K.art[unit.place.art].id });
+    path.appendChild(m); m.x = right ? 343 - 122 : 2; m.y = cys[2][1] - 66;
+  }
+  return y;
+}
+function homeTop(K, s, L, unitIdx) {
+  const c = content(s, { grow: true, gap: 20 });
+  const head = AL('HORIZONTAL', 'Шапка'); head.primaryAxisAlignItems = 'SPACE_BETWEEN'; head.counterAxisAlignItems = 'CENTER';
+  append(c, head, { fillW: true });
+  head.appendChild(inst(K.flag, { 'Язык': L.ru }));
+  for (const [t, v] of [['Ударный режим', '12'], ['Кристаллы', '500'], ['Жизни', '5']]) { const st = inst(K.stat, { 'Тип': t }); st.setProperties({ [K.statText]: v }); head.appendChild(st); }
+  const u = L.units[unitIdx];
+  const unit = inst(K.unit, { 'Цвет': u.color }); unit.setProperties({ [K.unitNum]: `Раздел 1, тема ${unitIdx + 1}`, [K.unitTopic]: u.title }); append(c, unit, { fillW: true });
+  const path = figma.createFrame(); path.name = 'Путь'; path.fills = []; path.clipsContent = false; path.resize(343, 640);
+  append(c, path, { fillW: true });
+  return path;
+}
+async function homeScreen(root, K, L, mode) {
+  const names = { start: 'Главная · тема 1', next: 'Главная · переход к теме 2', sheet: 'Главная · задание места' };
+  const s = screen(root, names[mode]);
+  const u1 = L.units[0], u2 = L.units[1];
+  const path = homeTop(K, s, L, 0);
+  if (mode === 'next' && u2) {
+    // тема 1 пройдена, видна её концовка; ниже — разделитель и начало темы 2
+    let y = placeUnit(K, path, u1, -10, { from: 5, to: 6, done: 7, current: -1 });
+    const d = inst(K.divider); d.setProperties({ [K.dividerText]: u2.title }); path.appendChild(d); d.x = 0; d.y = y + 4;
+    placeUnit(K, path, u2, y + 54, { from: 0, to: 5, done: 0, current: 0, lessons: 0, mirror: true, place: true, stars: 0 });
+  } else {
+    placeUnit(K, path, u1, 0, { from: 0, to: 6, done: 2, current: 2, lessons: 1, place: true, stars: 1 });
+  }
+  append(s, inst(K.tabbar), { fillW: true });
+  if (mode === 'sheet' && K.sheet && u1.place) {
+    const p = u1.place;
+    const ov = figma.createRectangle(); ov.name = 'Затемнение'; ov.resize(375, 812); ov.fills = [solid('#000000', 0.4)];
+    s.appendChild(ov); ov.layoutPositioning = 'ABSOLUTE'; ov.x = 0; ov.y = 0;
+    const sh = inst(K.sheet);
+    sh.setProperties({ [K.shName]: p.name, [K.shSub]: p.sub, [K.shTask]: p.task, [K.shArt]: K.artWide[p.art].id });
+    s.appendChild(sh); sh.layoutPositioning = 'ABSOLUTE'; sh.x = 0; sh.y = 812 - sh.height;
+  }
 }
 
 async function buildScreens(page, K) {
@@ -1034,40 +1223,21 @@ async function buildScreens(page, K) {
       append(c, card, { fillW: true });
     });
     const soon = inst(K.course, { 'Состояние': 'Скоро' });
-    soon.setProperties({ [K.courseLang]: SOON.ru, [K.courseNative]: SOON.native });
+    soon.setProperties({ [K.courseLang]: SOON.ru });
     append(c, soon, { fillW: true });
     spacer(c);
     append(c, button(K, 'Продолжить'), { fillW: true });
   }
 
-  // --- Уроки: по одному на курс, чередуем «верно» / «ошибка»
-  for (let i = 0; i < LANGS.length; i++) await lessonScreen(root, K, LANGS[i], i % 2 === 0);
+  // --- Уроки: «верно» и «ошибка» для первого курса, «верно» — для остальных
+  await lessonScreen(root, K, LANGS[0], true);
+  await lessonScreen(root, K, LANGS[0], false);
+  for (let i = 1; i < LANGS.length; i++) await lessonScreen(root, K, LANGS[i], true);
 
-  // --- Главная · учебный путь
-  {
-    const L = LANGS[0];
-    const s = screen(root, `Главная · учебный путь · ${L.ru}`);
-    const c = content(s, { grow: true, gap: 20 });
-    const head = AL('HORIZONTAL', 'Шапка'); head.primaryAxisAlignItems = 'SPACE_BETWEEN'; head.counterAxisAlignItems = 'CENTER';
-    append(c, head, { fillW: true });
-    head.appendChild(inst(K.flag, { 'Язык': L.ru }));
-    for (const [t, v] of [['Ударный режим', '12'], ['Кристаллы', '500'], ['Жизни', '5']]) { const st = inst(K.stat, { 'Тип': t }); st.setProperties({ [K.statText]: v }); head.appendChild(st); }
-    const unit = inst(K.unit, { 'Цвет': 'Зелёный' }); unit.setProperties({ [K.unitTopic]: L.unit }); append(c, unit, { fillW: true });
-    const path = figma.createFrame(); path.name = 'Путь'; path.fills = []; path.clipsContent = false; path.resize(343, 470);
-    append(c, path, { fillW: true });
-    const offs = [0, -56, -80, -56, 0, 56];
-    const states = ['Пройден', 'Пройден', 'Текущий', 'Заблокирован', 'Заблокирован', 'Заблокирован'];
-    offs.forEach((o, i) => {
-      const n = inst(K.node, { 'Состояние': states[i] });
-      path.appendChild(n); n.x = (343 - 72) / 2 + o; n.y = 28 + i * 74;
-      if (states[i] === 'Текущий') {
-        const tag = inst(K.tag, { 'Цвет': 'Зелёный' }); tag.setProperties({ [K.tagText]: 'Начать' });
-        path.appendChild(tag); tag.x = n.x + 36 - tag.width / 2; tag.y = n.y - 28;
-      }
-    });
-    const m = inst(K.mascot, { 'Эмоция': 'Радость' }); path.appendChild(m); m.x = 212; m.y = 200;
-    append(s, inst(K.tabbar), { fillW: true });
-  }
+  // --- Главная: тема 1 → переход к теме 2 → задание места
+  await homeScreen(root, K, LANGS[0], 'start');
+  if (LANGS[0].units.length > 1) await homeScreen(root, K, LANGS[0], 'next');
+  if (K.sheet) await homeScreen(root, K, LANGS[0], 'sheet');
 
   // --- Урок завершён
   {
@@ -1096,7 +1266,8 @@ async function findPrevious() {
   const rootNames = new Set();
   for (const p of NS) for (const n of ['Основы', 'Компоненты', 'Экраны']) rootNames.add(`${p} · ${n}`);
   const frames = [];
-  const pages = figma.root.children.filter((p, i) => i === 0 || Object.values(PAGES).includes(p.name));
+  const kitPages = [...Object.values(PAGES), ...Object.values(LEGACY_PAGES)];
+  const pages = figma.root.children.filter((p, i) => i === 0 || kitPages.includes(p.name));
   for (const p of pages) { await p.loadAsync(); for (const n of p.children) if (rootNames.has(n.name)) frames.push(n); }
   return { cols, styles, frames, empty: !cols.length && !styles.length && !frames.length };
 }
@@ -1136,7 +1307,7 @@ async function main() {
   const pScreens = await getPage(PAGES.screens);
   const screens = await buildScreens(pScreens, K);
   figma.viewport.scrollAndZoomIntoView([screens]);
-  return `✅ UI Kit v3 готов: ${STATS.components} компонентов (${STATS.sets} наборов), ${STATS.variables} переменных, ${STATS.textStyles} стилей, ${STATS.screens} экранов. Курсы: ${LANGS.map((l) => l.ru).join(', ')}.`;
+  return `✅ ФОЛК · UI Kit v8 готов: ${STATS.components} компонентов (${STATS.sets} наборов), ${STATS.variables} переменных, ${STATS.textStyles} стилей, ${STATS.screens} экранов. Курсы: ${LANGS.map((l) => l.ru).join(', ')}.`;
 }
 
 main()
