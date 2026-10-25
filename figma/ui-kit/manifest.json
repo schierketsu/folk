@@ -1,0 +1,9 @@
+{
+  "name": "UI Kit · языки народов России",
+  "id": "langs-ru-ui-kit-generator",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": { "allowedDomains": ["none"] }
+}
