@@ -174,6 +174,34 @@ class AssetIcon extends StatelessWidget {
   );
 }
 
+class KomiFlag extends StatelessWidget {
+  const KomiFlag({super.key});
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: 37,
+    height: 27,
+    decoration: BoxDecoration(
+      border: Border.all(
+        color: FolkColors.isDark(context)
+            ? FolkColors.darkLine
+            : FolkColors.line,
+      ),
+      borderRadius: BorderRadius.circular(7),
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(6),
+      child: const Column(
+        children: [
+          Expanded(child: ColoredBox(color: Color(0xFF2E86D1))),
+          Expanded(child: ColoredBox(color: Color(0xFF13A538))),
+          Expanded(child: ColoredBox(color: Colors.white)),
+        ],
+      ),
+    ),
+  );
+}
+
 class StatPill extends StatelessWidget {
   const StatPill({
     super.key,

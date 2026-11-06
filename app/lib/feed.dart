@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'data.dart';
+import 'lesson.dart';
 import 'progress.dart';
 import 'screens.dart';
 import 'ui.dart';
@@ -14,68 +15,72 @@ class ActivityFeedPage extends StatelessWidget {
   Widget build(BuildContext context) => ListView(
     padding: const EdgeInsets.fromLTRB(16, 30, 16, 24),
     children: [
-      const PageTitle('Лента новостей', 'Открытия и события путешествия'),
+      Text('Лента новостей', style: Theme.of(context).textTheme.headlineLarge),
       const SizedBox(height: 22),
-      if (progress.completed.isNotEmpty) ...[
+      if (progress.openedChests.isNotEmpty) ...[
         _FeedStory(
           author: 'Вы',
           time: 'Ваше достижение',
-          title: 'Первое открытие!',
+          title: 'Вы получили пестерь за задания!',
           detail:
-              'Пройдено ${progress.completed.length} из ${tasks.length} заданий. Продолжайте путешествие по Коми!',
-          image: 'assets/images/mascot-running.png',
-          onOpen: () {},
+              'Пройдено ${progress.completed.length} из ${tasks.length} заданий. Награда за тему открыта!',
+          image: 'assets/images/chest-open.png',
+          onOpen: () => Navigator.push(
+            context,
+            MaterialPageRoute<void>(
+              builder: (_) => ChestPage(
+                progress: progress,
+                topic: progress.openedChests.first,
+              ),
+            ),
+          ),
         ),
-        const SizedBox(height: 14),
+        const Divider(height: 38, thickness: 2),
       ],
       _FeedStory(
         author: 'ФОЛК',
-        time: 'Место курса',
-        title: 'Знакомьтесь: Маньпупунёр',
-        detail: topics[0].prompt,
-        image: topics[0].cardImage,
+        time: 'Начало пути',
+        title: 'Первый день путешествия по языку коми!',
+        detail: 'Открывайте новые темы и собирайте награды.',
+        image: 'assets/images/fire.png',
         onOpen: () => showPlace(context, progress, 0),
       ),
-      const SizedBox(height: 14),
+      const Divider(height: 38, thickness: 2),
       _FeedStory(
         author: 'ФОЛК',
         time: 'Традиции коми',
         title: 'Шаньга объединяет за столом',
         detail: topics[1].prompt,
-        image: topics[1].cardImage,
+        image: topics[1].mapImage,
         onOpen: () => showPlace(context, progress, 1),
       ),
-      const SizedBox(height: 14),
-      FolkCard(
-        color: FolkColors.yellowLight,
-        border: FolkColors.yellow,
-        child: Row(
-          children: [
-            Image.asset(
-              'assets/images/chest-closed.png',
-              width: 63,
-              height: 63,
-              fit: BoxFit.contain,
+      const Divider(height: 38, thickness: 2),
+      Row(
+        children: [
+          Image.asset(
+            'assets/images/chest-closed.png',
+            width: 63,
+            height: 63,
+            fit: BoxFit.contain,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Награда за тему',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Пройдите три задания и откройте пестерь с клюквой',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Награда за тему',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Пройдите три задания и откройте сундук с клюквой',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     ],
   );
@@ -175,8 +180,8 @@ class _FeedStoryState extends State<_FeedStory> {
   }
 
   @override
-  Widget build(BuildContext context) => FolkCard(
-    padding: const EdgeInsets.all(15),
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -210,26 +215,21 @@ class _FeedStoryState extends State<_FeedStory> {
                 ],
               ),
             ),
-            const Icon(Icons.more_horiz_rounded, color: FolkColors.darkMuted),
+            InkWell(
+              onTap: widget.onOpen,
+              child: Image.asset(
+                widget.image,
+                width: 76,
+                height: 76,
+                fit: BoxFit.contain,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 16),
         Text(widget.title, style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 5),
         Text(widget.detail, style: Theme.of(context).textTheme.bodyLarge),
-        const SizedBox(height: 13),
-        GestureDetector(
-          onTap: widget.onOpen,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(14),
-            child: Container(
-              color: FolkColors.surface(context, FolkColors.blueLight),
-              width: double.infinity,
-              height: 155,
-              child: Image.asset(widget.image, fit: BoxFit.contain),
-            ),
-          ),
-        ),
         const SizedBox(height: 14),
         Row(
           children: [

@@ -293,7 +293,7 @@ class ResultPage extends StatelessWidget {
               ),
               const Spacer(flex: 2),
               FolkButton(
-                text: chestReady ? 'Открыть сундук' : 'Продолжить',
+                text: chestReady ? 'Открыть пестерь' : 'Продолжить',
                 onPressed: () {
                   if (chestReady) {
                     Navigator.of(context).pushReplacement(
@@ -474,7 +474,7 @@ class _ChestPageState extends State<ChestPage> {
                     ? 'Награда получена!'
                     : ready
                     ? 'Впереди награда!'
-                    : 'Сундук пока закрыт',
+                    : 'Пестерь пока закрыт',
                 style: Theme.of(context).textTheme.headlineLarge,
                 textAlign: TextAlign.center,
               ),
@@ -483,7 +483,7 @@ class _ChestPageState extends State<ChestPage> {
                 opened
                     ? '+50 ягод клюквы'
                     : ready
-                    ? 'Откройте сундук за пройденную тему'
+                    ? 'Откройте пестерь за пройденную тему'
                     : 'Пройдите все три задания темы',
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
@@ -493,7 +493,7 @@ class _ChestPageState extends State<ChestPage> {
                 text: opened
                     ? 'Продолжить'
                     : ready
-                    ? 'Открыть сундук'
+                    ? 'Открыть пестерь'
                     : 'К заданиям',
                 onPressed: opening
                     ? null

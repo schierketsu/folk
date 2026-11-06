@@ -1,5 +1,5 @@
 // =====================================================================
-//  ФОЛК · UI Kit generator for Figma · v33
+//  ФОЛК · UI Kit generator for Figma · v37
 //  Приложение для изучения языков народов России.
 //  UX-паттерны — по мотивам Duolingo UI Kit (Marvilo); яркая палитра
 //  в духе Duolingo; маскот — Лиса (живёт во всех регионах России).
@@ -564,7 +564,7 @@ async function buildFoundations(page, family) {
   root.appendChild(cover);
   const m = mascotNode('Объясняет'); m.name = 'Лиса'; m.rescale(1.8); cover.appendChild(m);
   const ct = AL('VERTICAL', 'Текст'); ct.itemSpacing = 8; cover.appendChild(ct);
-  ct.appendChild(await T('UI Kit · v33', 'overline', 'color/text/on-color', { opacity: 0.85 }));
+  ct.appendChild(await T('UI Kit · v37', 'overline', 'color/text/on-color', { opacity: 0.85 }));
   ct.appendChild(await T(APP_NAME || 'UI Kit', 'display', 'color/text/on-color'));
   if (!APP_NAME) ct.appendChild(await T('Название продукта — в работе', 'bodyBold', 'color/text/on-color', { opacity: 0.85 }));
   ct.appendChild(await T(`Учим языки народов России. Курсы: ${LANGS.map((l) => l.ru.toLowerCase()).join(', ')} — и это только начало.`, 'h3', 'color/text/on-color', { width: 620 }));
@@ -1228,8 +1228,8 @@ async function buildComponents(page) {
 function screen(parent, name) {
   const s = AL('VERTICAL', name);
   fixBox(s, 375, 812);
-  s.clipsContent = true; fill(s, 'color/bg/default'); s.cornerRadius = 32;
-  s.strokes = [solid('#000000', 0.08)]; s.strokeWeight = 1;
+  s.clipsContent = true; fill(s, 'color/bg/default'); s.cornerRadius = 0;
+  s.strokes = [];
   parent.appendChild(s);
   STATS.screens++;
   return s;
@@ -1445,7 +1445,7 @@ async function chestScreen(root, K, themeIndex, phase) {
     if (phase === 1) opened.opacity = .65;
   }
   wrap(append(c, await T(phase === 0 ? 'Впереди награда!' : phase === 1 ? 'Сундук открывается!' : 'Награда получена!', 'h1', 'color/text/primary', { align: 'CENTER' })));
-  wrap(append(c, await T(phase === 2 ? '+15 ягод клюквы' : 'Продолжайте задания темы', 'body', 'color/text/secondary', { align: 'CENTER' })));
+  wrap(append(c, await T(phase === 2 ? '+50 ягод клюквы' : 'Продолжайте задания темы', 'body', 'color/text/secondary', { align: 'CENTER' })));
   spacer(c);
   append(c, button(K, phase === 2 ? 'Продолжить' : 'Открыть сундук'), { fillW: true });
 }
@@ -1475,38 +1475,104 @@ function hubCard(name, color, height) {
   return card;
 }
 
-async function tasksHubScreen(root, K) {
-  const s = screen(root, 'Задания');
-  const c = content(s, { grow: true, gap: 12, top: 48, bottom: 18 });
-  c.appendChild(await T('Задания', 'h1', 'color/text/primary'));
-  c.appendChild(await T('Два маршрута по культуре коми', 'body', 'color/text/secondary'));
-
-  const hero = AL('VERTICAL', 'Прогресс путешествия');
-  hero.itemSpacing = 9; hero.paddingTop = 16; hero.paddingBottom = 16; hero.paddingLeft = 18; hero.paddingRight = 18;
-  fill(hero, 'color/primary/default'); depth(hero, 'color/primary/shadow', 0, 4); rad(hero, 'lg');
-  append(c, hero, { fillW: true });
-  hero.appendChild(await T('ВАШ ПУТЬ', 'overline', 'color/text/on-color'));
-  hero.appendChild(await T('6 заданий · 2 темы', 'h2', 'color/text/on-color'));
-  hero.appendChild(await T('За каждую тему ждёт сундук с наградой', 'caption', 'color/text/on-color'));
-  const track = figma.createFrame(); track.name = 'Прогресс'; track.resize(307, 9); track.cornerRadius = 5; track.fills = [solid('#FFFFFF', .38)]; track.clipsContent = true; hero.appendChild(track);
-  const progress = figma.createRectangle(); progress.name = 'Пройдено'; progress.resize(154, 9); progress.cornerRadius = 5; progress.fills = [solid('#FFFFFF')]; track.appendChild(progress);
-
-  c.appendChild(await T('ВЫБЕРИТЕ ТЕМУ', 'overline', 'color/text/secondary'));
-  const themes = [
-    { title: 'Знакомство и приветствия', place: 'Маньпупунёр', task: 'Путешествие на Север', art: 'manpupuner', tint: 'color/primary/subtle', accent: 'color/primary/shadow', index: '01' },
-    { title: 'Еда и традиции', place: 'Шаньга', task: 'Готовим традиционные пирожки', art: 'shanga', tint: 'color/brand/subtle', accent: 'color/brand/shadow', index: '02' },
-  ];
-  for (const item of themes) {
-    const card = hubCard(`Тема ${item.index} · ${item.title}`, item.tint, 156);
-    depth(card, item.accent, 2, 4); append(c, card, { fillW: true });
-    const copy = AL('VERTICAL', 'Описание темы'); copy.itemSpacing = 6; fixW(copy, 205); card.appendChild(copy);
-    copy.appendChild(await T(`ТЕМА ${item.index} · 3 ЗАДАНИЯ`, 'overline', item.accent));
-    wrap(append(copy, await T(item.title, 'h3', 'color/text/primary')));
-    wrap(append(copy, await T(item.task, 'caption', 'color/text/secondary')));
-    copy.appendChild(await T('НАЧАТЬ  →', 'overline', item.accent));
-    const art = K.art[item.art].createInstance(); art.name = item.place; art.rescale(.82); card.appendChild(art);
+const REF = {
+  light: { bg: '#FFFFFF', surface: '#F7F9FA', line: '#DCE5E8', text: '#263238', muted: '#74858B', track: '#D9E4E8' },
+  dark: { bg: '#141F22', surface: '#1D2C30', line: '#34464C', text: '#F5F8F8', muted: '#8FA1A7', track: '#3A4C52' },
+  pink: '#D94F9D', pinkDeep: '#A91370', cyan: '#1CB0F6', cyanDeep: '#1899D6', purple: '#54314F',
+};
+async function refText(chars, style, color, options = {}) {
+  const node = await T(chars, style, null, options);
+  node.fills = [solid(color)];
+  return node;
+}
+function refRule(parent, color) {
+  const line = figma.createRectangle(); line.name = 'Разделитель'; line.resize(343, 2); line.fills = [solid(color)];
+  append(parent, line, { fillW: true }); return line;
+}
+function refTrack(parent, label, ratio, color, width = 260, background = '#3A4C52') {
+  const track = figma.createFrame(); track.name = `Прогресс · ${label}`; track.resize(width, 18);
+  track.cornerRadius = 9; track.fills = [solid(background)]; track.clipsContent = true; parent.appendChild(track);
+  if (ratio > 0) {
+    const bar = figma.createRectangle(); bar.name = 'Заполнение'; bar.resize(Math.max(16, width * ratio), 18);
+    bar.cornerRadius = 9; bar.fills = [solid(color)]; track.appendChild(bar);
+    const shine = figma.createRectangle(); shine.name = 'Блик'; shine.resize(Math.max(8, width * ratio - 16), 3);
+    shine.x = 8; shine.y = 3; shine.cornerRadius = 2; shine.fills = [solid('#FFFFFF', .28)]; track.appendChild(shine);
   }
-  append(s, activeTab(K, 'Задания'), { fillW: true });
+  return track;
+}
+function refPester(K, scale = .5) {
+  const pester = inst(K.chest, { 'Состояние': 'Закрыт' });
+  pester.name = 'Пестерь'; pester.rescale(scale);
+  return pester;
+}
+function refNav(s, K, dark, active) {
+  const p = dark ? REF.dark : REF.light;
+  const nav = AL('HORIZONTAL', 'Нижняя навигация'); nav.primaryAxisAlignItems = 'SPACE_BETWEEN'; nav.counterAxisAlignItems = 'CENTER';
+  nav.paddingLeft = 14; nav.paddingRight = 14; nav.paddingTop = 7; nav.paddingBottom = 14;
+  fixBox(nav, 375, 75); nav.fills = [solid(p.bg)]; nav.strokes = [solid(p.line)]; nav.strokeTopWeight = 2;
+  nav.strokeBottomWeight = 0; nav.strokeLeftWeight = 0; nav.strokeRightWeight = 0;
+  for (const [label, icon] of [['Изучение', 'Нора'], ['Задания', 'Сундук'], ['Рейтинг', 'Рейтинг'], ['Лента новостей', 'Лента'], ['Профиль', 'Профиль']]) {
+    const tab = AL('HORIZONTAL', label); center(tab); fixBox(tab, 58, 52); tab.cornerRadius = 12;
+    if (label === active) { tab.fills = [solid(dark ? '#254A58' : '#DDF4FF')]; tab.strokes = [solid('#4FBDEE')]; tab.strokeWeight = 2; }
+    nav.appendChild(tab); const glyph = inst(K.icon[icon]); glyph.rescale(1.22); tab.appendChild(glyph);
+  }
+  append(s, nav, { fillW: true });
+}
+async function refTasksScreen(root, K, dark, daily = false) {
+  const p = dark ? REF.dark : REF.light;
+  const s = screen(root, `Задания${daily ? ' · дневные цели' : ''}${dark ? ' · тёмная' : ''}`);
+  s.fills = [solid(p.bg)];
+  const hero = AL('VERTICAL', 'Розовая шапка'); hero.itemSpacing = 9;
+  hero.paddingTop = 38; hero.paddingBottom = 16; hero.paddingLeft = 22; hero.paddingRight = 22;
+  fixBox(hero, 375, 213); hero.fills = [solid(REF.pink)]; s.appendChild(hero);
+  hero.appendChild(await refText('Задания недели', 'h1', '#FFFFFF'));
+  hero.appendChild(await refText('◷  5 ДНЕЙ', 'overline', '#FFE2F2'));
+  const goal = AL('VERTICAL', 'Общая цель'); goal.itemSpacing = 8; goal.paddingTop = 12; goal.paddingBottom = 12; goal.paddingLeft = 14; goal.paddingRight = 14;
+  fixBox(goal, 331, 83); goal.cornerRadius = 15; goal.fills = [solid('#141F22')]; hero.appendChild(goal);
+  goal.appendChild(await refText('Пройдите 6 заданий курса!', 'h3', '#FFFFFF'));
+  const summary = refTrack(goal, '2 / 6', 2 / 6, REF.pink, 303); const label = await refText('2 / 6', 'caption', '#FFFFFF', { align: 'CENTER', width: 303 });
+  label.layoutPositioning = 'ABSOLUTE'; goal.appendChild(label); label.x = 14; label.y = summary.y + 1;
+  const body = AL('VERTICAL', 'Задания и награды'); body.itemSpacing = daily ? 20 : 13;
+  body.paddingTop = 19; body.paddingBottom = 14; body.paddingLeft = 22; body.paddingRight = 22;
+  append(s, body, { fillW: true, grow: true });
+  if (!daily) {
+    body.appendChild(await refText('ЗАДАНИЕ ТЕМЫ', 'overline', p.muted));
+    const art = AL('HORIZONTAL', 'Иллюстрация · путешествие'); center(art); fixBox(art, 331, 103); art.cornerRadius = 16; art.fills = [solid(REF.purple)]; body.appendChild(art);
+    const fox = inst(K.mascot, { 'Поза': 'Сидит' }); fox.rescale(.83); art.appendChild(fox);
+    const place = K.art.manpupuner.createInstance(); place.rescale(.72); art.appendChild(place);
+    body.appendChild(await refText('Пройдите 3 урока без ошибок', 'h3', p.text));
+    const reward = AL('HORIZONTAL', 'Прогресс и сундук'); reward.itemSpacing = 10; reward.counterAxisAlignItems = 'CENTER'; body.appendChild(reward);
+    const track = refTrack(reward, '2 / 3', .67, REF.pinkDeep, 245, p.track); reward.appendChild(refPester(K, .52));
+    const trackLabel = await refText('2 / 3', 'caption', '#FFFFFF', { align: 'CENTER', width: 245 }); track.appendChild(trackLabel); trackLabel.x = 0; trackLabel.y = 0;
+    const participant = AL('HORIZONTAL', 'Ваш прогресс'); participant.primaryAxisAlignItems = 'SPACE_BETWEEN';
+    append(body, participant, { fillW: true });
+    participant.appendChild(await refText('●  Вы', 'bodyBold', REF.pink));
+    participant.appendChild(await refText('2 урока', 'bodyBold', p.muted));
+    refRule(body, p.line);
+    body.appendChild(await refText('ЗАДАНИЯ ДНЯ', 'overline', p.muted));
+    body.appendChild(await refText('Три цели на сегодня и три награды', 'body', p.text));
+  } else {
+    body.appendChild(await refText('ЗАДАНИЯ ДНЯ', 'overline', p.muted));
+    for (const [title, label] of [
+      ['Поздоровайтесь по-коми', '0 / 1'],
+      ['Пройдите 3 задания темы', '0 / 3'],
+      ['Откройте пестерь Маньпупунёра', '0 / 1'],
+    ]) {
+      const row = AL('HORIZONTAL', title); row.itemSpacing = 10; row.counterAxisAlignItems = 'CENTER'; body.appendChild(row);
+      const copy = AL('VERTICAL', 'Цель и прогресс'); copy.itemSpacing = 12; row.appendChild(copy);
+      const text = await refText(title, 'h3', p.text, { width: 250 }); copy.appendChild(text);
+      const track = refTrack(copy, label, 0, REF.pink, 249, p.track);
+      const caption = await refText(label, 'caption', p.muted, { align: 'CENTER', width: 249 }); track.appendChild(caption); caption.x = 0; caption.y = 0;
+      row.appendChild(refPester(K, .52));
+      refRule(body, p.line);
+    }
+  }
+  refNav(s, K, dark, 'Задания');
+  return s;
+}
+async function tasksHubScreen(root, K) {
+  await refTasksScreen(root, K, false);
+  await refTasksScreen(root, K, false, true);
 }
 
 async function rankingScreen(root, K) {
@@ -1545,37 +1611,44 @@ async function rankingScreen(root, K) {
   append(s, activeTab(K, 'Рейтинг'), { fillW: true });
 }
 
-async function newsFeedScreen(root, K) {
-  const s = screen(root, 'Лента новостей');
-  const c = content(s, { grow: true, gap: 12, top: 48, bottom: 18 });
-  c.appendChild(await T('Лента новостей', 'h1', 'color/text/primary'));
-  c.appendChild(await T('Истории из вашего путешествия', 'body', 'color/text/secondary'));
-
-  const lead = AL('VERTICAL', 'Новость · Маньпупунёр'); lead.itemSpacing = 8; lead.counterAxisAlignItems = 'CENTER';
-  lead.paddingTop = 13; lead.paddingBottom = 13; lead.paddingLeft = 15; lead.paddingRight = 15;
-  fill(lead, 'color/secondary/subtle'); depth(lead, 'color/secondary/muted', 1, 4); rad(lead, 'lg'); append(c, lead, { fillW: true });
-  const leadArt = K.artWide.manpupuner.createInstance(); leadArt.name = 'Маньпупунёр'; leadArt.rescale(.8); lead.appendChild(leadArt);
-  lead.appendChild(await T('НОВОЕ МЕСТО · КОМИ', 'overline', 'color/secondary/shadow', { align: 'CENTER' }));
-  lead.appendChild(await T('Маньпупунёр', 'h2', 'color/text/primary', { align: 'CENTER' }));
-  lead.appendChild(await T('Отправьтесь в путешествие на Север', 'caption', 'color/text/secondary', { align: 'CENTER' }));
-
-  c.appendChild(await T('ЕЩЁ ИСТОРИИ', 'overline', 'color/text/secondary'));
-  const sh = hubCard('Новость · Шаньга', 'color/brand/subtle', 122); depth(sh, 'color/brand/muted', 1, 4); append(c, sh, { fillW: true });
-  const shCopy = AL('VERTICAL', 'Текст новости'); shCopy.itemSpacing = 5; fixW(shCopy, 205); sh.appendChild(shCopy);
-  shCopy.appendChild(await T('ЕДА И ТРАДИЦИИ', 'overline', 'color/brand/shadow'));
-  shCopy.appendChild(await T('Шаньга', 'h3', 'color/text/primary'));
-  wrap(append(shCopy, await T('Вместе приготовим традиционные пирожки', 'caption', 'color/text/secondary')));
-  const shArt = K.art.shanga.createInstance(); shArt.name = 'Шаньга'; shArt.rescale(.82); sh.appendChild(shArt);
-
-  const tip = AL('HORIZONTAL', 'Новость · Награда'); tip.itemSpacing = 12; tip.counterAxisAlignItems = 'CENTER';
-  tip.paddingTop = 12; tip.paddingBottom = 12; tip.paddingLeft = 16; tip.paddingRight = 16;
-  fill(tip, 'color/reward/subtle'); depth(tip, 'color/reward/muted', 1, 3); rad(tip, 'lg'); append(c, tip, { fillW: true });
-  const chest = inst(K.chest, { 'Состояние': 'Закрыт' }); chest.rescale(.55); tip.appendChild(chest);
-  const tipCopy = AL('VERTICAL', 'Текст награды'); tipCopy.itemSpacing = 3; append(tip, tipCopy, { grow: true });
-  wrap(append(tipCopy, await T('Сундук с наградой', 'h3', 'color/text/primary')));
-  wrap(append(tipCopy, await T('Завершите задания темы и откройте его', 'caption', 'color/text/secondary')));
-  append(s, activeTab(K, 'Лента новостей'), { fillW: true });
+async function refFeedPost(parent, K, dark, author, time, title, art, reactions) {
+  const p = dark ? REF.dark : REF.light;
+  const post = AL('VERTICAL', `Публикация · ${title}`); post.itemSpacing = 10; append(parent, post, { fillW: true });
+  const header = AL('HORIZONTAL', 'Автор и иллюстрация'); header.itemSpacing = 12; header.counterAxisAlignItems = 'CENTER'; append(post, header, { fillW: true });
+  const avatar = figma.createEllipse(); avatar.name = 'Аватар'; avatar.resize(32, 32);
+  avatar.fills = [solid(dark ? '#263A40' : '#E7F5FA')]; avatar.strokes = [solid(p.line)]; avatar.strokeWeight = 2; header.appendChild(avatar);
+  const meta = AL('VERTICAL', 'Автор и время'); meta.itemSpacing = 2; header.appendChild(meta);
+  meta.appendChild(await refText(author, 'bodyBold', p.text)); meta.appendChild(await refText(time, 'caption', p.muted));
+  spacer(header);
+  if (art === 'pester') header.appendChild(refPester(K, .55));
+  else if (art === 'fire') {
+    const flame = svgNode('<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72"><path d="M36 4C24 17 40 23 28 34c-2-8-10-11-10-11C8 36 9 48 16 58c9 13 31 14 40 1C66 45 56 29 45 19c1 10-4 15-4 15C43 22 39 13 36 4z" fill="#FF4B4B"/><path d="M37 33C28 43 26 47 28 54c3 10 16 12 20 2 3-8-4-15-11-23z" fill="#FFB52E"/></svg>', 'Огонь'); header.appendChild(flame);
+  } else { const place = K.art.shanga.createInstance(); place.rescale(.6); header.appendChild(place); }
+  const message = await refText(title, 'body', p.text, { width: 330 }); post.appendChild(message);
+  const actions = AL('HORIZONTAL', 'Реакции'); actions.itemSpacing = 8; post.appendChild(actions);
+  for (const label of [`♡  ${reactions}`, '▢', '↥']) {
+    const action = AL('HORIZONTAL', label); center(action); fixBox(action, label.startsWith('♡') ? 68 : 48, 43);
+    action.cornerRadius = 12; action.strokes = [solid(p.line)]; action.strokeWeight = 2; actions.appendChild(action);
+    action.appendChild(await refText(label, 'bodyBold', p.text));
+  }
+  post.appendChild(await refText('♡  Понравилось участникам путешествия', 'caption', p.muted));
+  refRule(parent, p.line);
 }
+async function refFeedScreen(root, K, dark) {
+  const p = dark ? REF.dark : REF.light;
+  const s = screen(root, `Лента новостей${dark ? ' · тёмная' : ''}`); s.fills = [solid(p.bg)];
+  const c = content(s, { grow: true, gap: 16, top: 42, bottom: 12 });
+  c.appendChild(await refText('Лента новостей', 'h1', p.text));
+  const viewport = AL('VERTICAL', 'Область прокрутки'); fixBox(viewport, 343, 600); viewport.fills = []; viewport.clipsContent = true;
+  append(c, viewport, { fillW: true });
+  const feed = AL('VERTICAL', 'События'); feed.itemSpacing = 17; append(viewport, feed, { fillW: true });
+  await refFeedPost(feed, K, dark, 'ФОЛК', 'сегодня', 'Вы завершили три задания темы и получили пестерь!', 'pester', '1');
+  await refFeedPost(feed, K, dark, 'ФОЛК', 'вчера', 'Первый день путешествия по языку коми!', 'fire', '2');
+  await refFeedPost(feed, K, dark, 'ФОЛК', '2 дня назад', 'Шаньга: знакомство с традицией и новой темой', 'shanga', '4');
+  refNav(s, K, dark, 'Лента новостей');
+  return s;
+}
+async function newsFeedScreen(root, K) { await refFeedScreen(root, K, false); }
 
 async function buildScreens(page, K) {
   await figma.setCurrentPageAsync(page);
@@ -1607,7 +1680,7 @@ async function buildScreens(page, K) {
   for (let i = 1; i < LANGS.length; i++) await lessonScreen(root, K, LANGS[i], true);
 
   // --- Главная: тема 1 → переход к теме 2 → задание места
-  await homeScreen(root, K, LANGS[0], 'start');
+  await refHomeScreen(root, K, false);
   if (LANGS[0].units.length > 1) await homeScreen(root, K, LANGS[0], 'next');
   if (K.sheet) {
     await homeScreen(root, K, LANGS[0], 'sheet');
@@ -1721,13 +1794,6 @@ function darkCard(name, height, background = DARK.surface) {
   card.cornerRadius = 18;
   return card;
 }
-function darkTrack(parent, value, width = 309) {
-  const track = figma.createFrame(); track.name = 'Прогресс'; track.resize(width, 12); track.cornerRadius = 7;
-  track.fills = [solid('#3A4C52')]; track.clipsContent = true; parent.appendChild(track);
-  const bar = figma.createRectangle(); bar.name = 'Выполнено'; bar.resize(Math.max(4, Math.round(width * value)), 12);
-  bar.cornerRadius = 7; bar.fills = [solid(DARK.pink)]; track.appendChild(bar);
-  return track;
-}
 function darkBase(root, name, K, active) {
   const s = screen(root, name); s.fills = [solid(DARK.bg)]; s.strokes = [solid(DARK.line)]; s.strokeWeight = 1;
   const c = content(s, { grow: true, gap: 13, top: 42, bottom: 16 });
@@ -1747,88 +1813,120 @@ function darkBase(root, name, K, active) {
   append(s, nav, { fillW: true });
   return { s, c };
 }
-async function buildDarkScreens(page, K) {
+async function refHomeScreen(root, K, dark) {
+  const p = dark ? REF.dark : REF.light;
+  const s = screen(root, dark ? 'Главная · тёмная' : 'Главная · тема 1'); s.fills = [solid(p.bg)];
+  const c = content(s, { grow: true, gap: 13, top: 48, bottom: 8 });
+  const stats = AL('HORIZONTAL', 'Счётчики'); stats.primaryAxisAlignItems = 'SPACE_BETWEEN'; stats.counterAxisAlignItems = 'CENTER';
+  fixBox(stats, 343, 42); append(c, stats, { fillW: true });
+  stats.appendChild(inst(K.flag, { 'Язык': 'Коми' }));
+  for (const [name, value, color] of [['Клюква', '15', '#FF4B4B'], ['Огонь', '0', '#FF9600'], ['Сердце', '5', REF.pink]]) {
+    const item = AL('HORIZONTAL', name); item.itemSpacing = 6; item.counterAxisAlignItems = 'CENTER'; stats.appendChild(item);
+    const icon = inst(K.icon[name]); icon.rescale(1.08); item.appendChild(icon);
+    item.appendChild(await refText(value, 'bodyBold', color));
+  }
+  const banner = inst(K.unit, { 'Цвет': 'Зелёный' });
+  banner.setProperties({ [K.unitNum]: 'Раздел 1, тема 1', [K.unitTopic]: LANGS[0].units[0].title });
+  banner.name = 'Зелёный баннер темы'; append(c, banner, { fillW: true });
+  const path = figma.createFrame(); path.name = 'Путь · активный урок'; path.resize(343, 505);
+  path.fills = []; path.clipsContent = true; append(c, path, { fillW: true });
+  // Пестерь занимает отдельный шаг на зигзагообразном пути между узлами.
+  const coords = [[121, 8, 'Звезда'], [45, 280, 'Звезда'], [230, 440, 'Книга']];
+  for (const [i, [x, y, icon]] of coords.entries()) {
+    const current = i === 0;
+    const state = current ? 'Текущий 1/3' : 'Закрыт';
+    const node = inst(K.node, { 'Цвет': 'Зелёный', 'Состояние': state });
+    node.setProperties({ [K.nodeGlyph]: K.glyph[icon].id });
+    node.name = `Шаг ${i + 1} · ${icon}`; node.opacity = dark && !current ? .58 : 1;
+    path.appendChild(node); node.x = x; node.y = y;
+  }
+  const landmark = inst(K.landmark, { 'Звёзды': '1' });
+  landmark.setProperties({ [K.lmArt]: K.art.manpupuner.id });
+  landmark.name = 'Маньпупунёр · звёзды'; landmark.x = 223; landmark.y = 270;
+  landmark.opacity = dark ? .72 : 1; path.appendChild(landmark);
+  const pester = refPester(K, .72); pester.x = 125; pester.y = 376;
+  pester.opacity = dark ? .8 : 1; path.appendChild(pester);
+  const pointer = svgNode('<svg xmlns="http://www.w3.org/2000/svg" width="30" height="16" viewBox="0 0 30 16"><path d="M0 16L15 0l15 16z" fill="#58CC02"/></svg>', 'Указатель на урок');
+  pointer.x = 156; pointer.y = 102; path.appendChild(pointer);
+  const pop = AL('VERTICAL', 'Карточка активного урока'); pop.itemSpacing = 8;
+  pop.paddingTop = 17; pop.paddingBottom = 15; pop.paddingLeft = 16; pop.paddingRight = 16;
+  fixBox(pop, 323, 154); pop.cornerRadius = 18; pop.fills = [solid('#58CC02')];
+  pop.strokes = [solid('#58A700')]; pop.strokeWeight = 3; pop.strokeTopWeight = 0;
+  pop.strokeLeftWeight = 3; pop.strokeRightWeight = 3; pop.strokeBottomWeight = 3;
+  path.appendChild(pop); pop.x = 10; pop.y = 114;
+  pop.appendChild(await refText('Быстрое повторение', 'h2', '#FFFFFF'));
+  pop.appendChild(await refText('Урок 1 из 3 · приветствие на коми', 'body', '#E8F8FF'));
+  const b = AL('HORIZONTAL', 'Учиться'); center(b); fixBox(b, 291, 48);
+  b.fills = [solid('#FFFFFF')]; b.strokes = [solid('#D7FFB8')]; b.strokeBottomWeight = 4; b.cornerRadius = 12; pop.appendChild(b);
+  b.appendChild(await refText('УЧИТЬСЯ · +15 ОПЫТА', 'button', '#58A700'));
+  refNav(s, K, dark, 'Изучение');
+  return s;
+}
+function detachForDark(node) {
+  const editable = node.type === 'INSTANCE' ? node.detachInstance() : node;
+  if ('children' in editable) for (const child of [...editable.children]) detachForDark(child);
+  return editable;
+}
+function recolorDark(node, namesById) {
+  const mapped = (paint, isText) => {
+    if (paint.type !== 'SOLID') return paint;
+    const variable = paint.boundVariables && paint.boundVariables.color;
+    const name = variable && namesById.get(variable.id);
+    const rgb = paint.color;
+    const key = '#' + [rgb.r, rgb.g, rgb.b].map((v) => Math.round(v * 255).toString(16).padStart(2, '0')).join('').toUpperCase();
+    let color = null;
+    if (name) {
+      if (name.startsWith('color/text/on-color')) color = '#FFFFFF';
+      else if (name.startsWith('color/text/primary')) color = DARK.text;
+      else if (name.startsWith('color/text/secondary')) color = DARK.muted;
+      else if (name.startsWith('color/text/disabled')) color = '#65787E';
+      else if (name === 'color/bg/default') color = DARK.surface;
+      else if (name.startsWith('color/bg/')) color = '#26383D';
+      else if (name.startsWith('color/border/')) color = DARK.line;
+      else if (name === 'color/primary/subtle') color = '#25452B';
+      else if (name === 'color/secondary/subtle') color = '#214257';
+      else if (name === 'color/brand/subtle') color = '#4A3521';
+      else if (name === 'color/reward/subtle') color = '#4C421F';
+    }
+    if (!color && isText) {
+      if (key === '#4B4B4B' || key === '#263238') color = DARK.text;
+      if (key === '#777777' || key === '#74858B') color = DARK.muted;
+    }
+    if (!color && !isText) {
+      color = ({ '#FFFFFF': DARK.surface, '#F7F7F7': '#26383D', '#E5E5E5': DARK.line,
+        '#D7FFB8': '#25452B', '#DDF4FF': '#214257', '#FFF0D9': '#4A3521', '#FFF6CC': '#4C421F' })[key];
+    }
+    if (!color) return paint;
+    const { boundVariables, ...unbound } = paint;
+    return { ...unbound, color: hex(color) };
+  };
+  if ('fills' in node && Array.isArray(node.fills)) node.fills = node.fills.map((p) => mapped(p, node.type === 'TEXT'));
+  if ('strokes' in node && Array.isArray(node.strokes)) node.strokes = node.strokes.map((p) => mapped(p, false));
+  if ('children' in node) for (const child of node.children) recolorDark(child, namesById);
+}
+function mirrorDarkScreens(root, lightRoot) {
+  const namesById = new Map(Object.entries(V).map(([name, variable]) => [variable.id, name]));
+  const custom = new Set(['Главная · тема 1', 'Задания', 'Задания · дневные цели', 'Лента новостей', 'Рейтинг']);
+  for (const source of [...lightRoot.children]) {
+    if (custom.has(source.name)) continue;
+    const clone = source.clone(); root.appendChild(clone);
+    clone.name = `${source.name} · тёмная`;
+    detachForDark(clone); recolorDark(clone, namesById);
+    clone.fills = [solid(DARK.bg)]; clone.strokes = [solid(DARK.line)];
+    STATS.screens++;
+  }
+}
+async function buildDarkScreens(page, K, lightRoot) {
   await figma.setCurrentPageAsync(page);
   const root = rootFrame(`${KIT} · Тёмная тема`, page); root.layoutMode = 'HORIZONTAL'; root.fills = [solid('#0D171A')];
 
-  // Учебный путь: насыщенная шапка, активный узел и контекстная карточка урока.
-  {
-    const { c } = darkBase(root, 'Главная · тёмная', K, 'Изучение');
-    const stats = AL('HORIZONTAL', 'Счётчики'); stats.primaryAxisAlignItems = 'SPACE_BETWEEN'; append(c, stats, { fillW: true });
-    for (const [label, value, color] of [['КОМИ', '●', '#58CC02'], ['🔥', '0', '#FF9600'], ['●', '0', '#FF4B4B'], ['♥', '5', '#FF4B4B']]) {
-      const item = AL('HORIZONTAL', label); item.itemSpacing = 5; stats.appendChild(item);
-      item.appendChild(await dt(label, 'caption', color)); item.appendChild(await dt(value, 'caption', DARK.text));
-    }
-    const banner = darkCard('Тема · Знакомство и приветствия', 96, DARK.blue); append(c, banner, { fillW: true });
-    banner.appendChild(await dt('РАЗДЕЛ 1, ТЕМА 1', 'overline', '#DDF4FF'));
-    banner.appendChild(await dt('Знакомство и приветствия', 'h2', '#FFFFFF'));
-    banner.appendChild(await dt('Коми язык · первые шаги', 'caption', '#DDF4FF'));
-    const nodeRow = AL('HORIZONTAL', 'Путь'); nodeRow.primaryAxisAlignItems = 'CENTER'; append(c, nodeRow, { fillW: true });
-    const node = figma.createEllipse(); node.name = 'Активный урок'; node.resize(82, 82); node.fills = [solid(DARK.blue)]; node.strokes = [solid('#1899D6')]; node.strokeWeight = 5; nodeRow.appendChild(node);
-    const pop = darkCard('Быстрое повторение', 165, DARK.blue); append(c, pop, { fillW: true });
-    pop.appendChild(await dt('Быстрое повторение', 'h2', '#FFFFFF'));
-    pop.appendChild(await dt('Урок 1 из 3 · приветствие на коми', 'body', '#E8F8FF'));
-    const b = AL('HORIZONTAL', 'Учиться'); b.primaryAxisAlignItems = 'CENTER'; b.counterAxisAlignItems = 'CENTER'; fixBox(b, 309, 52);
-    b.fills = [solid('#FFFFFF')]; b.cornerRadius = 13; pop.appendChild(b);
-    b.appendChild(await dt('УЧИТЬСЯ · +15 ОПЫТА', 'button', '#1899D6'));
-    const next = AL('HORIZONTAL', 'Следующие шаги'); next.primaryAxisAlignItems = 'SPACE_BETWEEN'; append(c, next, { fillW: true });
-    for (const [i, icon] of ['Звезда', 'Книга', 'Гантель'].entries()) {
-      const spot = figma.createEllipse(); spot.name = `Шаг ${i + 2} · ${icon}`; spot.resize(62, 62); spot.fills = [solid('#34464C')]; next.appendChild(spot);
-    }
-    const reward = darkCard('Награда за тему', 92); append(c, reward, { fillW: true });
-    const rr = AL('HORIZONTAL', 'Сундук'); rr.itemSpacing = 12; rr.counterAxisAlignItems = 'CENTER'; reward.appendChild(rr);
-    const chest = inst(K.chest, { 'Состояние': 'Закрыт' }); chest.rescale(.58); rr.appendChild(chest);
-    const copy = AL('VERTICAL', 'Подпись'); copy.itemSpacing = 4; rr.appendChild(copy);
-    copy.appendChild(await dt('Сундук впереди', 'h3'));
-    copy.appendChild(await dt('Пройдите 3 задания темы', 'caption', DARK.muted));
-  }
+  // Учебный путь: серые объёмные узлы за яркой карточкой активного урока.
+  await refHomeScreen(root, K, true);
 
-  // Задания: общий прогресс, дневные цели и награды, без чужих социальных данных.
-  {
-    const { c } = darkBase(root, 'Задания · тёмная', K, 'Задания');
-    const hero = darkCard('Задания недели', 190, DARK.pink); append(c, hero, { fillW: true });
-    hero.appendChild(await dt('Задания недели', 'h1', '#FFFFFF'));
-    hero.appendChild(await dt('До конца недели · 5 дней', 'body', '#FFF0F8'));
-    const goal = darkCard('Цель недели', 82, DARK.bg); fixBox(goal, 309, 82); goal.strokes = []; hero.appendChild(goal);
-    goal.appendChild(await dt('Пройдите обе темы курса коми', 'h3'));
-    darkTrack(goal, .33, 277);
-    c.appendChild(await dt('ЗАДАНИЯ ДНЯ', 'overline', DARK.muted));
-    for (const [title, detail, fraction] of [
-      ['Поздоровайтесь по-коми', '0 / 1 урок', 0],
-      ['Откройте Маньпупунёр', '0 / 3 задания', 0],
-      ['Приготовьте шаньгу', '0 / 3 задания', 0],
-    ]) {
-      const card = darkCard(title, 105); append(c, card, { fillW: true });
-      card.appendChild(await dt(title, 'h3'));
-      card.appendChild(await dt(detail, 'caption', DARK.muted));
-      darkTrack(card, fraction);
-    }
-    const footer = AL('HORIZONTAL', 'Награда'); footer.itemSpacing = 10; footer.counterAxisAlignItems = 'CENTER'; append(c, footer, { fillW: true });
-    const chest = inst(K.chest, { 'Состояние': 'Закрыт' }); chest.rescale(.52); footer.appendChild(chest);
-    footer.appendChild(await dt('Сундук за каждую тему', 'caption', DARK.muted));
-  }
-
-  // Лента: карточки событий с реакциями и нашими иллюстрациями.
-  {
-    const { c } = darkBase(root, 'Лента новостей · тёмная', K, 'Новости');
-    c.appendChild(await dt('Лента новостей', 'h1'));
-    c.appendChild(await dt('Ваши открытия и события курса', 'body', DARK.muted));
-    for (const [label, time, title, detail, art] of [
-      ['ФОЛК · ПУТЕШЕСТВИЕ', 'сегодня', 'Откройте Маньпупунёр', 'Отправьтесь в путешествие на Север', 'manpupuner'],
-      ['ФОЛК · ТРАДИЦИИ', 'вчера', 'Пора готовить шаньгу', 'Вместе приготовим традиционные пирожки', 'shanga'],
-    ]) {
-      const post = darkCard(title, 218); append(c, post, { fillW: true });
-      const header = AL('HORIZONTAL', 'Автор и время'); header.primaryAxisAlignItems = 'SPACE_BETWEEN'; append(post, header, { fillW: true });
-      header.appendChild(await dt(label, 'overline', DARK.blue)); header.appendChild(await dt(time, 'caption', DARK.muted));
-      post.appendChild(await dt(title, 'h3'));
-      post.appendChild(await dt(detail, 'caption', DARK.muted));
-      const activity = AL('HORIZONTAL', 'Иллюстрация и реакции'); activity.itemSpacing = 15; activity.counterAxisAlignItems = 'CENTER'; post.appendChild(activity);
-      const pic = inst(K.art[art]); pic.rescale(.65); activity.appendChild(pic);
-      const reactions = AL('VERTICAL', 'Реакции'); reactions.itemSpacing = 10; activity.appendChild(reactions);
-      reactions.appendChild(await dt('♡  Понравилось', 'caption'));
-      reactions.appendChild(await dt('☏  Обсудить', 'caption', DARK.muted));
-    }
-  }
+  // Общий шаблон сохраняет одинаковую композицию в светлой и тёмной теме.
+  await refTasksScreen(root, K, true);
+  await refTasksScreen(root, K, true, true);
+  await refFeedScreen(root, K, true);
 
   // Рейтинг оставляет персональный результат главным, остальные строки — демо.
   {
@@ -1848,6 +1946,7 @@ async function buildDarkScreens(page, K) {
       row.appendChild(await dt(`${xp} XP`, 'caption', '#FFE066'));
     }
   }
+  mirrorDarkScreens(root, lightRoot);
   return root;
 }
 
@@ -1908,12 +2007,12 @@ async function main() {
   const pComps = await getPage(PAGES.comps);
   const { K } = await buildComponents(pComps);
   const pScreens = await getPage(PAGES.screens);
-  await buildScreens(pScreens, K);
-  const darkScreens = await buildDarkScreens(pScreens, K);
+  const lightScreens = await buildScreens(pScreens, K);
+  const darkScreens = await buildDarkScreens(pScreens, K, lightScreens);
   const pAnimations = await getPage(PAGES.animations);
   await buildAnimations(pAnimations, K);
   figma.viewport.scrollAndZoomIntoView([darkScreens]);
-  return `✅ ФОЛК · UI Kit v33 готов: ${STATS.components} компонентов (${STATS.sets} наборов), ${STATS.variables} переменных, ${STATS.textStyles} стилей, ${STATS.screens} экранов и 20 уникальных кадров анимации. Добавлены экраны тёмной темы.`;
+  return `✅ ФОЛК · UI Kit v37 готов: ${STATS.components} компонентов (${STATS.sets} наборов), ${STATS.variables} переменных, ${STATS.textStyles} стилей, ${STATS.screens} экранов и 20 уникальных кадров анимации. Добавлены экраны тёмной темы.`;
 }
 
 main()
