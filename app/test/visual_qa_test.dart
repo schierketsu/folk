@@ -7,10 +7,11 @@ import 'package:folk_app/progress.dart';
 
 void main() {
   testWidgets('снимок тёмных заданий', (tester) async {
-    await (FontLoader('FolkRoboto')
-          ..addFont(rootBundle.load('assets/fonts/roboto-regular.ttf'))
-          ..addFont(rootBundle.load('assets/fonts/roboto-bold.ttf'))
-          ..addFont(rootBundle.load('assets/fonts/roboto-black.ttf')))
+    await (FontLoader('FolkNunito')
+          ..addFont(rootBundle.load('assets/fonts/nunito-regular.ttf'))
+          ..addFont(rootBundle.load('assets/fonts/nunito-bold.ttf'))
+          ..addFont(rootBundle.load('assets/fonts/nunito-extrabold.ttf'))
+          ..addFont(rootBundle.load('assets/fonts/nunito-black.ttf')))
         .load();
     await (FontLoader('MaterialIcons')
           ..addFont(rootBundle.load('assets/fonts/materialicons-regular.otf')))
@@ -24,7 +25,7 @@ void main() {
     await tester.pumpWidget(
       RepaintBoundary(child: FolkApp(progress: progress)),
     );
-    await tester.tap(find.byIcon(Icons.backpack_rounded));
+    await tester.tap(find.byKey(const Key('tab-1')));
     await tester.pumpAndSettle();
     await expectLater(
       find.byType(RepaintBoundary).first,
@@ -37,10 +38,11 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-    await (FontLoader('FolkRoboto')
-          ..addFont(rootBundle.load('assets/fonts/roboto-regular.ttf'))
-          ..addFont(rootBundle.load('assets/fonts/roboto-bold.ttf'))
-          ..addFont(rootBundle.load('assets/fonts/roboto-black.ttf')))
+    await (FontLoader('FolkNunito')
+          ..addFont(rootBundle.load('assets/fonts/nunito-regular.ttf'))
+          ..addFont(rootBundle.load('assets/fonts/nunito-bold.ttf'))
+          ..addFont(rootBundle.load('assets/fonts/nunito-extrabold.ttf'))
+          ..addFont(rootBundle.load('assets/fonts/nunito-black.ttf')))
         .load();
     await (FontLoader('MaterialIcons')
           ..addFont(rootBundle.load('assets/fonts/materialicons-regular.otf')))
@@ -50,7 +52,7 @@ void main() {
     await tester.pumpWidget(
       RepaintBoundary(child: FolkApp(progress: progress)),
     );
-    await tester.tap(find.byIcon(Icons.forum_rounded));
+    await tester.tap(find.byKey(const Key('tab-3')));
     await tester.pumpAndSettle();
     await expectLater(
       find.byType(RepaintBoundary).first,

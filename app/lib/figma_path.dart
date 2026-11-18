@@ -1,4 +1,7 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'data.dart';
 import 'progress.dart';
@@ -34,16 +37,16 @@ class FigmaPath extends StatelessWidget {
     final dark = FolkColors.isDark(context);
 
     return SizedBox(
-      height: 540,
+      height: 505,
       child: LayoutBuilder(
         builder: (context, box) => Stack(
           clipBehavior: Clip.hardEdge,
           children: [
             Positioned(
-              left: box.maxWidth / 2 - 44,
-              top: 0,
+              left: box.maxWidth / 2 - 50,
+              top: 8,
               child: _StepNode(
-                icon: Icons.star_rounded,
+                glyph: 'step-star.svg',
                 color: accent,
                 edge: edge,
                 active: true,
@@ -53,22 +56,27 @@ class FigmaPath extends StatelessWidget {
               ),
             ),
             Positioned(
-              left: box.maxWidth / 2 - 9,
-              top: 101,
-              child: Transform.rotate(
-                angle: .785398,
-                child: Container(width: 18, height: 18, color: accent),
+              left: box.maxWidth / 2 - 15,
+              top: 102,
+              child: SvgPicture.asset(
+                'assets/images/path-pointer.svg',
+                width: 30,
+                height: 16,
+                colorFilter: topic == 0
+                    ? null
+                    : ColorFilter.mode(accent, BlendMode.srcIn),
               ),
             ),
             Positioned(
-              left: 4,
-              right: 4,
-              top: 110,
+              left: 10,
+              right: 10,
+              top: 114,
               child: InkWell(
                 onTap: () => onTask(active),
                 borderRadius: BorderRadius.circular(18),
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+                  height: 154,
+                  padding: const EdgeInsets.fromLTRB(16, 17, 16, 15),
                   decoration: BoxDecoration(
                     color: accent,
                     borderRadius: BorderRadius.circular(18),
@@ -86,12 +94,14 @@ class FigmaPath extends StatelessWidget {
                         style: Theme.of(context).textTheme.headlineMedium!
                             .copyWith(color: Colors.white),
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 8),
                       Text(
                         'Урок ${lessons.indexOf(active) + 1} из ${lessons.length} · ${active.title.toLowerCase()}',
-                        style: const TextStyle(color: Colors.white),
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: const Color(0xFFE8F8FF),
+                        ),
                       ),
-                      const SizedBox(height: 13),
+                      const SizedBox(height: 8),
                       Container(
                         height: 48,
                         width: double.infinity,
@@ -114,8 +124,9 @@ class FigmaPath extends StatelessWidget {
                               : 'УЧИТЬСЯ · +15 ОПЫТА',
                           style: TextStyle(
                             color: edge,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: .5,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: .8,
                           ),
                         ),
                       ),
@@ -125,10 +136,10 @@ class FigmaPath extends StatelessWidget {
               ),
             ),
             Positioned(
-              left: box.maxWidth * .12,
+              left: box.maxWidth / 2 - 126.5,
               top: 280,
               child: _StepNode(
-                icon: Icons.star_rounded,
+                glyph: 'step-star.svg',
                 color: accent,
                 edge: edge,
                 done: progress.isDone(others.first.id),
@@ -144,7 +155,7 @@ class FigmaPath extends StatelessWidget {
                 child: Column(
                   children: [
                     Image.asset(topics[topic].mapImage,
-                        width: 112, height: 94, fit: BoxFit.contain),
+                        width: 120, height: 116, fit: BoxFit.contain),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: List.generate(3, (i) => Icon(
@@ -160,25 +171,21 @@ class FigmaPath extends StatelessWidget {
               ),
             ),
             Positioned(
-              left: box.maxWidth * .39,
-              top: 386,
+              left: box.maxWidth / 2 - 46.5,
+              top: 376,
               child: InkWell(
                 onTap: onPester,
-                child: Image.asset(
-                  progress.chestOpened(topic)
-                      ? 'assets/images/chest-open.png'
-                      : 'assets/images/chest-closed.png',
-                  width: 98,
-                  height: 98,
-                  fit: BoxFit.contain,
+                child: PesterImage(
+                  size: 74.88,
+                  opened: progress.chestOpened(topic),
                 ),
               ),
             ),
             Positioned(
-              right: 8,
+              right: 13,
               top: 460,
               child: _StepNode(
-                icon: Icons.menu_book_rounded,
+                glyph: 'step-book.svg',
                 color: accent,
                 edge: edge,
                 done: progress.isDone(others.last.id),
@@ -195,7 +202,7 @@ class FigmaPath extends StatelessWidget {
 
 class _StepNode extends StatelessWidget {
   const _StepNode({
-    required this.icon,
+    required this.glyph,
     required this.color,
     required this.edge,
     required this.onTap,
@@ -204,7 +211,7 @@ class _StepNode extends StatelessWidget {
     this.dark = false,
     this.fraction = 0,
   });
-  final IconData icon;
+  final String glyph;
   final Color color;
   final Color edge;
   final VoidCallback onTap;
@@ -225,63 +232,56 @@ class _StepNode extends StatelessWidget {
       onTap: onTap,
       customBorder: const CircleBorder(),
       child: SizedBox(
-        width: 88,
-        height: 88,
+        width: 100,
+        height: 100,
         child: Stack(
           alignment: Alignment.center,
           children: [
             if (active)
-              SizedBox(
-                width: 88,
-                height: 88,
-                child: CircularProgressIndicator(
-                  value: fraction,
-                  strokeWidth: 4,
+              CustomPaint(
+                size: const Size(100, 100),
+                painter: _SegmentRing(
+                  completed: (fraction * 3).round(),
                   color: color,
-                  backgroundColor:
-                      dark ? FolkColors.darkLine : FolkColors.line,
+                  background: dark ? FolkColors.darkLine : FolkColors.line,
                 ),
               ),
             Positioned(
-              top: 17,
+              top: 23,
               child: Container(
-                width: 68,
-                height: 63,
+                width: 70,
+                height: 62,
                 decoration: BoxDecoration(color: rim, shape: BoxShape.circle),
               ),
             ),
             Positioned(
-              top: 9,
+              top: 15,
               child: ClipOval(
                 child: Container(
-                  width: 68,
-                  height: 63,
+                  width: 70,
+                  height: 62,
                   color: face,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        left: -14,
-                        top: -18,
-                        child: Transform.rotate(
-                          angle: -.75,
-                          child: Container(
-                            width: 30,
-                            height: 110,
-                            color: Colors.white.withValues(alpha: .18),
-                          ),
-                        ),
-                      ),
-                      Center(child: Icon(
-                        done ? Icons.check_rounded : icon,
-                        size: 31,
-                        color: active || done
-                            ? Colors.white
-                            : dark ? FolkColors.darkMuted
-                                : const Color(0xFFAFBFC4),
-                      )),
-                    ],
-                  ),
                 ),
+              ),
+            ),
+            SvgPicture.asset(
+              'assets/images/node-glare.svg',
+              width: 100,
+              height: 100,
+            ),
+            Positioned(
+              left: 34,
+              top: 30,
+              child: SvgPicture.asset(
+                'assets/images/$glyph',
+                width: 32,
+                height: 32,
+                colorFilter: active || done
+                    ? null
+                    : ColorFilter.mode(
+                        dark ? FolkColors.darkMuted : const Color(0xFFB5B5B5),
+                        BlendMode.srcIn,
+                      ),
               ),
             ),
           ],
@@ -289,4 +289,41 @@ class _StepNode extends StatelessWidget {
       ),
     );
   }
+}
+
+class _SegmentRing extends CustomPainter {
+  const _SegmentRing({
+    required this.completed,
+    required this.color,
+    required this.background,
+  });
+
+  final int completed;
+  final Color color;
+  final Color background;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Rect.fromLTWH(4, 4, size.width - 8, size.height - 8);
+    const sector = math.pi * 2 / 3;
+    const gap = .26;
+    for (var index = 0; index < 3; index++) {
+      canvas.drawArc(
+        rect,
+        -math.pi / 2 + index * sector + gap / 2,
+        sector - gap,
+        false,
+        Paint()
+          ..color = index < completed ? color : background
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 8,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_SegmentRing oldDelegate) =>
+      completed != oldDelegate.completed ||
+      color != oldDelegate.color ||
+      background != oldDelegate.background;
 }

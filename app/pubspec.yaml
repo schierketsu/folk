@@ -34,6 +34,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   shared_preferences: ^2.5.4
+  flutter_svg: ^2.0.17
 
 dev_dependencies:
   flutter_test:
@@ -55,13 +56,15 @@ flutter:
     - assets/images/
     - assets/fonts/materialicons-regular.otf
   fonts:
-    - family: FolkRoboto
+    - family: FolkNunito
       fonts:
-        - asset: assets/fonts/roboto-regular.ttf
+        - asset: assets/fonts/nunito-regular.ttf
           weight: 400
-        - asset: assets/fonts/roboto-bold.ttf
+        - asset: assets/fonts/nunito-bold.ttf
           weight: 700
-        - asset: assets/fonts/roboto-black.ttf
+        - asset: assets/fonts/nunito-extrabold.ttf
+          weight: 800
+        - asset: assets/fonts/nunito-black.ttf
           weight: 900
 
   # The following line ensures that the Material Icons font is

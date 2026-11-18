@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'data.dart';
 import 'figma_path.dart';
@@ -186,45 +187,35 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     children: [
       Padding(
-        padding: const EdgeInsets.fromLTRB(16, 28, 16, 13),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const KomiFlag(),
-            StatPill(
-              asset: 'fire.png',
-              value: '${progress.fire}',
-              color: FolkColors.orange,
-            ),
-            StatPill(
-              asset: 'cranberry.png',
-              value: '${progress.cranberries}',
-              color: FolkColors.red,
-            ),
-            StatPill(
-              asset: 'heart.png',
-              value: '${progress.hearts}',
-              color: FolkColors.red,
-            ),
-            IconButton(
-              tooltip: 'Уведомления',
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (_) => NotificationsPage(progress: progress),
-                ),
+        padding: const EdgeInsets.fromLTRB(16, 24, 16, 13),
+        child: SizedBox(
+          height: 42,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const KomiFlag(),
+              StatPill(
+                asset: 'cranberry.png',
+                value: '${progress.cranberries}',
+                color: FolkColors.red,
               ),
-              icon: const Icon(
-                Icons.notifications_none_rounded,
-                color: FolkColors.blue,
+              StatPill(
+                asset: 'fire.png',
+                value: '${progress.fire}',
+                color: FolkColors.orange,
               ),
-            ),
-          ],
+              StatPill(
+                asset: 'heart.png',
+                value: '${progress.hearts}',
+                color: const Color(0xFFD94F9D),
+              ),
+            ],
+          ),
         ),
       ),
       Expanded(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 6, 16, 24),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
           children: [
             _TopicBanner(
               topic: 0,
@@ -313,7 +304,8 @@ class _TopicBanner extends StatelessWidget {
   final Color shadow;
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.fromLTRB(17, 15, 17, 18),
+    height: 112,
+    padding: const EdgeInsets.fromLTRB(16, 16, 0, 16),
     decoration: BoxDecoration(
       color: color,
       borderRadius: BorderRadius.circular(16),
@@ -336,9 +328,17 @@ class _TopicBanner extends StatelessWidget {
             ],
           ),
         ),
-        Container(width: 2, height: 54, color: shadow),
-        const SizedBox(width: 15),
-        const Icon(Icons.menu_book_rounded, color: Colors.white, size: 30),
+        Container(width: 2, height: 80, color: shadow),
+        SizedBox(
+          width: 64,
+          child: Center(
+            child: SvgPicture.asset(
+              'assets/images/banner-notebook.svg',
+              width: 24,
+              height: 24,
+            ),
+          ),
+        ),
       ],
     ),
   );
@@ -352,7 +352,8 @@ class TasksPage extends StatelessWidget {
     padding: EdgeInsets.zero,
     children: [
       Container(
-        padding: const EdgeInsets.fromLTRB(20, 30, 20, 23),
+        height: 213,
+        padding: const EdgeInsets.fromLTRB(22, 38, 22, 16),
         color: const Color(0xFFD94F9D),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -363,7 +364,7 @@ class TasksPage extends StatelessWidget {
                 context,
               ).textTheme.headlineLarge!.copyWith(color: Colors.white),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 9),
             const Text(
               '◷  5 ДНЕЙ',
               style: TextStyle(
@@ -371,45 +372,51 @@ class TasksPage extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 9),
             Container(
-              padding: const EdgeInsets.all(17),
+              height: 83,
+              padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
               decoration: BoxDecoration(
                 color: FolkColors.darkBg,
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(15),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Пройдите 6 заданий курса!',
-                    style: TextStyle(
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       color: Colors.white,
-                      fontSize: 19,
-                      fontWeight: FontWeight.w900,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: LinearProgressIndicator(
-                      value: progress.completed.length / tasks.length,
-                      minHeight: 13,
-                      backgroundColor: FolkColors.darkLine,
-                      valueColor: const AlwaysStoppedAnimation(
-                        Color(0xFFD94F9D),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      '${progress.completed.length} / ${tasks.length}',
-                      style: const TextStyle(
-                        color: FolkColors.darkMuted,
-                        fontWeight: FontWeight.w800,
-                      ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    height: 18,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(9),
+                          child: LinearProgressIndicator(
+                            value: progress.completed.length / tasks.length,
+                            minHeight: 18,
+                            backgroundColor: FolkColors.darkLine,
+                            valueColor: const AlwaysStoppedAnimation(
+                              Color(0xFFD94F9D),
+                            ),
+                          ),
+                        ),
+                        Center(
+                          child: Text(
+                            '${progress.completed.length} / ${tasks.length}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -419,7 +426,7 @@ class TasksPage extends StatelessWidget {
         ),
       ),
       Padding(
-        padding: const EdgeInsets.fromLTRB(16, 23, 16, 24),
+        padding: const EdgeInsets.fromLTRB(22, 19, 22, 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -475,25 +482,25 @@ class _TopicChallenge extends StatelessWidget {
         const SizedBox(height: 13),
         Container(
           width: double.infinity,
-          height: 105,
+          height: 103,
           padding: const EdgeInsets.symmetric(horizontal: 22),
           decoration: BoxDecoration(
             color: FolkColors.isDark(context)
                 ? const Color(0xFF49314B)
-                : const Color(0xFF64436A),
+                : const Color(0xFF54314F),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/mascot-sitting.png', height: 96),
-              Image.asset(topics[0].mapImage, height: 88, width: 115),
+              Image.asset('assets/images/mascot-sitting.png', width: 100, height: 100),
+              Image.asset(topics[0].mapImage, height: 84, width: 86),
             ],
           ),
         ),
         const SizedBox(height: 17),
         Text(
-          'Пройдите 3 урока темы',
+          'Пройдите 3 урока без ошибок',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 12),
@@ -504,7 +511,7 @@ class _TopicChallenge extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 child: LinearProgressIndicator(
                   value: completed / 3,
-                  minHeight: 19,
+                  minHeight: 18,
                   backgroundColor: FolkColors.isDark(context)
                       ? FolkColors.darkLine
                       : FolkColors.line,
@@ -512,13 +519,10 @@ class _TopicChallenge extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 14),
-            Image.asset(
-              progress.chestOpened(0)
-                  ? 'assets/images/chest-open.png'
-                  : 'assets/images/chest-closed.png',
-              width: 65,
-              height: 65,
+            const SizedBox(width: 10),
+            PesterImage(
+              size: 54.08,
+              opened: progress.chestOpened(0),
             ),
           ],
         ),
@@ -715,13 +719,14 @@ class RankingPage extends StatelessWidget {
     leaders.sort((a, b) => b.$2.compareTo(a.$2));
     final yourRank = leaders.indexWhere((item) => item.$3) + 1;
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 30, 16, 24),
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
       children: [
         const PageTitle('Рейтинг', 'Каждое открытие приближает к вершине'),
         const SizedBox(height: 18),
         FolkCard(
           color: FolkColors.yellow,
           border: const Color(0xFFE6A700),
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -732,7 +737,7 @@ class RankingPage extends StatelessWidget {
                   Text(
                     '№ $yourRank',
                     style: const TextStyle(
-                      fontSize: 42,
+                      fontSize: 32,
                       fontWeight: FontWeight.w900,
                       color: FolkColors.ink,
                     ),
@@ -765,7 +770,7 @@ class RankingPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 22),
-        const Eyebrow('ЛИДЕРЫ НЕДЕЛИ · ДЕМО'),
+        const Eyebrow('ЛИДЕРЫ НЕДЕЛИ'),
         const SizedBox(height: 10),
         ...List.generate(leaders.length, (i) {
           final item = leaders[i];
@@ -1020,53 +1025,51 @@ class ProfilePage extends StatelessWidget {
     padding: const EdgeInsets.fromLTRB(16, 30, 16, 24),
     children: [
       const PageTitle('Профиль', 'Ваш путь в приложении «ФОЛК»'),
-      const SizedBox(height: 22),
-      Center(
-        child: Image.asset('assets/images/mascot-sitting.png', height: 150),
-      ),
-      const SizedBox(height: 14),
-      Center(
-        child: Text(
-          'Исследователь коми',
-          style: Theme.of(context).textTheme.headlineMedium,
+      const SizedBox(height: 18),
+      FolkCard(
+        color: FolkColors.light,
+        border: Colors.transparent,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Курс · Коми', style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 6),
+            Text(
+              'Две темы в MVP',
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                color: FolkColors.isDark(context)
+                    ? FolkColors.darkMuted
+                    : FolkColors.muted,
+              ),
+            ),
+          ],
         ),
       ),
       const SizedBox(height: 18),
       FolkCard(
-        color: FolkColors.greenLight,
-        border: FolkColors.green,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _ProfileStat(value: '${progress.experience}', label: 'опыт'),
-            _ProfileStat(
-              value: '${progress.completed.length}/${tasks.length}',
-              label: 'задания',
-            ),
-            _ProfileStat(
-              value: '${progress.openedChests.length}/2',
-              label: 'пестери',
-            ),
-          ],
-        ),
-      ),
-      const SizedBox(height: 14),
-      FolkCard(
         color: FolkColors.light,
-        child: Row(
+        border: Colors.transparent,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.language_rounded, color: FolkColors.blue),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                'Курс · Коми',
-                style: Theme.of(context).textTheme.titleMedium,
+            Text(
+              'Опыт · ${progress.experience}',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Собирайте ягоды и открывайте новые места',
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                color: FolkColors.isDark(context)
+                    ? FolkColors.darkMuted
+                    : FolkColors.muted,
               ),
             ),
-            Text('2 темы', style: Theme.of(context).textTheme.bodyMedium),
           ],
         ),
       ),
+      const SizedBox(height: 500),
+      const Eyebrow('НАСТРОЙКИ'),
       const SizedBox(height: 12),
       FolkCard(
         color: FolkColors.light,
@@ -1113,20 +1116,6 @@ class ProfilePage extends StatelessWidget {
         icon: const Icon(Icons.restart_alt_rounded),
         label: const Text('Начать заново'),
       ),
-    ],
-  );
-}
-
-class _ProfileStat extends StatelessWidget {
-  const _ProfileStat({required this.value, required this.label});
-  final String value;
-  final String label;
-  @override
-  Widget build(BuildContext context) => Column(
-    children: [
-      Text(value, style: Theme.of(context).textTheme.headlineMedium),
-      const SizedBox(height: 2),
-      Text(label, style: Theme.of(context).textTheme.bodyMedium),
     ],
   );
 }

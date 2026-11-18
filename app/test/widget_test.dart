@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:folk_app/main.dart';
 import 'package:folk_app/progress.dart';
-import 'package:folk_app/ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -13,7 +12,7 @@ void main() {
     final progress = await ProgressStore.load();
     await tester.pumpWidget(FolkApp(progress: progress));
 
-    await tester.tap(find.byIcon(Icons.backpack_rounded));
+    await tester.tap(find.byKey(const Key('tab-1')));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('Первое приветствие').first);
     await tester.pumpAndSettle();
@@ -34,12 +33,7 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     final progress = await ProgressStore.load();
     await tester.pumpWidget(FolkApp(progress: progress));
-    await tester.tap(
-      find.descendant(
-        of: find.byType(FolkBottomBar),
-        matching: find.byIcon(Icons.person_rounded),
-      ),
-    );
+    await tester.tap(find.byKey(const Key('tab-4')));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.byType(SwitchListTile));
     await tester.tap(find.byType(SwitchListTile));

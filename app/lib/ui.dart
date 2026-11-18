@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class FolkColors {
   static const green = Color(0xFF58CC02);
@@ -108,15 +109,15 @@ class FolkCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Material(
     color: FolkColors.surface(context, color),
-    borderRadius: BorderRadius.circular(20),
+    borderRadius: BorderRadius.circular(16),
     child: InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
         width: double.infinity,
         padding: padding,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: FolkColors.stroke(context, border),
             width: 1.5,
@@ -139,9 +140,10 @@ class Eyebrow extends StatelessWidget {
       color: FolkColors.isDark(context) && color == FolkColors.muted
           ? FolkColors.darkMuted
           : color,
-      fontSize: 11,
-      fontWeight: FontWeight.w900,
-      letterSpacing: 1.1,
+      fontSize: 12,
+      height: 16 / 12,
+      fontWeight: FontWeight.w800,
+      letterSpacing: 1,
     ),
   );
 }
@@ -155,8 +157,15 @@ class PageTitle extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(title, style: Theme.of(context).textTheme.headlineLarge),
-      const SizedBox(height: 5),
-      Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
+      const SizedBox(height: 6),
+      Text(
+        subtitle,
+        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+          color: FolkColors.isDark(context)
+              ? FolkColors.darkMuted
+              : FolkColors.muted,
+        ),
+      ),
     ],
   );
 }
@@ -174,13 +183,40 @@ class AssetIcon extends StatelessWidget {
   );
 }
 
+/// Figma's pester component has a square frame and art that extends beyond it.
+class PesterImage extends StatelessWidget {
+  const PesterImage({super.key, required this.size, this.opened = false});
+
+  final double size;
+  final bool opened;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    width: size,
+    height: size,
+    child: OverflowBox(
+      alignment: Alignment.center,
+      minWidth: size * 1.5,
+      maxWidth: size * 1.5,
+      minHeight: size,
+      maxHeight: size,
+      child: Image.asset(
+        opened ? 'assets/images/chest-open.png' : 'assets/images/chest-closed.png',
+        width: size * 1.5,
+        height: size,
+        fit: BoxFit.fill,
+      ),
+    ),
+  );
+}
+
 class KomiFlag extends StatelessWidget {
   const KomiFlag({super.key});
 
   @override
   Widget build(BuildContext context) => Container(
-    width: 37,
-    height: 27,
+    width: 44,
+    height: 32,
     decoration: BoxDecoration(
       border: Border.all(
         color: FolkColors.isDark(context)
@@ -216,14 +252,14 @@ class StatPill extends StatelessWidget {
   Widget build(BuildContext context) => Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      AssetIcon(asset, size: 25),
-      const SizedBox(width: 3),
+      AssetIcon(asset, size: 25.92),
+      const SizedBox(width: 6),
       Text(
         value,
         style: TextStyle(
           color: color,
-          fontSize: 15,
-          fontWeight: FontWeight.w900,
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
         ),
       ),
     ],
@@ -277,11 +313,11 @@ class FolkBottomBar extends StatelessWidget {
   final int index;
   final ValueChanged<int> onTap;
   static const icons = [
-    Icons.home_rounded,
-    Icons.backpack_rounded,
-    Icons.emoji_events_rounded,
-    Icons.forum_rounded,
-    Icons.person_rounded,
+    'nav-home.svg',
+    'nav-tasks.svg',
+    'nav-ranking.svg',
+    'nav-feed.svg',
+    'nav-profile.svg',
   ];
   static const labels = [
     'Изучение',
@@ -294,7 +330,7 @@ class FolkBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     height: 75,
-    padding: const EdgeInsets.fromLTRB(12, 7, 12, 9),
+    padding: const EdgeInsets.fromLTRB(14, 7, 14, 14),
     decoration: BoxDecoration(
       color: FolkColors.isDark(context) ? FolkColors.darkBg : Colors.white,
       border: Border(
@@ -302,7 +338,7 @@ class FolkBottomBar extends StatelessWidget {
           color: FolkColors.isDark(context)
               ? FolkColors.darkLine
               : FolkColors.line,
-          width: 1.5,
+          width: 2,
         ),
       ),
     ),
@@ -315,34 +351,29 @@ class FolkBottomBar extends StatelessWidget {
           button: true,
           selected: i == index,
           child: InkWell(
+            key: Key('tab-$i'),
             onTap: () => onTap(i),
-            borderRadius: BorderRadius.circular(13),
+            borderRadius: BorderRadius.circular(12),
             child: Container(
               width: 58,
-              height: 53,
+              height: 52,
               decoration: BoxDecoration(
                 color: i == index
                     ? (FolkColors.isDark(context)
                           ? FolkColors.darkBlue
                           : FolkColors.blueLight)
                     : Colors.transparent,
-                borderRadius: BorderRadius.circular(13),
+                borderRadius: BorderRadius.circular(12),
                 border: i == index
-                    ? Border.all(color: const Color(0xFF84D8FF), width: 2)
+                    ? Border.all(color: const Color(0xFF4FBDEE), width: 2)
                     : null,
               ),
-              child: Icon(
-                icons[i],
-                color: i == index
-                    ? FolkColors.blue
-                    : [
-                        FolkColors.orange,
-                        FolkColors.yellow,
-                        FolkColors.blue,
-                        const Color(0xFFE67DB7),
-                        FolkColors.blue,
-                      ][i],
-                size: 27,
+              child: Center(
+                child: SvgPicture.asset(
+                  'assets/images/${icons[i]}',
+                  width: 29.28,
+                  height: 29.28,
+                ),
               ),
             ),
           ),

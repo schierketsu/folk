@@ -21,4 +21,4 @@ Flutter-приложение по макетам ФОЛК для изучени�
 
 `flutter analyze` и `flutter test`. После обновления экранов нужно пересоздать снимки в `test/goldens/` через `flutter test --update-goldens`.
 
-Ассеты взяты из `../figma/ui-kit/assets/`. Макеты светлой и тёмной темы создаёт локальный генератор Figma UI Kit v37.
+Ассеты взяты из `../figma/ui-kit/assets/`. Шрифт Nunito подключён из `assets/fonts/`. SVG-иконки навигации и пути извлекаются из генератора командой `node tool/export_figma_icons.mjs`. Макеты светлой и тёмной темы создаёт локальный генератор Figma UI Kit v37.

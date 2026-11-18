@@ -13,7 +13,7 @@ class ActivityFeedPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListView(
-    padding: const EdgeInsets.fromLTRB(16, 30, 16, 24),
+    padding: const EdgeInsets.fromLTRB(16, 18, 16, 24),
     children: [
       Text('Лента новостей', style: Theme.of(context).textTheme.headlineLarge),
       const SizedBox(height: 22),
