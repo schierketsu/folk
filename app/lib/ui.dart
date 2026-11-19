@@ -228,6 +228,7 @@ class KomiFlag extends StatelessWidget {
     child: ClipRRect(
       borderRadius: BorderRadius.circular(6),
       child: const Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(child: ColoredBox(color: Color(0xFF2E86D1))),
           Expanded(child: ColoredBox(color: Color(0xFF13A538))),
@@ -244,21 +245,25 @@ class StatPill extends StatelessWidget {
     required this.asset,
     required this.value,
     required this.color,
+    this.iconSize = 25.92,
+    this.fontSize = 16,
   });
   final String asset;
   final String value;
   final Color color;
+  final double iconSize;
+  final double fontSize;
   @override
   Widget build(BuildContext context) => Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      AssetIcon(asset, size: 25.92),
+      AssetIcon(asset, size: iconSize),
       const SizedBox(width: 6),
       Text(
         value,
         style: TextStyle(
           color: color,
-          fontSize: 16,
+          fontSize: fontSize,
           fontWeight: FontWeight.w700,
         ),
       ),
@@ -317,14 +322,12 @@ class FolkBottomBar extends StatelessWidget {
     'nav-tasks.svg',
     'nav-ranking.svg',
     'nav-feed.svg',
-    'nav-profile.svg',
   ];
   static const labels = [
     'Изучение',
     'Задания',
     'Рейтинг',
     'Новости',
-    'Профиль',
   ];
 
   @override

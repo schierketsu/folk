@@ -1,0 +1,9 @@
+import { Image, StyleSheet, Text, View } from 'react-native';
+import { router, useLocalSearchParams } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { images } from '../../assets/images';
+import { Button } from '../../components/UI';
+import { lessons } from '../../data/course';
+import { c, font } from '../../theme';
+export default function Result() { const { id } = useLocalSearchParams<{ id: string }>(); const lesson = lessons.find(x => x.id === id); return <SafeAreaView style={styles.page}><View style={styles.main}><Image source={images.foxRunning} style={styles.fox} resizeMode="contain" /><Text style={styles.title}>Урок пройден!</Text><Text style={styles.subtitle}>{lesson?.title}</Text><View style={styles.awards}><View style={styles.award}><Text style={styles.awardTitle}>ОПЫТ</Text><Text style={styles.awardValue}>+15</Text></View><View style={styles.award}><Text style={styles.awardTitle}>ЯГОДЫ</Text><Text style={styles.awardValue}>+15</Text></View></View></View><View style={styles.footer}><Button title="НА КАРТУ" onPress={() => router.replace('/(tabs)/home')} /></View></SafeAreaView>; }
+const styles = StyleSheet.create({ page: { flex: 1, backgroundColor: 'white' }, main: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }, fox: { width: 190, height: 210 }, title: { fontFamily: font.black, fontSize: 30, color: c.green, marginTop: 15 }, subtitle: { fontFamily: font.bold, fontSize: 19, color: c.text, marginTop: 8 }, awards: { flexDirection: 'row', gap: 14, marginTop: 30 }, award: { minWidth: 125, alignItems: 'center', borderWidth: 2, borderColor: '#D4EDC5', borderRadius: 16, padding: 12 }, awardTitle: { fontFamily: font.black, fontSize: 13, color: c.greenDark }, awardValue: { fontFamily: font.black, fontSize: 24, color: c.green }, footer: { padding: 20 } });

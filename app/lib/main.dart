@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'progress.dart';
 import 'feed.dart';
+import 'language.dart';
 import 'screens.dart';
 import 'ui.dart';
 
@@ -24,7 +25,9 @@ class FolkApp extends StatelessWidget {
       theme: _theme(false),
       darkTheme: _theme(true),
       themeMode: progress.darkMode ? ThemeMode.dark : ThemeMode.light,
-      home: AppShell(progress: progress),
+      home: progress.languageSelected
+          ? AppShell(progress: progress)
+          : LanguagePage(progress: progress),
     ),
   );
 
@@ -103,7 +106,6 @@ class _AppShellState extends State<AppShell> {
                   TasksPage(progress: widget.progress),
                   RankingPage(progress: widget.progress),
                   ActivityFeedPage(progress: widget.progress),
-                  ProfilePage(progress: widget.progress),
                 ],
               ),
             ),

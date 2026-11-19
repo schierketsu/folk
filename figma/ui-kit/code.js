@@ -1,5 +1,5 @@
 // =====================================================================
-//  ФОЛК · UI Kit generator for Figma · v37
+//  ФОЛК · UI Kit generator for Figma · v40
 //  Приложение для изучения языков народов России.
 //  UX-паттерны — по мотивам Duolingo UI Kit (Marvilo); яркая палитра
 //  в духе Duolingo; маскот — Лиса (живёт во всех регионах России).
@@ -12,7 +12,7 @@ const FONT_FAMILY = 'Nunito';   // можно заменить, напр. 'PT Ro
 const APP_NAME = 'ФОЛК';        // название продукта
 const KIT = 'ФОЛК';             // префикс переменных, стилей и фреймов кита
 const LEGACY_KITS = ['Тамыр', 'UI Kit'];  // префиксы прошлых версий — убираются при пересоздании
-const PAGES = { found: 'Основы', comps: 'Компоненты', screens: 'Экраны', animations: 'Анимации' };
+const PAGES = { found: 'Основы', comps: 'Компоненты', screens: 'Экраны', animations: 'Анимации', app: 'Приложение' };
 // Старые имена страниц: такие страницы будут переименованы и переиспользованы
 const LEGACY_PAGES = { 'Основы': '🎨 Основы', 'Компоненты': '🧩 Компоненты', 'Экраны': '📱 Экраны' };
 
@@ -523,7 +523,7 @@ async function getPage(name) {
   if (figma.root.children.length === 1 && first.children.length === 0 && !first.name.startsWith('🎨')) { first.name = name; return first; }
   try { p = figma.createPage(); p.name = name; return p; }
   catch (e) {
-    if (name === PAGES.animations) throw new Error('Не удалось создать отдельную страницу «Анимации»: проверьте лимит страниц файла.');
+    if (name === PAGES.animations || name === PAGES.app) throw new Error(`Не удалось создать отдельную страницу «${name}»: проверьте лимит страниц файла.`);
     return first; // лимит страниц (Starter) — кладём остальные разделы на первую
   }
 }
@@ -1531,23 +1531,33 @@ async function refTasksScreen(root, K, dark, daily = false) {
   fixBox(goal, 331, 83); goal.cornerRadius = 15; goal.fills = [solid('#141F22')]; hero.appendChild(goal);
   goal.appendChild(await refText('Пройдите 6 заданий курса!', 'h3', '#FFFFFF'));
   const summary = refTrack(goal, '2 / 6', 2 / 6, REF.pink, 303); const label = await refText('2 / 6', 'caption', '#FFFFFF', { align: 'CENTER', width: 303 });
-  label.layoutPositioning = 'ABSOLUTE'; goal.appendChild(label); label.x = 14; label.y = summary.y + 1;
-  const body = AL('VERTICAL', 'Задания и награды'); body.itemSpacing = daily ? 20 : 13;
+  goal.appendChild(label); label.layoutPositioning = 'ABSOLUTE'; label.x = 14; label.y = summary.y + 1;
+  const body = AL('VERTICAL', 'Задания и награды'); body.itemSpacing = daily ? 20 : 11;
   body.paddingTop = 19; body.paddingBottom = 14; body.paddingLeft = 22; body.paddingRight = 22;
   append(s, body, { fillW: true, grow: true });
   if (!daily) {
-    body.appendChild(await refText('ЗАДАНИЕ ТЕМЫ', 'overline', p.muted));
-    const art = AL('HORIZONTAL', 'Иллюстрация · путешествие'); center(art); fixBox(art, 331, 103); art.cornerRadius = 16; art.fills = [solid(REF.purple)]; body.appendChild(art);
-    const fox = inst(K.mascot, { 'Поза': 'Сидит' }); fox.rescale(.83); art.appendChild(fox);
+    body.appendChild(await refText('ПАРНОЕ ЗАДАНИЕ', 'overline', p.muted));
+    const art = AL('HORIZONTAL', 'Иллюстрация · места и традиции'); center(art); art.itemSpacing = 23;
+    fixBox(art, 331, 103); art.cornerRadius = 16; art.fills = [solid(REF.purple)]; body.appendChild(art);
     const place = K.art.manpupuner.createInstance(); place.rescale(.72); art.appendChild(place);
-    body.appendChild(await refText('Пройдите 3 урока без ошибок', 'h3', p.text));
+    art.appendChild(await refText('✦', 'h2', '#FFD470'));
+    const food = K.art.shanga.createInstance(); food.rescale(.72); art.appendChild(food);
+    body.appendChild(await refText('Пройдите вместе 6 заданий курса', 'h3', p.text));
     const reward = AL('HORIZONTAL', 'Прогресс и сундук'); reward.itemSpacing = 10; reward.counterAxisAlignItems = 'CENTER'; body.appendChild(reward);
-    const track = refTrack(reward, '2 / 3', .67, REF.pinkDeep, 245, p.track); reward.appendChild(refPester(K, .52));
-    const trackLabel = await refText('2 / 3', 'caption', '#FFFFFF', { align: 'CENTER', width: 245 }); track.appendChild(trackLabel); trackLabel.x = 0; trackLabel.y = 0;
-    const participant = AL('HORIZONTAL', 'Ваш прогресс'); participant.primaryAxisAlignItems = 'SPACE_BETWEEN';
+    const track = refTrack(reward, '2 / 6', 2 / 6, REF.pinkDeep, 245, p.track); reward.appendChild(refPester(K, .52));
+    const trackLabel = await refText('2 / 6', 'caption', p.text, { align: 'CENTER', width: 245 }); track.appendChild(trackLabel); trackLabel.x = 0; trackLabel.y = 0;
+    const participant = AL('HORIZONTAL', 'Ваш вклад'); participant.primaryAxisAlignItems = 'SPACE_BETWEEN';
     append(body, participant, { fillW: true });
     participant.appendChild(await refText('●  Вы', 'bodyBold', REF.pink));
-    participant.appendChild(await refText('2 урока', 'bodyBold', p.muted));
+    participant.appendChild(await refText('2 / 6 заданий', 'bodyBold', p.muted));
+    const partner = AL('HORIZONTAL', 'Вклад друга'); partner.primaryAxisAlignItems = 'SPACE_BETWEEN';
+    append(body, partner, { fillW: true });
+    partner.appendChild(await refText('●  Друг', 'bodyBold', REF.pinkDeep));
+    partner.appendChild(await refText('Пока не подключён', 'bodyBold', p.muted));
+    const invite = AL('HORIZONTAL', 'Пригласить друга'); center(invite); fixBox(invite, 331, 48);
+    invite.cornerRadius = 14; invite.strokes = [solid(p.line)]; invite.strokeWeight = 2;
+    append(body, invite, { fillW: true });
+    invite.appendChild(await refText('ПРИГЛАСИТЬ ДРУГА', 'button', p.text));
     refRule(body, p.line);
     body.appendChild(await refText('ЗАДАНИЯ ДНЯ', 'overline', p.muted));
     body.appendChild(await refText('Три цели на сегодня и три награды', 'body', p.text));
@@ -1815,7 +1825,7 @@ function darkBase(root, name, K, active) {
 }
 async function refHomeScreen(root, K, dark) {
   const p = dark ? REF.dark : REF.light;
-  const s = screen(root, dark ? 'Главная · тёмная' : 'Главная · тема 1'); s.fills = [solid(p.bg)];
+  const s = screen(root, dark ? 'Главная · тема 1 · тёмная' : 'Главная · тема 1'); s.fills = [solid(p.bg)];
   const c = content(s, { grow: true, gap: 13, top: 48, bottom: 8 });
   const stats = AL('HORIZONTAL', 'Счётчики'); stats.primaryAxisAlignItems = 'SPACE_BETWEEN'; stats.counterAxisAlignItems = 'CENTER';
   fixBox(stats, 343, 42); append(c, stats, { fillW: true });
@@ -1947,8 +1957,323 @@ async function buildDarkScreens(page, K, lightRoot) {
     }
   }
   mirrorDarkScreens(root, lightRoot);
+  const darkNames = new Set(root.children.map((node) => node.name));
+  for (const source of lightRoot.children) {
+    if (!darkNames.has(`${source.name} · тёмная`)) {
+      throw new Error(`Нет тёмной копии экрана «${source.name}»`);
+    }
+  }
+  if (root.children.length !== lightRoot.children.length) {
+    throw new Error('Число светлых и тёмных экранов не совпадает');
+  }
   return root;
 }
+
+// <generated:app-frames>
+// Generated by scripts/build-app-frames.mjs. All interface text and shapes remain editable.
+const APP_FRAMES = (() => {
+const CONTENT = {"topics":[{"title":"Знакомство и приветствия","place":"Маньпупунёр","prompt":"Отправьтесь в путешествие на Север","cardImage":"place-manpupuner-card.png","mapImage":"place-manpupuner-map.png"},{"title":"Еда и традиции","place":"Шаньга","prompt":"Вместе приготовим традиционные пирожки","cardImage":"place-shanga-card.png","mapImage":"place-shanga-map.png"}],"tasks":[{"id":"hello","topic":0,"title":"Первое приветствие","foxLine":"Как поздороваться с новым другом?","words":[["Чолӧм!","Привет!"],["Видза олан!","Здравствуй!"]],"steps":[{"kind":"choice","question":"Вы встретили друга. Что скажете по-коми?","options":["Чолӧм!","Аттьӧ!","Аддзысьлытӧдз!"],"answer":[],"correct":0,"note":"«Чолӧм!» — дружеское «Привет!».","image":null},{"kind":"arrange","question":"Соберите «Здравствуй!» по-коми","options":["олан!","Видза"],"answer":["Видза","олан!"],"correct":0,"note":"«Видза олан!» говорят при встрече.","image":null},{"kind":"choice","question":"Что значит «Чолӧм!»?","options":["Привет!","Спасибо!","До свидания!"],"answer":[],"correct":0,"note":"Это короткое приветствие для знакомого человека.","image":null}]},{"id":"polite","topic":0,"title":"Вежливые слова","foxLine":"Вежливость пригодится в любом путешествии.","words":[["Аттьӧ!","Спасибо!"],["Аддзысьлытӧдз!","До свидания!"]],"steps":[{"kind":"choice","question":"Вам помогли. Как сказать «Спасибо!»?","options":["Аттьӧ!","Чолӧм!","Бур лун!"],"answer":[],"correct":0,"note":"«Аттьӧ!» — благодарность по-коми.","image":null},{"kind":"choice","question":"Как попрощаться по-коми?","options":["Видза олан!","Аддзысьлытӧдз!","Кыдзи олан?"],"answer":[],"correct":1,"note":"«Аддзысьлытӧдз!» означает «До свидания!».","image":null},{"kind":"choice","question":"Вы уходите после встречи. Какое слово подходит?","options":["Аттьӧ!","Аддзысьлытӧдз!","Бура."],"answer":[],"correct":1,"note":"На прощание говорят «Аддзысьлытӧдз!».","image":null}]},{"id":"how_are_you","topic":0,"title":"Как дела?","foxLine":"Спросим, как поживает друг.","words":[["Кыдзи олан?","Как дела?"],["Бура.","Хорошо."]],"steps":[{"kind":"choice","question":"Что означает «Кыдзи олан?»?","options":["Как дела?","Как тебя зовут?","Что можно съесть?"],"answer":[],"correct":0,"note":"Так спрашивают, как человек поживает.","image":null},{"kind":"arrange","question":"Соберите вопрос «Как дела?»","options":["олан?","Кыдзи"],"answer":["Кыдзи","олан?"],"correct":0,"note":"«Кыдзи олан?» — короткий вопрос при встрече.","image":null},{"kind":"choice","question":"Ответьте на «Кыдзи олан?» словом «Хорошо»","options":["Нянь.","Бура.","Аттьӧ."],"answer":[],"correct":1,"note":"«Бура» означает «хорошо».","image":null}]},{"id":"name","topic":0,"title":"Давайте знакомиться","foxLine":"Потренируем фразу для знакомства.","words":[["Кыдзи тэнӧ шуӧны?","Как тебя зовут?"],["Менӧ шуӧны Аняӧн.","Меня зовут Аня."]],"steps":[{"kind":"choice","question":"Как спросить по-коми «Как тебя зовут?»?","options":["Кыдзи олан?","Кыдзи тэнӧ шуӧны?","Мый позьӧ юны?"],"answer":[],"correct":1,"note":"«Кыдзи тэнӧ шуӧны?» — вопрос об имени.","image":null},{"kind":"arrange","question":"Соберите фразу «Меня зовут Аня»","options":["Аняӧн.","шуӧны","Менӧ"],"answer":["Менӧ","шуӧны","Аняӧн."],"correct":0,"note":"В учебном диалоге: «Менӧ шуӧны Аняӧн».","image":null},{"kind":"choice","question":"Что означает «Менӧ шуӧны Аняӧн»?","options":["Меня зовут Аня","Аня, как дела?","До свидания, Аня"],"answer":[],"correct":0,"note":"Фраза помогает представиться собеседнику.","image":null}]},{"id":"formal","topic":0,"title":"Добрый день","foxLine":"Попробуем более вежливое приветствие.","words":[["Бур лун!","Добрый день!"],["Видза оланныд!","Здравствуйте!"]],"steps":[{"kind":"choice","question":"Вы здороваетесь с группой. Что скажете?","options":["Видза оланныд!","Чолӧм!","Аттьӧ!"],"answer":[],"correct":0,"note":"«Видза оланныд!» — вежливое «Здравствуйте!».","image":null},{"kind":"arrange","question":"Соберите «Добрый день!»","options":["лун!","Бур"],"answer":["Бур","лун!"],"correct":0,"note":"«Бур лун!» — приветствие днём.","image":null},{"kind":"choice","question":"Как перевести «Бур лун!»?","options":["Добрый день!","Спокойной ночи!","До свидания!"],"answer":[],"correct":0,"note":"«Бур» — хороший, «лун» — день.","image":null}]},{"id":"greeting_review","topic":0,"title":"Первая беседа","foxLine":"Соберём всё, что узнали о знакомстве.","words":[["Ме велӧда коми кыв.","Я учу коми язык."],["Чолӧм!","Привет!"]],"steps":[{"kind":"choice","question":"Друг говорит «Чолӧм!». Что он сделал?","options":["Поздоровался","Попрощался","Поблагодарил"],"answer":[],"correct":0,"note":"«Чолӧм!» — дружеское приветствие.","image":null},{"kind":"arrange","question":"Соберите «Я учу коми язык»","options":["коми","Ме","кыв.","велӧда"],"answer":["Ме","велӧда","коми","кыв."],"correct":0,"note":"«Ме велӧда коми кыв.» — полезная фраза о себе.","image":null},{"kind":"choice","question":"Чем завершить беседу?","options":["Аддзысьлытӧдз!","Кыдзи олан?","Видза олан!"],"answer":[],"correct":0,"note":"На прощание говорят «Аддзысьлытӧдз!».","image":null}]},{"id":"shanga","topic":1,"title":"Знакомьтесь: шаньга","foxLine":"Открываем вкусную традицию Севера.","words":[["Шаньга","Открытая выпечка с начинкой"],["Нянь","Хлеб"]],"steps":[{"kind":"choice","question":"Что изображено на картинке?","options":["Шаньга","Суп","Чай"],"answer":[],"correct":0,"note":"Шаньга — открытая выпечка с начинкой.","image":"place-shanga-map.png"},{"kind":"choice","question":"Какая начинка бывает у коми шаньги?","options":["Картофель и ягоды","Только шоколад","Только мясо"],"answer":[],"correct":0,"note":"В шаньги кладут картофель, крупу, творог или ягоды.","image":null},{"kind":"choice","question":"Как по-коми называется хлеб?","options":["Ва","Нянь","Пув"],"answer":[],"correct":1,"note":"«Нянь» — хлеб.","image":null}]},{"id":"food_words","topic":1,"title":"Что на столе?","foxLine":"Узнаем названия привычных продуктов.","words":[["Нянь","Хлеб"],["Шыд","Суп"],["Чери","Рыба"]],"steps":[{"kind":"choice","question":"Выберите слово «суп»","options":["Шыд","Ва","Йӧв"],"answer":[],"correct":0,"note":"«Шыд» — суп; например, «яя шыд» — мясной суп.","image":null},{"kind":"choice","question":"Что означает «чери»?","options":["Хлеб","Рыба","Молоко"],"answer":[],"correct":1,"note":"«Чери» — рыба.","image":null},{"kind":"arrange","question":"Соберите «Хлеб да соль!»","options":["сов!","Нянь","да"],"answer":["Нянь","да","сов!"],"correct":0,"note":"«Нянь да сов!» — знакомое пожелание за столом.","image":null}]},{"id":"drinks","topic":1,"title":"Что будем пить?","foxLine":"Заучим три слова для напитков.","words":[["Ва","Вода"],["Йӧв","Молоко"],["Пув ва","Брусничный морс"]],"steps":[{"kind":"choice","question":"Как по-коми «вода»?","options":["Нянь","Ва","Шыд"],"answer":[],"correct":1,"note":"«Ва» — вода.","image":null},{"kind":"arrange","question":"Соберите название брусничного морса","options":["ва","Пув"],"answer":["Пув","ва"],"correct":0,"note":"«Пув» — брусника, «ва» — вода.","image":null},{"kind":"choice","question":"Что означает «йӧв»?","options":["Молоко","Рыба","Ягода"],"answer":[],"correct":0,"note":"«Йӧв» — молоко.","image":null}]},{"id":"berries","topic":1,"title":"Ягоды Севера","foxLine":"В лесу можно найти целый словарь ягод.","words":[["Пув","Брусника"],["Чӧд","Черника"],["Сэтӧр","Смородина"]],"steps":[{"kind":"choice","question":"Как по-коми «брусника»?","options":["Пув","Чери","Йӧв"],"answer":[],"correct":0,"note":"«Пув» — брусника.","image":null},{"kind":"choice","question":"Какую ягоду называют «чӧд»?","options":["Смородину","Чернику","Бруснику"],"answer":[],"correct":1,"note":"«Чӧд» — черника.","image":null},{"kind":"choice","question":"Что означает «сэтӧр»?","options":["Хлеб","Смородина","Шаньга"],"answer":[],"correct":1,"note":"«Сэтӧр» — смородина.","image":null}]},{"id":"at_table","topic":1,"title":"За столом","foxLine":"Спросим, что можно съесть и выпить.","words":[["Мый позьӧ сёйны?","Что можно есть?"],["Мый позьӧ юны?","Что можно пить?"]],"steps":[{"kind":"choice","question":"Как спросить «Что можно пить?»?","options":["Мый позьӧ юны?","Кыдзи олан?","Мый позьӧ сёйны?"],"answer":[],"correct":0,"note":"«Юны» связано с питьём.","image":null},{"kind":"arrange","question":"Соберите вопрос «Что можно есть?»","options":["сёйны?","Мый","позьӧ"],"answer":["Мый","позьӧ","сёйны?"],"correct":0,"note":"«Мый позьӧ сёйны?» — вопрос о еде.","image":null},{"kind":"choice","question":"Что из этого можно ответить на вопрос о питье?","options":["Ва","Чери","Нянь"],"answer":[],"correct":0,"note":"«Ва» — вода.","image":null}]},{"id":"table_review","topic":1,"title":"Угощение готово","foxLine":"Накроем стол и повторим слова.","words":[["Шаньга","Выпечка"],["Пув ва","Брусничный морс"],["Нянь","Хлеб"]],"steps":[{"kind":"choice","question":"Гость просит «пув ва». Что подать?","options":["Брусничный морс","Молоко","Суп"],"answer":[],"correct":0,"note":"«Пув ва» — морс из брусники.","image":null},{"kind":"arrange","question":"Соберите вопрос «Что можно пить?»","options":["юны?","позьӧ","Мый"],"answer":["Мый","позьӧ","юны?"],"correct":0,"note":"«Мый позьӧ юны?» — вопрос о напитках.","image":null},{"kind":"choice","question":"Что можно положить в шаньгу?","options":["Картофель и ягоды","Лёд и соль","Только рыбу"],"answer":[],"correct":0,"note":"Традиционные начинки — картофель, ягоды, крупа, творог и другие.","image":null}]}]};
+const PNG = {
+  'mascot-sitting.png': MASCOT_PNG['Сидит'],
+  'mascot-running.png': MASCOT_PNG['Бежит'],
+  'mascot-explaining.png': MASCOT_PNG['Объясняет'],
+  'place-manpupuner-card.png': PLACE_CARD_PNG.manpupuner,
+  'place-manpupuner-map.png': PLACE_MAP_PNG.manpupuner,
+  'place-shanga-card.png': PLACE_CARD_PNG.shanga,
+  'place-shanga-map.png': PLACE_MAP_PNG.shanga,
+  'chest-closed.png': CHEST_PNG['Закрыт'],
+  'chest-open.png': CHEST_PNG['Открыт'],
+  'cranberry.png': COUNTER_ICON_PNG['Клюква'],
+  'fire.png': COUNTER_ICON_PNG['Огонь'],
+  'heart.png': COUNTER_ICON_PNG['Сердце'],
+};
+const W = 375, H = 812;
+const C = {
+  green:'#58CC02', greenEdge:'#58A700', greenPale:'#D7FFB8',
+  orange:'#FF9600', orangeEdge:'#D97A00', orangePale:'#FFF0D9',
+  blue:'#1CB0F6', bluePale:'#DDF4FF', yellow:'#FFC800', yellowPale:'#FFF6CC',
+  red:'#FF4B4B', pink:'#D94F9D', ink:'#4B4B4B', muted:'#777777', line:'#E5E5E5',
+  darkBg:'#141F22', darkSurface:'#1D2C30', darkLine:'#34464C',
+  darkText:'#F5F8F8', darkMuted:'#A8B8BC', white:'#FFFFFF', light:'#F7F7F7'
+};
+const imageHashes = {};
+let page, nodes = 0, fonts;
+function rgb(h) { h=h.replace('#',''); return {r:parseInt(h.slice(0,2),16)/255,g:parseInt(h.slice(2,4),16)/255,b:parseInt(h.slice(4,6),16)/255}; }
+function paint(h) { return [{type:'SOLID',color:rgb(h)}]; }
+function theme(d) { return {bg:d?C.darkBg:C.white, surface:d?C.darkSurface:C.white, ink:d?C.darkText:C.ink, muted:d?C.darkMuted:C.muted, line:d?C.darkLine:C.line, light:d?C.darkSurface:C.light}; }
+function box(p,x,y,w,h,fill,r=0,stroke=null,sw=1) {
+  const n=figma.createRectangle(); p.appendChild(n); n.x=x;n.y=y;n.resize(w,h);n.cornerRadius=r;
+  n.fills=paint(fill); if(stroke){n.strokes=paint(stroke);n.strokeWeight=sw;}
+  nodes++;return n;
+}
+function ellipse(p,x,y,w,h,fill,stroke=null,sw=1) {
+  const n=figma.createEllipse();p.appendChild(n);n.x=x;n.y=y;n.resize(w,h);n.fills=paint(fill);
+  if(stroke){n.strokes=paint(stroke);n.strokeWeight=sw;}nodes++;return n;
+}
+function text(p,s,x,y,w,size=16,color=C.ink,bold=false,align='LEFT') {
+  const n=figma.createText();p.appendChild(n);n.fontName=bold?fonts.bold:fonts.regular;
+  n.characters=String(s);n.fontSize=size;n.fills=paint(color);n.textAlignHorizontal=align;
+  n.textAutoResize='HEIGHT';n.resize(w,Math.max(size*1.5,20));n.x=x;n.y=y;
+  nodes++;return n;
+}
+function label(p,s,x,y,w,color=C.muted) { return text(p,s.toUpperCase(),x,y,w,11,color,true); }
+function image(p,name,x,y,w,h,fit='FIT') {
+  const b64=PNG[name];if(!b64)return;
+  let hash=imageHashes[name];if(!hash){hash=figma.createImage(figma.base64Decode(b64)).hash;imageHashes[name]=hash;}
+  const n=figma.createRectangle();p.appendChild(n);n.x=x;n.y=y;n.resize(w,h);
+  n.fills=[{type:'IMAGE',imageHash:hash,scaleMode:fit}];nodes++;return n;
+}
+function button(p,s,x,y,w,color=C.green,edge=C.greenEdge) {
+  box(p,x,y,w,53,edge,15);box(p,x,y,w,49,color,15);text(p,s.toUpperCase(),x+10,y+16,w-20,14,C.white,true,'CENTER');
+}
+function card(p,x,y,w,h,d,fill=null,border=null,r=18) {
+  const t=theme(d);return box(p,x,y,w,h,fill||t.surface,r,border||t.line,1.5);
+}
+function base(name,d,x,y,nav=-1) {
+  const f=figma.createFrame();page.appendChild(f);f.name=`APK · ${name} · ${d?'Тёмная':'Светлая'}`;
+  f.resize(W,H);f.x=x;f.y=y;f.fills=paint(theme(d).bg);f.clipsContent=true;nodes++;
+  if(nav>=0) drawNav(f,d,nav);return f;
+}
+function drawNav(f,d,active) {
+  const t=theme(d);box(f,0,738,375,1,t.line);box(f,0,739,375,73,t.bg);
+  const glyphs=['⌂','▣','★','▤','●'];const cols=[C.orange,C.yellow,C.blue,C.pink,C.blue];
+  for(let i=0;i<5;i++){const cx=41+i*73;
+    if(i===active)box(f,cx-27,749,54,52,d?'#214257':C.bluePale,12,C.blue,1.5);
+    text(f,glyphs[i],cx-16,754,32,27,cols[i],true,'CENTER');
+  }
+}
+function topStats(f) {
+  box(f,18,54,34,12,'#2E86D1',5);box(f,18,64,34,7,'#13A538');box(f,18,71,34,6,C.white);
+  [['cranberry.png',122,'0',C.red],['fire.png',224,'0',C.orange],['heart.png',324,'5',C.red]].forEach(([name,x,value,color])=>{
+    image(f,name,x,52,25,25);text(f,value,x+28,56,26,15,color,true);
+  });
+}
+function topicBanner(f,topic,y) {
+  const accent=topic===0?C.green:C.orange,edge=topic===0?C.greenEdge:C.orangeEdge;
+  box(f,16,y,343,110,edge,16);box(f,16,y,343,106,accent,16);
+  label(f,`РАЗДЕЛ 1, ТЕМА ${topic+1}`,32,y+24,235,C.white);
+  text(f,CONTENT.topics[topic].title,32,y+47,250,20,C.white,true);
+  box(f,296,y+18,2,54,edge);text(f,'▣',308,y+35,37,26,C.white,true,'CENTER');
+}
+function pathNode(f,x,y,active,accent,d,book=false) {
+  const t=theme(d),face=active?accent:(d?t.line:C.line),edge=active?(accent===C.green?C.greenEdge:C.orangeEdge):(d?'#293B41':'#B5B5B5');
+  if(active)ellipse(f,x-7,y-7,82,82,t.bg,t.line,4);
+  ellipse(f,x,y+8,68,64,edge);ellipse(f,x,y,68,64,face);
+  text(f,book?'▣':'★',x+13,y+16,42,31,active?C.white:(d?t.muted:'#AFBFC4'),true,'CENTER');
+}
+function drawHome(f,d,topic=0) {
+  const t=theme(d),a=topic===0?C.green:C.orange,e=topic===0?C.greenEdge:C.orangeEdge;
+  topStats(f);topicBanner(f,topic,103);
+  pathNode(f,143,235,true,a,d);
+  const pointer=box(f,180,318,20,20,a);pointer.rotation=45;
+  box(f,26,331,323,154,e,18);box(f,26,331,323,150,a,18);
+  text(f,CONTENT.tasks.find(z=>z.topic===topic).title,42,351,291,20,C.white,true);
+  text(f,`Урок 1 из 6 · ${CONTENT.topics[topic].title.toLowerCase()}`,42,382,291,14,C.white);
+  box(f,42,418,291,48,C.white,12);text(f,'УЧИТЬСЯ · +15 ОПЫТА',52,433,271,14,e,true,'CENTER');
+  pathNode(f,47,528,false,a,d);
+  image(f,CONTENT.topics[topic].mapImage,237,513,122,116);
+  for(let i=0;i<3;i++)text(f,'★',267+i*22,624,22,20,d?t.muted:'#B5B5B5',true);
+  image(f,'chest-closed.png',129,612,118,108);
+  pathNode(f,268,683,false,a,d,true);
+}
+function drawTasks(f,d) {
+  const t=theme(d);box(f,0,0,W,213,C.pink);
+  text(f,'Задания недели',22,38,320,24,C.white,true);label(f,'◷  5 ДНЕЙ',22,78,200,'#FFE8F5');
+  box(f,22,104,331,83,C.darkBg,15);text(f,'Пройдите 12 заданий курса!',36,119,300,17,C.white,true);
+  box(f,36,146,303,18,C.darkLine,9);text(f,'0 / 12',150,149,75,12,C.white,true,'CENTER');
+  label(f,'ПАРНОЕ ЗАДАНИЕ',22,236,250,t.muted);
+  box(f,22,261,331,105,'#54314F',16);
+  image(f,'place-manpupuner-map.png',63,269,93,89);image(f,'place-shanga-map.png',228,269,93,89);
+  text(f,'✦',172,295,40,28,'#FFD472',true,'CENTER');
+  text(f,'Пройдите вместе 12 уроков курса',22,387,331,17,t.ink,true);
+  box(f,22,438,251,23,t.line,11);text(f,'0 / 12',100,442,96,13,t.ink,true,'CENTER');
+  image(f,'chest-closed.png',303,427,45,45);
+  ellipse(f,23,498,10,10,C.pink);text(f,'Вы',41,494,100,15,t.ink,true);text(f,'0 / 12 уроков',225,495,128,13,t.muted,false,'RIGHT');
+  ellipse(f,23,531,10,10,'#B10075');text(f,'Друг',41,527,100,15,t.ink,true);text(f,'Пока не подключён',194,527,159,13,t.muted,false,'RIGHT');
+  card(f,22,566,331,46,d,t.bg,t.line,12);text(f,'♟  ПРИГЛАСИТЬ ДРУГА',35,580,305,14,t.ink,true,'CENTER');
+  box(f,22,643,331,2,t.line);label(f,'ЗАДАНИЯ ДНЯ',22,681,200,t.muted);
+}
+function drawRanking(f,d) {
+  const t=theme(d);text(f,'Рейтинг',16,30,340,27,t.ink,true);
+  text(f,'Каждое открытие приближает к вершине',16,67,340,14,t.muted);
+  card(f,16,108,343,155,d,C.yellow,'#E6A700');label(f,'ВАШЕ МЕСТО',33,126,220,C.ink);
+  text(f,'№ 4',33,152,118,42,C.ink,true);text(f,'0 опыта',155,169,170,22,C.ink,true);
+  text(f,'Лига исследователей',155,198,180,14,C.ink);text(f,'Продолжайте путь и собирайте клюкву',33,233,300,13,C.ink);
+  label(f,'ЛИДЕРЫ НЕДЕЛИ · ДЕМО',16,288,300,t.muted);
+  const leaders=[['Аня','105 XP'],['Марк','75 XP'],['Лена','45 XP'],['Вы','0 XP']];
+  leaders.forEach((v,i)=>{const y=319+i*83;card(f,16,y,343,72,d,i===3?(d?'#25452B':C.greenPale):t.light,i===3?C.green:t.line);
+    ellipse(f,31,y+17,39,39,i===3?C.green:t.line);text(f,String(i+1),40,y+26,21,16,i===3?C.white:t.ink,true,'CENTER');
+    text(f,v[0],81,y+26,180,17,t.ink,true);text(f,v[1],267,y+27,75,14,i===3?C.greenEdge:t.muted,true,'RIGHT');});
+  text(f,'Участники добавлены для примера. Ваш опыт сохраняется на устройстве.',16,670,343,13,t.muted);
+}
+function drawFeed(f,d) {
+  const t=theme(d);text(f,'Лента новостей',16,30,340,27,t.ink,true);
+  story(f,d,100,'ФОЛК','Начало пути','Первый день путешествия по языку коми!','Открывайте новые темы и собирайте награды.','fire.png');
+  box(f,16,390,343,2,t.line);
+  story(f,d,420,'ФОЛК','Традиции коми','Шаньга объединяет за столом','Вместе приготовим традиционные пирожки','place-shanga-map.png');
+}
+function story(f,d,y,author,time,title,detail,art) {
+  const t=theme(d);ellipse(f,16,y,42,42,d?'#214257':C.bluePale);
+  image(f,'mascot-sitting.png',20,y+3,34,34);
+  text(f,author,68,y,205,16,t.ink,true);text(f,time,68,y+24,205,13,t.muted);
+  image(f,art,274,y,77,77);
+  text(f,title,16,y+94,327,19,t.ink,true);text(f,detail,16,y+151,327,14,t.muted);
+  card(f,16,y+213,66,39,d,t.bg,t.line,10);text(f,'♡ 0',27,y+224,47,16,t.ink,true);
+  card(f,91,y+213,54,39,d,t.bg,t.line,10);text(f,'▤',103,y+222,29,18,t.ink,true,'CENTER');
+  card(f,154,y+213,54,39,d,t.bg,t.line,10);text(f,'↥',168,y+222,29,18,t.ink,true,'CENTER');
+}
+function drawProfile(f,d) {
+  const t=theme(d);text(f,'Профиль',16,30,340,27,t.ink,true);
+  text(f,'Ваш путь в приложении «ФОЛК»',16,67,340,14,t.muted);
+  image(f,'mascot-sitting.png',112,113,150,150);text(f,'Алёна',67,275,241,22,t.ink,true,'CENTER');
+  card(f,16,328,343,90,d,d?'#25452B':C.greenPale,C.green);
+  [['0','опыт'],['0/12','уроки'],['0/2','пестери']].forEach((a,i)=>{const x=32+i*109;text(f,a[0],x,345,93,22,t.ink,true,'CENTER');text(f,a[1],x,376,93,13,t.muted,false,'CENTER');});
+  card(f,16,433,343,63,d,t.light);text(f,'◉',32,450,24,23,C.blue,true);
+  text(f,'Курс · Коми',65,453,180,16,t.ink,true);text(f,'2 темы',268,453,75,14,t.muted,false,'RIGHT');
+  card(f,16,508,343,63,d,t.light);text(f,'♧',32,523,24,25,C.blue,true);
+  text(f,'Уведомления',65,529,270,16,t.ink,true);
+  card(f,16,583,343,81,d,t.light);text(f,'◐',32,605,24,25,C.blue,true);
+  text(f,'Тёмная тема',65,597,216,16,t.ink,true);text(f,'Сохраняется на устройстве',65,621,240,13,t.muted);
+  box(f,305,605,37,21,d?C.green:t.line,11);ellipse(f,d?321:307,607,17,17,C.white);
+  text(f,'↻  Начать заново',16,696,343,15,C.blue,true,'CENTER');
+}
+function drawNotifications(f,d) {
+  const t=theme(d);text(f,'‹  Уведомления',16,26,340,22,t.ink,true);
+  text(f,'Что нового?',16,97,340,27,t.ink,true);text(f,'Важное по вашему обучению',16,135,340,14,t.muted);
+  card(f,16,179,343,102,d,d?'#25452B':C.greenPale,C.green);
+  text(f,'✦',32,210,29,24,C.greenEdge,true);text(f,'Пора продолжить путешествие',69,199,270,17,t.ink,true);
+  text(f,'12 уроков ждут вас',69,233,270,14,t.muted);
+  card(f,16,293,343,102,d,d?'#4C421F':C.yellowPale,C.yellow);
+  image(f,'chest-closed.png',30,305,48,68);text(f,'Награда за тему',84,315,250,17,t.ink,true);
+  text(f,'Пройдите все уроки одной темы',84,348,252,14,t.muted);
+}
+function drawPlace(f,d,topic) {
+  const t=theme(d),place=CONTENT.topics[topic];drawHome(f,d,topic);
+  box(f,0,0,W,H,d?'#0D1719':'#737373').opacity=0.55;
+  const sh=card(f,0,383,375,429,d,t.bg,t.bg,25);sh.topLeftRadius=25;sh.topRightRadius=25;
+  box(f,168,395,39,5,t.line,4);
+  image(f,place.cardImage,16,415,343,190,'CROP');
+  text(f,place.place,16,620,343,22,t.ink,true,'CENTER');
+  card(f,16,658,343,70,d,t.light,t.light,15);
+  text(f,'◎',30,682,28,22,C.green,true);
+  text(f,place.prompt,66,674,272,16,t.ink,true);
+  button(f,'Начать задание',16,746,343,C.orange,C.orangeEdge);
+}
+function quizHeader(f,d,progress=0) {
+  const t=theme(d);text(f,'×',30,22,23,26,t.muted,true);
+  box(f,64,30,245,12,t.line,7);if(progress>0)box(f,64,30,245*progress,12,C.green,7);
+  image(f,'heart.png',324,26,23,23);text(f,'5',348,29,17,15,C.red,true);
+}
+function drawIntro(f,d,task) {
+  const t=theme(d);quizHeader(f,d,0);
+  label(f,CONTENT.topics[task.topic].title,20,81,335,task.topic===0?C.greenEdge:C.orangeEdge);
+  text(f,task.title,20,109,335,27,t.ink,true);
+  image(f,'mascot-explaining.png',21,168,118,128);
+  card(f,139,174,216,110,d,t.surface,t.line,22);text(f,task.foxLine,154,190,186,16,t.ink,true);
+  label(f,'СЕГОДНЯ УЗНАЕМ',20,328,300,t.muted);
+  task.words.forEach((v,i)=>{const y=360+i*76;card(f,20,y,335,65,d);text(f,v[0],35,y+21,168,16,t.ink,true);text(f,v[1],208,y+22,130,14,t.muted,false,'RIGHT');});
+  text(f,'Далее — 3 коротких упражнения.',20,532,335,14,t.muted);
+  button(f,'Продолжить',20,741,335);
+}
+function drawQuestion(f,d,task,index) {
+  const t=theme(d),step=task.steps[index];quizHeader(f,d,(index+1)/3);
+  label(f,`ЗАДАНИЕ ${index+1} ИЗ 3`,20,82,300,task.topic===0?C.greenEdge:C.orangeEdge);
+  text(f,step.question,20,109,335,25,t.ink,true);
+  image(f,'mascot-explaining.png',20,194,123,120);
+  card(f,137,206,218,96,d,t.surface,t.line,20);
+  text(f,task.words[0][0],153,232,184,18,t.ink,true);
+  let y=Math.max(333,109+Math.ceil(step.question.length/24)*30+168);
+  if(step.image){image(f,step.image,96,y,178,128);y+=143;}
+  if(step.kind==='choice')step.options.forEach((option,i)=>{const yy=y+i*75;card(f,20,yy,335,65,d);card(f,38,yy+17,30,30,d,t.surface,t.line,7);text(f,String(i+1),44,yy+22,18,13,t.ink,true,'CENTER');text(f,option,79,yy+23,256,16,t.ink,true);});
+  else {label(f,'ВАШ ОТВЕТ',20,y,300,t.muted);card(f,20,y+30,335,132,d,t.light,t.line,15);
+    text(f,'Нажимайте слова в нужном порядке',31,y+78,310,14,t.muted);
+    label(f,'СЛОВА',20,y+189,280,t.muted);let xx=20,chipY=y+221;step.options.forEach((word)=>{const ww=Math.min(166,Math.max(70,word.length*9+27));if(xx+ww>355){xx=20;chipY+=52;}card(f,xx,chipY,ww,43,d,t.surface,t.line,11);text(f,word,xx+10,chipY+12,ww-20,14,t.ink,true);xx+=ww+8;});}
+  button(f,'Проверить',20,741,335,C.greenEdge,C.greenEdge);
+}
+function drawFeedback(f,d,correct) {
+  const t=theme(d);quizHeader(f,d,0.33);label(f,'ЗАДАНИЕ 1 ИЗ 3',20,82,300,C.greenEdge);
+  text(f,'Вы встретили друга. Что скажете по-коми?',20,109,335,25,t.ink,true);
+  ['Чолӧм!','Аттьӧ!','Аддзысьлытӧдз!'].forEach((s,i)=>{const y=190+i*75;card(f,20,y,335,65,d,i===0&&correct?(d?'#25452B':C.greenPale):i===1&&!correct?(d?'#4A2729':'#FFDFE0'):t.surface,i===0&&correct?C.green:i===1&&!correct?C.red:t.line);text(f,`${i+1}   ${s}`,40,y+22,290,16,t.ink,true);});
+  box(f,0,613,375,199,correct?(d?'#25452B':C.greenPale):(d?'#4A2729':'#FFDFE0'));
+  text(f,correct?'✓  Отлично!':'×  Правильный ответ:',20,633,335,20,correct?C.greenEdge:C.red,true);
+  text(f,correct?'«Чолӧм!» — дружеское «Привет!».':'Чолӧм!',20,676,335,15,t.ink);
+  button(f,'Продолжить',20,741,335,correct?C.green:C.red,correct?C.greenEdge:'#EA2B2B');
+}
+function drawResult(f,d) {
+  const t=theme(d);image(f,'mascot-running.png',79,199,217,174);
+  text(f,'Урок пройден!',20,394,335,27,C.orangeEdge,true,'CENTER');
+  text(f,'Впереди у вас ещё много открытий!',20,432,335,14,t.muted,false,'CENTER');
+  const stats=[['ОПЫТ','+15',C.yellow],['ТОЧНОСТЬ','100%',C.green],['ВРЕМЯ','2:41',C.blue]];
+  stats.forEach((a,i)=>{const x=18+i*114;card(f,x,480,107,64,d,t.surface,a[2],12);box(f,x,480,107,23,a[2],8);text(f,a[0],x+5,485,97,10,C.white,true,'CENTER');text(f,a[1],x+5,518,97,16,a[2],true,'CENTER');});
+  button(f,'Продолжить',20,741,335);
+}
+function drawChest(f,d,topic,open) {
+  const t=theme(d);text(f,'×',20,20,35,27,t.muted,true);
+  label(f,`ТЕМА ${topic+1} · НАГРАДА`,20,276,335,t.muted);
+  image(f,open?'chest-open.png':'chest-closed.png',57,316,260,230);
+  text(f,open?'Награда получена!':'Пестерь пока закрыт',20,566,335,27,t.ink,true,'CENTER');
+  text(f,open?'+50 ягод клюквы':'Пройдите все 6 уроков темы',20,607,335,14,t.muted,false,'CENTER');
+  button(f,open?'Продолжить':'К заданиям',20,741,335);
+}
+async function build(pageArg, fontFaces) {
+  fonts=fontFaces;nodes=0;
+  await figma.setCurrentPageAsync(pageArg);
+  page=figma.createFrame();page.name='ФОЛК · Приложение';page.fills=[];page.clipsContent=false;
+  pageArg.appendChild(page);
+  let y=0;
+  const sections=[
+    ['Главные вкладки',[
+      ['Главная · Приветствия',(f,d)=>drawHome(f,d,0),0],
+      ['Главная · Традиции',(f,d)=>drawHome(f,d,1),0],
+      ['Задания',(f,d)=>drawTasks(f,d),1],
+      ['Рейтинг',(f,d)=>drawRanking(f,d),2],
+      ['Лента новостей',(f,d)=>drawFeed(f,d),3],
+      ['Профиль · Алёна',(f,d)=>drawProfile(f,d),4],
+      ['Уведомления',(f,d)=>drawNotifications(f,d),-1],
+    ]],
+    ['Места, награды и состояния',[
+      ['Маньпупунёр',(f,d)=>drawPlace(f,d,0),-1],
+      ['Шаньга',(f,d)=>drawPlace(f,d,1),-1],
+      ['Верный ответ',(f,d)=>drawFeedback(f,d,true),-1],
+      ['Неверный ответ',(f,d)=>drawFeedback(f,d,false),-1],
+      ['Урок пройден',(f,d)=>drawResult(f,d),-1],
+      ['Пестерь · закрыт',(f,d)=>drawChest(f,d,0,false),-1],
+      ['Пестерь · открыт',(f,d)=>drawChest(f,d,0,true),-1],
+    ]],
+  ];
+  function heading(s,yy){text(page,`ФОЛК · APK · ${s}`,0,yy,1900,32,C.ink,true);}
+  for(const [title,items] of sections){heading(title,y);y+=64;
+    for(let i=0;i<items.length;i++){const [name,fn,nav]=items[i];const row=Math.floor(i/3),col=i%3;
+      for(let d=0;d<2;d++){const f=base(name,!!d,col*850+d*415,y+row*852,nav);fn(f,!!d);}
+    }
+    y+=Math.ceil(items.length/3)*852+110;
+  }
+  for(let topic=0;topic<2;topic++){
+    heading(`Тема ${topic+1} · ${CONTENT.topics[topic].title}`,y);y+=64;
+    const lessons=CONTENT.tasks.filter(t=>t.topic===topic);
+    for(let i=0;i<lessons.length;i++){
+      const task=lessons[i];const col=i%3,row=Math.floor(i/3),yy=y+row*4*852;
+      for(let state=0;state<4;state++)for(let d=0;d<2;d++){
+        const name=`Тема ${topic+1} · ${String(i+1).padStart(2,'0')} ${task.title} · ${state===0?'Введение':`Задание ${state}/3`}`;
+        const f=base(name,!!d,col*850+d*415,yy+state*852,-1);
+        if(state===0)drawIntro(f,!!d,task);else drawQuestion(f,!!d,task,state-1);
+      }
+    }
+    y+=2*4*852+110;
+  }
+  page.resize(2525,y);
+  const frames=page.children.filter(n=>n.type==='FRAME');
+  return { frames: frames.length, layers: nodes, root: page, focus: frames.slice(0,2) };
+}
+return { build };
+})();
+// </generated:app-frames>
+
+
+
+
+
+
 
 // ---------------------------------------------------------------------
 // MAIN
@@ -1959,7 +2284,7 @@ async function findPrevious() {
   const cols = (await figma.variables.getLocalVariableCollectionsAsync()).filter((c) => NS.some((p) => c.name.startsWith(p + ' · ')));
   const styles = (await figma.getLocalTextStylesAsync()).filter((s) => NS.some((p) => s.name.startsWith(p + '/')));
   const rootNames = new Set();
-  for (const p of NS) for (const n of ['Основы', 'Компоненты', 'Экраны', 'Анимации', 'Тёмная тема']) rootNames.add(`${p} · ${n}`);
+  for (const p of NS) for (const n of ['Основы', 'Компоненты', 'Экраны', 'Анимации', 'Тёмная тема', 'Приложение']) rootNames.add(`${p} · ${n}`);
   // v28 аварийно оставляла эти два временных слоя вне корневого фрейма.
   const orphanNames = new Set(['Спрайт-лист · 4 × 2', 'Лиса · кадр 1']);
   const frames = [];
@@ -1968,7 +2293,8 @@ async function findPrevious() {
   for (const p of pages) {
     await p.loadAsync();
     for (const n of p.children) {
-      if (rootNames.has(n.name) || (p.name === PAGES.animations && orphanNames.has(n.name))) frames.push(n);
+      if (rootNames.has(n.name) || (p.name === PAGES.animations && orphanNames.has(n.name)) ||
+          (p.name === PAGES.app && (n.name.startsWith('APK · ') || n.name.startsWith('ФОЛК · APK · ')))) frames.push(n);
     }
   }
   return { cols, styles, frames, empty: !cols.length && !styles.length && !frames.length };
@@ -1996,8 +2322,10 @@ async function main() {
   const prev = await findPrevious();
   if (!prev.empty) {
     if (!(await confirmRebuild(prev))) return 'Отменено — ничего не изменено.';
-    await cleanup(prev);
   }
+  // Проверяем отдельную страницу до очистки прошлой версии кита.
+  const pApp = await getPage(PAGES.app);
+  if (!prev.empty) await cleanup(prev);
   const { F, family } = await loadFonts();
   await buildVariables();
   await buildTextStyles(F);
@@ -2011,8 +2339,9 @@ async function main() {
   const darkScreens = await buildDarkScreens(pScreens, K, lightScreens);
   const pAnimations = await getPage(PAGES.animations);
   await buildAnimations(pAnimations, K);
-  figma.viewport.scrollAndZoomIntoView([darkScreens]);
-  return `✅ ФОЛК · UI Kit v37 готов: ${STATS.components} компонентов (${STATS.sets} наборов), ${STATS.variables} переменных, ${STATS.textStyles} стилей, ${STATS.screens} экранов и 20 уникальных кадров анимации. Добавлены экраны тёмной темы.`;
+  const appFrames = await APP_FRAMES.build(pApp, F);
+  figma.viewport.scrollAndZoomIntoView(appFrames.focus);
+  return `✅ ФОЛК · UI Kit v41 готов: ${STATS.components} компонентов (${STATS.sets} наборов), ${STATS.variables} переменных, ${STATS.textStyles} стилей, ${STATS.screens} экранов, 20 кадров анимации и ${appFrames.frames} фрейма приложения с ${appFrames.layers} редактируемыми слоями.`;
 }
 
 main()

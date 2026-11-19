@@ -11,6 +11,7 @@ class ProgressStore extends ChangeNotifier {
     );
     hearts = _prefs.getInt('hearts') ?? 5;
     darkMode = _prefs.getBool('dark_mode') ?? false;
+    languageSelected = _prefs.getBool('language_selected') ?? false;
   }
 
   final SharedPreferences _prefs;
@@ -18,6 +19,13 @@ class ProgressStore extends ChangeNotifier {
   final Set<int> openedChests = {};
   int hearts = 5;
   bool darkMode = false;
+  bool languageSelected = false;
+
+  Future<void> selectLanguage() async {
+    languageSelected = true;
+    notifyListeners();
+    await _prefs.setBool('language_selected', true);
+  }
 
   Future<void> setDarkMode(bool enabled) async {
     darkMode = enabled;
