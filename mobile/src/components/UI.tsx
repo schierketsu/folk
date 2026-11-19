@@ -1,16 +1,17 @@
 import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle, Path, SvgXml } from 'react-native-svg';
+import Svg, { Path, SvgXml } from 'react-native-svg';
 import { icons } from '../assets/icons';
+import { images } from '../assets/images';
 import { c, font } from '../theme';
 
 export function Icon({ name, size = 32 }: { name: keyof typeof icons; size?: number }) {
   return <SvgXml xml={icons[name]} width={size} height={size} />;
 }
 
-export function Button({ title, onPress, color = c.green, disabled = false }: { title: string; onPress: () => void; color?: string; disabled?: boolean }) {
-  return <Pressable disabled={disabled} onPress={onPress} style={[styles.button, { backgroundColor: disabled ? c.gray : color, borderBottomColor: disabled ? c.grayDark : color === c.green ? c.greenDark : c.blueDark }]}>
-    <Text style={styles.buttonText}>{title}</Text>
+export function Button({ title, onPress, color = c.green, shadowColor, textColor = 'white', disabled = false }: { title: string; onPress: () => void; color?: string; shadowColor?: string; textColor?: string; disabled?: boolean }) {
+  return <Pressable disabled={disabled} onPress={onPress} style={[styles.button, { backgroundColor: disabled ? c.gray : color, borderBottomColor: disabled ? c.grayDark : shadowColor ?? (color === c.green ? c.greenDark : c.blueDark) }]}>
+    <Text style={[styles.buttonText, { color: disabled ? 'white' : textColor }]}>{title}</Text>
   </Pressable>;
 }
 
@@ -22,30 +23,28 @@ export function PageHeader({ title, onClose, progress }: { title?: string; onClo
   </View>;
 }
 
-export function StarRing({ active = false, size = 96 }: { active?: boolean; size?: number }) {
-  const circleSize = size * .72;
-  return <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-    {active && <Svg width={size} height={size} viewBox="0 0 100 100" style={StyleSheet.absoluteFill}>
-      <Path d="M49 5 A45 45 0 0 0 5 53" fill="none" stroke={c.gray} strokeWidth="8" strokeLinecap="round" />
-      <Path d="M6 62 A45 45 0 0 0 42 95" fill="none" stroke={c.gray} strokeWidth="8" strokeLinecap="round" />
-      <Path d="M53 95 A45 45 0 0 0 94 60" fill="none" stroke={c.gray} strokeWidth="8" strokeLinecap="round" />
-      <Path d="M95 49 A45 45 0 0 0 59 5" fill="none" stroke={c.green} strokeWidth="8" strokeLinecap="round" />
+export function StarRing({ active = false, color = c.green, shadowColor = c.greenDark }: { active?: boolean; color?: string; shadowColor?: string }) {
+  return <View style={{ width: 118, height: 108 }}>
+    {active && <Svg width={118} height={108} viewBox="0 0 118 108" style={StyleSheet.absoluteFill}>
+      <Path d="M52 6 A52 44 0 0 0 7 44" fill="none" stroke={c.gray} strokeWidth="8" strokeLinecap="round" />
+      <Path d="M7 56 C10 78 27 98 52 98" fill="none" stroke={c.gray} strokeWidth="8" strokeLinecap="round" />
+      <Path d="M66 98 C91 98 108 78 111 56" fill="none" stroke={c.gray} strokeWidth="8" strokeLinecap="round" />
+      <Path d="M111 44 A52 44 0 0 0 66 6" fill="none" stroke={color} strokeWidth="8" strokeLinecap="round" />
     </Svg>}
-    <View style={[styles.nodeShadow, { width: circleSize, height: circleSize, borderRadius: circleSize / 2, backgroundColor: c.greenDark, top: (size - circleSize) / 2 + 5, left: (size - circleSize) / 2 }]} />
-    <View style={[styles.nodeFace, { width: circleSize, height: circleSize, borderRadius: circleSize / 2, backgroundColor: c.green, top: (size - circleSize) / 2, left: (size - circleSize) / 2 }]}>
-      <Icon name="step-star" size={circleSize * .43} />
+    <View style={[styles.nodeShadow, styles.starShadow, { backgroundColor: shadowColor }]} />
+    <View style={[styles.nodeFace, styles.starFace, { backgroundColor: color }]}>
+      <Image source={images.mapStar} style={styles.stageStar} resizeMode="contain" />
     </View>
   </View>;
 }
 
-export function LockedNode({ size = 72 }: { size?: number }) {
-  return <View style={{ width: size, height: size + 7 }}>
-    <View style={[styles.nodeShadow, { width: size, height: size, borderRadius: size / 2, backgroundColor: '#B8B8B8', top: 7, left: 0 }]} />
-    <View style={[styles.nodeFace, { width: size, height: size, borderRadius: size / 2, backgroundColor: c.gray, top: 0, left: 0 }]}>
-      <Svg width={size * .36} height={size * .41} viewBox="0 0 28 32">
-        <Path d="M6 13V9a8 8 0 0 1 16 0v4" fill="none" stroke={c.grayDark} strokeWidth="4" />
-        <Path d="M4 13h20v17H4z" fill={c.grayDark} />
-        <Circle cx="14" cy="21" r="2" fill={c.gray} />
+export function LockedNode() {
+  return <View style={{ width: 84, height: 69 }}>
+    <View style={[styles.nodeShadow, styles.lockShadow]} />
+    <View style={[styles.nodeFace, styles.lockFace]}>
+      <Svg width={29} height={30} viewBox="0 0 36 36">
+        <Path d="M6 19v-7a12 12 0 0 1 24 0v7h-5v-7a7 7 0 0 0-14 0v7H6Z" fill={c.grayDark} />
+        <Path d="M4 17h28a3 3 0 0 1 3 3v13a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3V20a3 3 0 0 1 3-3Z" fill={c.grayDark} />
       </Svg>
     </View>
   </View>;
@@ -68,7 +67,12 @@ const styles = StyleSheet.create({
   trackFill: { height: 14, borderRadius: 10, backgroundColor: c.green },
   nodeShadow: { position: 'absolute' },
   nodeFace: { position: 'absolute', alignItems: 'center', justifyContent: 'center' },
+  starShadow: { width: 84, height: 62, borderRadius: 31, backgroundColor: c.greenDark, top: 22, left: 17 },
+  starFace: { width: 84, height: 62, borderRadius: 31, backgroundColor: c.green, top: 17, left: 17 },
+  stageStar: { width: 36, height: 36, tintColor: 'white' },
+  lockShadow: { width: 84, height: 62, borderRadius: 31, backgroundColor: '#B8B8B8', top: 7, left: 0 },
+  lockFace: { width: 84, height: 62, borderRadius: 31, backgroundColor: c.gray, top: 0, left: 0 },
   counter: { flexDirection: 'row', alignItems: 'center', gap: 9 },
-  counterImage: { width: 33, height: 33 },
-  counterValue: { fontSize: 23, fontFamily: font.extra },
+  counterImage: { width: 39, height: 39 },
+  counterValue: { fontSize: 26, fontFamily: font.extra },
 });

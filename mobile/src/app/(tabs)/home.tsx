@@ -6,10 +6,10 @@ import { images } from '../../assets/images';
 import { Counter, LockedNode, StarRing } from '../../components/UI';
 import { lessonsForTopic, topics } from '../../data/course';
 import { useProgress } from '../../state/ProgressContext';
-import { c, font } from '../../theme';
+import { font, topicPalettes } from '../../theme';
 
 const nodeOffsets = [0, -70, -98, -70, 0, 70];
-const ringSize = 92;
+const nodeWidth = 118;
 
 export default function Home() {
   const { width } = useWindowDimensions();
@@ -30,11 +30,12 @@ export default function Home() {
         </View>
 
         {[0, 1].map(topic => {
+          const palette = topicPalettes[topic];
           const taskList = lessonsForTopic(topic);
           const previousTopicComplete = topic === 0 || lessonsForTopic(topic - 1).every(item => progress.completed.includes(item.id));
           const complete = taskList.every(item => progress.completed.includes(item.id));
           return <View key={topic}>
-            <View style={[styles.banner, topic > 0 && styles.nextBanner]}>
+            <View style={[styles.banner, topic > 0 && styles.nextBanner, { backgroundColor: palette.primary, borderBottomColor: palette.shadow }]}>
               <Text style={styles.module}>МОДУЛЬ 1, ТЕМА {topic + 1}</Text>
               <Text style={styles.bannerTitle}>{topics[topic].title}</Text>
             </View>
@@ -44,7 +45,7 @@ export default function Home() {
                 const done = progress.completed.includes(lesson.id);
                 const unlocked = index === 0 ? previousTopicComplete : progress.completed.includes(taskList[index - 1].id);
                 const isSelected = selected === lesson.id;
-                const left = Math.max(20, Math.min(contentWidth - ringSize - 20, (contentWidth - ringSize) / 2 + nodeOffsets[index]));
+                const left = Math.max(20, Math.min(contentWidth - nodeWidth - 20, (contentWidth - nodeWidth) / 2 + nodeOffsets[index]));
                 return <React.Fragment key={lesson.id}>
                   <View style={styles.stage}>
                     <View style={[styles.stageNode, { left }]}>
@@ -53,7 +54,7 @@ export default function Home() {
                         accessibilityLabel={lesson.title}
                         accessibilityState={{ selected: isSelected }}
                         onPress={() => setSelected(isSelected ? null : lesson.id)}
-                      ><StarRing size={ringSize} active={!done} /></Pressable> : <LockedNode size={72} />}
+                      ><StarRing active={!done} color={palette.primary} shadowColor={palette.shadow} /></Pressable> : <LockedNode />}
                     </View>
                     {index === 2 && <Pressable
                       accessibilityRole="button"
@@ -62,19 +63,22 @@ export default function Home() {
                       style={styles.place}
                     >
                       <Image source={topic === 0 ? images.manpupuner : images.shanga} style={styles.placeImage} resizeMode="contain" />
-                      <View style={styles.placeStars}><Text style={styles.goldStar}>★</Text><Text style={styles.grayStar}>★</Text><Text style={styles.grayStar}>★</Text></View>
+                      <View style={styles.placeStars}>
+                        <Image source={images.mapStar} style={styles.placeStar} resizeMode="contain" />
+                        <Image source={images.mapStar} style={[styles.placeStar, styles.middleStar, styles.grayStar]} resizeMode="contain" />
+                        <Image source={images.mapStar} style={[styles.placeStar, styles.grayStar]} resizeMode="contain" />
+                      </View>
                     </Pressable>}
                   </View>
 
-                  {isSelected && unlocked && <View style={styles.lessonCard}>
-                    <View style={[styles.cardPointer, { left: left + ringSize / 2 - 30 }]} />
+                  {isSelected && unlocked && <View style={[styles.lessonCard, { backgroundColor: palette.primary, borderBottomColor: palette.shadow }]}>
+                    <View style={[styles.cardPointer, { left: left + nodeWidth / 2 - 30, backgroundColor: palette.primary }]} />
                     <Text style={styles.lessonTitle}>{lesson.title}</Text>
-                    <Text style={styles.lessonMeta}>Этап {index + 1} из {taskList.length} · {done ? 'пройден' : 'новый урок'}</Text>
                     <Pressable
                       accessibilityRole="button"
                       onPress={() => router.push({ pathname: '/lesson/[id]', params: { id: lesson.id } })}
                       style={styles.learnButton}
-                    ><Text style={styles.learnText}>{done ? 'ПОВТОРИТЬ' : 'УЧИТЬСЯ · +15 ОПЫТА'}</Text></Pressable>
+                    ><Text style={[styles.learnText, { color: palette.ink }]}>{done ? 'ПОВТОРИТЬ' : 'УЧИТЬСЯ · +15 ОПЫТА'}</Text></Pressable>
                   </View>}
                 </React.Fragment>;
               })}
@@ -99,26 +103,26 @@ const styles = StyleSheet.create({
   scroll: { paddingBottom: 28 },
   content: { width: '100%', alignSelf: 'center' },
   stats: { height: 84, paddingHorizontal: 24, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  avatar: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#ADADAD' },
+  avatar: { width: 46, height: 46, borderRadius: 23, backgroundColor: '#ADADAD' },
   counters: { flexDirection: 'row', gap: 27, alignItems: 'center' },
-  banner: { marginHorizontal: 15, borderRadius: 18, backgroundColor: c.green, borderBottomWidth: 5, borderBottomColor: c.greenDark, minHeight: 106, paddingHorizontal: 18, paddingVertical: 17, justifyContent: 'center' },
+  banner: { marginHorizontal: 15, borderRadius: 18, borderBottomWidth: 5, minHeight: 106, paddingHorizontal: 18, paddingVertical: 17, justifyContent: 'center' },
   nextBanner: { marginTop: 28 },
-  module: { fontFamily: font.black, fontSize: 16, color: 'white', letterSpacing: .4 },
-  bannerTitle: { fontFamily: font.black, fontSize: 22, color: 'white', marginTop: 7 },
+  module: { fontFamily: font.black, fontSize: 16, letterSpacing: .4, color: 'white', textShadowColor: 'rgba(75, 49, 30, 0.28)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 },
+  bannerTitle: { fontFamily: font.black, fontSize: 22, marginTop: 7, color: 'white', textShadowColor: 'rgba(75, 49, 30, 0.28)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 },
   path: { paddingTop: 18 },
-  stage: { height: 98, position: 'relative' },
-  stageNode: { position: 'absolute', top: 3 },
-  lessonCard: { marginHorizontal: 20, marginVertical: 8, padding: 17, borderRadius: 18, backgroundColor: c.green, borderBottomWidth: 4, borderBottomColor: c.greenDark },
-  cardPointer: { position: 'absolute', top: -9, width: 20, height: 20, backgroundColor: c.green, transform: [{ rotate: '45deg' }] },
-  lessonTitle: { fontFamily: font.black, color: 'white', fontSize: 21 },
-  lessonMeta: { fontFamily: font.regular, color: 'white', fontSize: 16, marginTop: 4, marginBottom: 16 },
-  learnButton: { minHeight: 49, borderRadius: 12, backgroundColor: 'white', borderBottomWidth: 3, borderBottomColor: '#D9E8D4', alignItems: 'center', justifyContent: 'center' },
-  learnText: { fontFamily: font.black, color: c.greenDark, fontSize: 17, letterSpacing: .7 },
+  stage: { height: 114, position: 'relative' },
+  stageNode: { position: 'absolute', top: 0, width: nodeWidth, height: 108, alignItems: 'center', justifyContent: 'center' },
+  lessonCard: { marginHorizontal: 20, marginVertical: 8, padding: 17, borderRadius: 18, borderBottomWidth: 4 },
+  cardPointer: { position: 'absolute', top: -9, width: 20, height: 20, transform: [{ rotate: '45deg' }] },
+  lessonTitle: { fontFamily: font.black, fontSize: 21, color: 'white', textAlign: 'center', textShadowColor: 'rgba(75, 49, 30, 0.28)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 },
+  learnButton: { minHeight: 49, marginTop: 16, borderRadius: 12, backgroundColor: 'white', borderBottomWidth: 3, borderBottomColor: '#D9E8D4', alignItems: 'center', justifyContent: 'center' },
+  learnText: { fontFamily: font.black, fontSize: 17, letterSpacing: .7 },
   place: { position: 'absolute', right: 18, top: -8, width: 146, alignItems: 'center', zIndex: 2 },
   placeImage: { width: 135, height: 107 },
-  placeStars: { flexDirection: 'row', gap: 10, marginTop: -3 },
-  goldStar: { color: '#FFC800', fontSize: 23 },
-  grayStar: { color: c.gray, fontSize: 23 },
+  placeStars: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginTop: 4 },
+  placeStar: { width: 36, height: 36 },
+  middleStar: { transform: [{ translateY: 8 }] },
+  grayStar: { tintColor: '#E5E5E5' },
   chest: { alignItems: 'center', marginTop: 4 },
-  chestImage: { width: 90, height: 90 },
+  chestImage: { width: 112, height: 112 },
 });

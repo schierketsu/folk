@@ -11,4 +11,5 @@ export const images = {
   shanga: require('../../assets/images/place-shanga-map.png'),
   manpupunerCard: require('../../assets/images/place-manpupuner-card.png'),
   shangaCard: require('../../assets/images/place-shanga-card.png'),
+  mapStar: require('../../assets/images/map-star.png'),
 };
