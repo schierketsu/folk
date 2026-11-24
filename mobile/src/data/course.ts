@@ -1,7 +1,9 @@
 import raw from './course.json';
+import type { WordArt } from '../components/WordIllustration';
 
-export type Step = { kind: 'choice' | 'arrange'; question: string; options: string[]; correct?: number; answer?: string[]; note: string };
-export type Lesson = { id: string; topic: number; title: string; foxLine: string; steps: Step[] };
+export type Word = { komi: string; russian: string; art: WordArt };
+export type Phrase = { komi: string; russian: string; tokens: string[]; distractor: string };
+export type Lesson = { id: string; topic: number; title: string; words: [Word, Word, Word]; phrase: Phrase };
 export const lessons = raw as Lesson[];
 export const topics = [
   { title: 'Знакомство и приветствия', place: 'Маньпупунёр', description: 'Отправьтесь в путешествие на Север' },

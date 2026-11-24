@@ -1,0 +1,12 @@
+@font-face { font-family: Nunito; src: url('/fonts/nunito-regular.ttf') format('truetype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: Nunito; src: url('/fonts/nunito-bold.ttf') format('truetype'); font-weight: 700; font-display: swap; }
+@font-face { font-family: Nunito; src: url('/fonts/nunito-extrabold.ttf') format('truetype'); font-weight: 800; font-display: swap; }
+@font-face { font-family: Nunito; src: url('/fonts/nunito-black.ttf') format('truetype'); font-weight: 900; font-display: swap; }
+:root { font-family: Nunito, system-ui, sans-serif; color: #4b4b4b; background: #edf2f0; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+* { box-sizing: border-box; }
+html, body, #root { margin: 0; min-width: 320px; min-height: 100%; }
+button { font: inherit; cursor: pointer; }
+button:disabled { cursor: default; }
+button:focus-visible { outline: 3px solid #159bd2; outline-offset: 3px; }
+h1, h2, h3, p { margin: 0; }
+@media (max-width: 520px) { :root { background: white; } }
