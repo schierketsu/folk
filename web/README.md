@@ -1,32 +1,33 @@
-# React + TypeScript + Vite
+# ФОЛК — веб-приложение
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Веб-версия проекта на React, TypeScript и Vite. Это текущая площадка для разработки интерфейса.
 
-Currently, two official plugins are available:
+## Запуск
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Нужен Node.js и npm. Из корня проекта:
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```powershell
+cd .\web
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Откройте адрес, который напечатает Vite (обычно `http://localhost:5173/`). Для проверки готовой веб-сборки:
+
+```powershell
+npm run build
+npm run preview
+```
+
+Проверка кода: `npm run lint`.
+
+## Что доступно
+
+- Карта курса с шестью узлами первой темы, событием Маньпупунёр, второй темой и облаками на продолжении пути.
+- Первые два урока первой темы: слова на коми, выбор перевода, карточки, составление фразы и обратная связь. После первого открывается второй.
+- Нажатие на остальные закрытые узлы показывает окно о будущем продолжении. Сама надпись на карте не отображается.
+- Окно выбора языка, экран завершения, карточка места, разделы нижней навигации.
+
+Прогресс хранится только в `localStorage` браузера. Кнопка озвучивания пока служит заглушкой; настоящая запись коми произношения будет добавлена позднее. Дальнейшие уроки и события пока не реализованы.
+
+Статика лежит в `public/`, содержание двух уроков — в `src/data/course.json`.

@@ -2030,7 +2030,7 @@ function card(p,x,y,w,h,d,fill=null,border=null,r=18) {
   const t=theme(d);return box(p,x,y,w,h,fill||t.surface,r,border||t.line,1.5);
 }
 function base(name,d,x,y,nav=-1) {
-  const f=figma.createFrame();page.appendChild(f);f.name=`APK · ${name} · ${d?'Тёмная':'Светлая'}`;
+  const f=figma.createFrame();page.appendChild(f);f.name=`Приложение · ${name} · ${d?'Тёмная':'Светлая'}`;
   f.resize(W,H);f.x=x;f.y=y;f.fills=paint(theme(d).bg);f.clipsContent=true;nodes++;
   if(nav>=0) drawNav(f,d,nav);return f;
 }
@@ -2241,7 +2241,7 @@ async function build(pageArg, fontFaces) {
       ['Пестерь · открыт',(f,d)=>drawChest(f,d,0,true),-1],
     ]],
   ];
-  function heading(s,yy){text(page,`ФОЛК · APK · ${s}`,0,yy,1900,32,C.ink,true);}
+  function heading(s,yy){text(page,`ФОЛК · Приложение · ${s}`,0,yy,1900,32,C.ink,true);}
   for(const [title,items] of sections){heading(title,y);y+=64;
     for(let i=0;i<items.length;i++){const [name,fn,nav]=items[i];const row=Math.floor(i/3),col=i%3;
       for(let d=0;d<2;d++){const f=base(name,!!d,col*850+d*415,y+row*852,nav);fn(f,!!d);}
@@ -2268,11 +2268,6 @@ async function build(pageArg, fontFaces) {
 return { build };
 })();
 // </generated:app-frames>
-
-
-
-
-
 
 
 // ---------------------------------------------------------------------

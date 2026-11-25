@@ -266,8 +266,9 @@ function ChestScreen({ topic, progress, openChest, navigate }: { topic: number; 
 }
 
 function TasksScreen({ progress, navigate }: { progress: Progress; navigate: (path: string) => void }) {
-  const done = Math.min(lessons.filter(item => progress.completed.includes(item.id)).length, 6)
-  return <div className="tabScreen"><div className="tabContent"><div className="tasksHeader"><h1>Задания недели</h1><div className="weekGoal"><b>Пройдите 6 заданий курса!</b><div className="weekTrack"><span style={{ width: `${done / 6 * 100}%` }} /><em>{done} / 6</em></div></div></div><section className="tasksSection"><h2>ПАРНОЕ ЗАДАНИЕ</h2><div className="tasksIllustration"><img src={image('map-star')} alt="" /></div></section></div><TabBar active="tasks" navigate={navigate} /></div>
+  const goal = lessons.length
+  const done = lessons.filter(item => progress.completed.includes(item.id)).length
+  return <div className="tabScreen"><div className="tabContent"><div className="tasksHeader"><h1>Задания недели</h1><div className="weekGoal"><b>Пройдите первые два урока!</b><div className="weekTrack"><span style={{ width: `${done / goal * 100}%` }} /><em>{done} / {goal}</em></div></div></div><section className="tasksSection"><h2>ПАРНОЕ ЗАДАНИЕ</h2><div className="tasksIllustration"><img src={image('map-star')} alt="" /></div></section></div><TabBar active="tasks" navigate={navigate} /></div>
 }
 function SimpleTab({ title, active, navigate }: { title: string; active: string; navigate: (path: string) => void }) {
   return <div className="tabScreen"><div className="tabContent"><h1 className="simpleTitle">{title}</h1></div><TabBar active={active} navigate={navigate} /></div>
