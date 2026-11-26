@@ -50,9 +50,9 @@
 .mapNode { position: absolute; left: clamp(20px, calc(50% - 59px + var(--offset)), calc(100% - 138px)); top: 0; width: 118px; height: 108px; border: 0; padding: 0; background: none; display: grid; place-items: center; }
 .starRing { width: 118px; height: 108px; position: relative; --node-color: #11aefe; --node-shadow: #2b9bc9; }
 .ringArcs { position: absolute; inset: 0; width: 118px; height: 108px; transform-origin: center; }
-.mapNode:not(:disabled) .ringArcs { animation: ringDepthPulse 2.4s ease-in-out infinite; }
+.mapNode .ringArcs { animation: ringDepthPulse 2.4s ease-in-out infinite; }
 @keyframes ringDepthPulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(.9); opacity: .7; } }
-@media (prefers-reduced-motion: reduce) { .mapNode:not(:disabled) .ringArcs { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .mapNode .ringArcs { animation: none; } }
 .starFace, .lockShadow, .lockFace { position: absolute; width: 80px; height: 76px; border-radius: 38px; left: 19px; }
 .starFace { top: 15px; left: 20px; width: 78px; height: 78px; border-radius: 50%; background: var(--node-color); box-shadow: inset 0 -6px var(--node-shadow); display: grid; place-items: center; }
 .starFace img { width: 36px; height: 36px; object-fit: contain; pointer-events: none; }
@@ -60,16 +60,16 @@
 .starMover { z-index: 1; width: 36px; height: 36px; display: grid; place-items: center; transform: translateY(-2px); }
 .starGlyph { filter: brightness(0) invert(1); }
 .starShadow { filter: brightness(0); opacity: 0; transform: translateY(7px) scale(.65); }
-.mapNode:not(:disabled) .starMover { animation: starHop 2s ease-in-out infinite; }
-.mapNode:not(:disabled) .starGlyph { animation: starTurn 10s linear infinite; }
-.mapNode:not(:disabled) .starShadow { animation: starHopShadow 2s ease-in-out infinite; }
+.mapNode .starMover { animation: starHop 2s ease-in-out infinite; }
+.mapNode .starGlyph { animation: starTurn 10s linear infinite; }
+.mapNode .starShadow { animation: starHopShadow 2s ease-in-out infinite; }
 @keyframes starHop { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(-7px); } }
 @keyframes starTurn { to { transform: rotate(360deg); } }
 @keyframes starHopShadow {
   0%, 100% { transform: translateY(7px) scale(.65); opacity: 0; }
   50% { transform: translateY(10px) scale(.78); opacity: .28; }
 }
-@media (prefers-reduced-motion: reduce) { .mapNode:not(:disabled) .starMover, .mapNode:not(:disabled) .starGlyph, .mapNode:not(:disabled) .starShadow { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .mapNode .starMover, .mapNode .starGlyph, .mapNode .starShadow { animation: none; } }
 .lockedNode { width: 80px; height: 83px; position: relative; }
 .lockShadow, .lockFace { left: 0; }.lockShadow { top: 7px; background: #a9a9a9; }.lockFace { top: 0; display: grid; place-items: center; background: #e5e5e5; }
 .lockFace img { width: 36px; height: 36px; object-fit: contain; filter: grayscale(1) brightness(.82); }
@@ -177,11 +177,14 @@
 .placeBody { scrollbar-width: none; }.placeBody::-webkit-scrollbar { display: none; }.placeScreenManpupuner .pageHeader { background: #11aefe; }.placeScreenManpupuner .pageHeader button { color: #fff; }.placeScreenManpupuner .placeBody { justify-content: flex-start; padding-top: 0; }.placeHero { width: calc(100% + 48px); max-width: none; flex: none; margin-inline: -24px; aspect-ratio: 686 / 458; object-fit: cover; }.placeBody h1 { font-size: 29px; font-weight: 900; margin-top: 20px; }.placeRating { gap: 12px; margin: 16px 0 20px; }.placeRating img { width: 42px; height: 42px; }.placeBody p { font-size: 18px; color: #777; }.chestBody img { width: 240px; height: 240px; object-fit: contain; }.chestBody h1 { font-size: 28px; font-weight: 900; margin-top: 20px; }.chestBody p { font-size: 19px; font-weight: 700; color: #15465e; margin-top: 10px; }
 .placeScreenManpupuner { background: #11aefe; }
 .placeScreenManpupuner .placeBody { position: relative; overflow: hidden; padding: 28px 20px 0; background: #11aefe; }
-.placeScreenManpupuner .placeBody > :not(.placeHero) { position: relative; z-index: 1; }
+.placeScreenManpupuner .placeBody > :not(.placeScene) { position: relative; z-index: 1; }
 .placeScreenManpupuner .pageHeader h2 { color: #fff; font-size: clamp(21px, 5vw, 29px); }
 .placeScreenManpupuner .placeRating img { filter: brightness(0) invert(1); opacity: .6; }
 .placeScreenManpupuner .placeBody p { max-width: 350px; color: #fff; }
-.placeScreenManpupuner .placeBody .primaryButton { width: min(100%, 343px); margin-top: 30px; flex: none; }
-.placeScreenManpupuner .placeHero { position: absolute; left: 0; bottom: 0; width: 100%; height: auto; aspect-ratio: 1374 / 1145; margin: 0; mask-image: linear-gradient(to bottom, transparent, #000 13%); }
+.placeScreenManpupuner .placeBody .primaryButton { position: absolute; left: 50%; bottom: max(32px, env(safe-area-inset-bottom)); z-index: 2; width: min(calc(100% - 40px), 343px); margin: 0; transform: translateX(-50%); }
+.placeScene { position: absolute; left: 0; bottom: 0; width: 100%; aspect-ratio: 1; overflow: hidden; mask-image: linear-gradient(to bottom, transparent, #000 11%); }
+.placeSceneUpper { position: absolute; left: 0; top: 0; width: 100%; height: auto; aspect-ratio: 1374 / 1145; }
+.placeSceneSnow { position: absolute; inset: auto 0 0; height: 30.7%; overflow: hidden; mask-image: linear-gradient(to bottom, transparent, #000 18px); }
+.placeSceneSnow img { position: absolute; left: 0; bottom: 0; width: 100%; height: auto; aspect-ratio: 1374 / 1145; transform: scaleY(2.2); transform-origin: bottom center; }
 @media (max-width: 520px) { .desktopCanvas { padding: 0; display: block; }.phoneFrame { width: 100%; height: 100dvh; min-height: 0; aspect-ratio: auto; border-radius: 0; box-shadow: none; }.appShell { inset: 0; padding-top: 0; border-radius: 0; }.phoneStatusBar, .phoneSkin { display: none; }.screenFooter { padding-bottom: max(20px, env(safe-area-inset-bottom)); }.answerPanel { padding-bottom: max(20px, env(safe-area-inset-bottom)); } }
 @media (max-width: 359px) { .topicBanner h2 { font-size: 18px; }.lessonBody h1 { font-size: 26px; } }

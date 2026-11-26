@@ -299,8 +299,9 @@ function LessonScreen({ lesson, navigate, progress, complete }: { lesson: Lesson
       {step === 1 && <>
         {newWordPrompt(words[0])}
         <div className="pictureGrid">{pictureWords.map((word, index) => {
-          const greetingChoice = (lesson.id === 'hello_words' && index === 0) || (lesson.id === 'name_words' && index === 3)
-          const placeholderChoice = lesson.id === 'name_words' && index < 3
+          const placeholderLesson = lesson.id === 'name_words' || lesson.id === 'morning_evening' || lesson.id === 'thanks_farewell'
+          const greetingChoice = (lesson.id === 'hello_words' && index === 0) || (placeholderLesson && index === 3)
+          const placeholderChoice = placeholderLesson && index < 3
           const sunChoice = lesson.id === 'hello_words' && index === 1
           const breadChoice = lesson.id === 'hello_words' && index === 2
           const forestChoice = lesson.id === 'hello_words' && index === 3
@@ -368,7 +369,10 @@ function PlaceScreen({ topic, navigate }: { topic: number; navigate: (path: stri
       <div className="placeRating"><img className="dim" src={image('map-star')} alt="" /><img className="dim raised" src={image('map-star')} alt="" /><img className="dim" src={image('map-star')} alt="" /></div>
       <p>{topics[0].description}</p>
       <button className="primaryButton" disabled>СКОРО</button>
-      <img className="placeHero" src={image('place-manpupuner-extended-v2')} alt="" />
+      <div className="placeScene" aria-hidden="true">
+        <img className="placeSceneUpper" src={image('place-manpupuner-extended-v2')} alt="" />
+        <div className="placeSceneSnow"><img src={image('place-manpupuner-extended-v2')} alt="" /></div>
+      </div>
     </div>
   </div>
   return <div className="fullScreen"><PageHeader onClose={() => navigate('/home')} lessonStyle /><div className="placeBody"><img className="placeHero" src={image('place-shanga-card')} alt={title} /><h1>{title}</h1><div className="placeRating"><img src={image('map-star')} alt="" /><img className="dim raised" src={image('map-star')} alt="" /><img className="dim" src={image('map-star')} alt="" /></div><p>Вместе приготовим традиционные пирожки</p></div><div className="screenFooter"><PrimaryButton tone="blue" onClick={() => navigate('/home')}>НА КАРТУ</PrimaryButton></div></div>
