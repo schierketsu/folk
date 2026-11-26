@@ -20,6 +20,10 @@
         "art": "day"
       }
     ],
+    "extraMatches": [
+      { "komi": "нянь", "russian": "хлеб" },
+      { "komi": "ним", "russian": "имя" }
+    ],
     "phrase": {
       "komi": "Бур лун!",
       "russian": "Добрый день!",
@@ -51,6 +55,10 @@
         "komi": "шуӧны"
       }
     ],
+    "extraMatches": [
+      { "komi": "Чолӧм!", "russian": "Привет!" },
+      { "komi": "Бур", "russian": "Добрый" }
+    ],
     "phrase": {
       "russian": "Меня зовут…",
       "distractor": "ним",
@@ -59,6 +67,46 @@
         "Менӧ",
         "шуӧны…"
       ]
+    }
+  },
+  {
+    "id": "morning_evening",
+    "topic": 0,
+    "title": "Доброе утро и вечер",
+    "words": [
+      { "komi": "Бур", "russian": "добрый", "art": "good" },
+      { "komi": "асыв", "russian": "утро", "art": "morning" },
+      { "komi": "рыт", "russian": "вечер", "art": "evening" }
+    ],
+    "extraMatches": [
+      { "komi": "лун", "russian": "день" },
+      { "komi": "Чолӧм!", "russian": "Привет!" }
+    ],
+    "phrase": {
+      "komi": "Бур асыв!",
+      "russian": "Доброе утро!",
+      "tokens": ["Бур", "асыв!"],
+      "distractor": "рыт"
+    }
+  },
+  {
+    "id": "thanks_farewell",
+    "topic": 0,
+    "title": "Спасибо и прощание",
+    "words": [
+      { "komi": "Аттьӧ", "russian": "спасибо", "art": "thanks" },
+      { "komi": "Аддзысьлытӧдз", "russian": "до свидания", "art": "farewell" },
+      { "komi": "Став бурсӧ", "russian": "всего доброго", "art": "goodwill" }
+    ],
+    "extraMatches": [
+      { "komi": "Чолӧм!", "russian": "Привет!" },
+      { "komi": "лун", "russian": "день" }
+    ],
+    "phrase": {
+      "komi": "Став бурсӧ!",
+      "russian": "Всего доброго!",
+      "tokens": ["Став", "бурсӧ!"],
+      "distractor": "Аттьӧ"
     }
   }
 ]
