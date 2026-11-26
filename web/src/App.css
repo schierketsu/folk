@@ -182,6 +182,6 @@
 .placeScreenManpupuner .placeRating img { filter: brightness(0) invert(1); opacity: .6; }
 .placeScreenManpupuner .placeBody p { max-width: 350px; color: #fff; }
 .placeScreenManpupuner .placeBody .primaryButton { width: min(100%, 343px); margin-top: 30px; flex: none; }
-.placeScreenManpupuner .placeHero { position: absolute; left: 0; bottom: 0; width: 100%; height: auto; margin: 0; }
+.placeScreenManpupuner .placeHero { position: absolute; left: 0; bottom: 0; width: 100%; height: auto; aspect-ratio: 1374 / 1145; margin: 0; mask-image: linear-gradient(to bottom, transparent, #000 13%); }
 @media (max-width: 520px) { .desktopCanvas { padding: 0; display: block; }.phoneFrame { width: 100%; height: 100dvh; min-height: 0; aspect-ratio: auto; border-radius: 0; box-shadow: none; }.appShell { inset: 0; padding-top: 0; border-radius: 0; }.phoneStatusBar, .phoneSkin { display: none; }.screenFooter { padding-bottom: max(20px, env(safe-area-inset-bottom)); }.answerPanel { padding-bottom: max(20px, env(safe-area-inset-bottom)); } }
 @media (max-width: 359px) { .topicBanner h2 { font-size: 18px; }.lessonBody h1 { font-size: 26px; } }

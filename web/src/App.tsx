@@ -368,7 +368,7 @@ function PlaceScreen({ topic, navigate }: { topic: number; navigate: (path: stri
       <div className="placeRating"><img className="dim" src={image('map-star')} alt="" /><img className="dim raised" src={image('map-star')} alt="" /><img className="dim" src={image('map-star')} alt="" /></div>
       <p>{topics[0].description}</p>
       <button className="primaryButton" disabled>СКОРО</button>
-      <img className="placeHero" src={image('place-manpupuner-card')} alt="" />
+      <img className="placeHero" src={image('place-manpupuner-extended-v2')} alt="" />
     </div>
   </div>
   return <div className="fullScreen"><PageHeader onClose={() => navigate('/home')} lessonStyle /><div className="placeBody"><img className="placeHero" src={image('place-shanga-card')} alt={title} /><h1>{title}</h1><div className="placeRating"><img src={image('map-star')} alt="" /><img className="dim raised" src={image('map-star')} alt="" /><img className="dim" src={image('map-star')} alt="" /></div><p>Вместе приготовим традиционные пирожки</p></div><div className="screenFooter"><PrimaryButton tone="blue" onClick={() => navigate('/home')}>НА КАРТУ</PrimaryButton></div></div>
