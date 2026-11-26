@@ -12,6 +12,7 @@ const answerOrder = [2, 4, 0, 3, 1]
 const scenariosPerStage = 4
 const artEmoji: Record<ArtId, string> = { wave: '👋', sun: '☀️', day: '🌤️', tag: '🏷️', person: '🧍', speech: '💬', good: '👍', morning: '🌅', evening: '🌆', thanks: '🙏', farewell: '👋', goodwill: '✨' }
 type WordDrag = { source: 'bank' | 'answer'; bankIndex: number; answerPosition: number; pointerId: number; startX: number; startY: number; x: number; y: number; active: boolean }
+type MatchFlash = { id: number; left: number; right: number; correct: boolean }
 
 type Progress = { languageSelected: boolean; completed: string[]; chests: number[] }
 const initialProgress: Progress = { languageSelected: false, completed: [], chests: [] }
@@ -49,7 +50,7 @@ function StarRing({ completed }: { completed: number }) {
         <circle key={index} cx="59" cy="54" r="48" fill="none" stroke={index < completed ? 'var(--node-color)' : '#E5E5E5'} strokeWidth="8" strokeLinecap="round" strokeDasharray={`${segmentLength - gapLength} ${circumference}`} transform={`rotate(${-90 + index * 360 / scenariosPerStage + gapAngle / 2} 59 54)`} />
       )}
     </svg>
-    <span className="starFace"><img src={image('map-star')} alt="" /></span>
+    <span className="starFace"><img className="starShadow" src={image('map-star')} alt="" /><span className="starMover"><img className="starGlyph" src={image('map-star')} alt="" /></span></span>
   </div>
 }
 
@@ -167,20 +168,21 @@ function LessonScreen({ lesson, navigate, progress, complete }: { lesson: Lesson
   const [matched, setMatched] = useState<number[]>([])
   const [left, setLeft] = useState<number | null>(null)
   const [right, setRight] = useState<number | null>(null)
-  const [matchFlash, setMatchFlash] = useState<{ left: number; right: number; correct: boolean } | null>(null)
-  const matchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [matchFlashes, setMatchFlashes] = useState<MatchFlash[]>([])
+  const matchTimersRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set())
+  const nextMatchFlashId = useRef(0)
   const [checked, setChecked] = useState(false)
   const [correct, setCorrect] = useState(false)
-  const [mistakes, setMistakes] = useState(0)
   const [exitModal, setExitModal] = useState(false)
   const [wordHintOpen, setWordHintOpen] = useState(false)
+  const [soundAnimation, setSoundAnimation] = useState(0)
   const newWordBlockRef = useRef<HTMLDivElement | null>(null)
   const wordDrag = useRef<WordDrag | null>(null)
   const ignoreClickUntil = useRef(0)
   const [dragPreview, setDragPreview] = useState<WordDrag | null>(null)
   const [dropZone, setDropZone] = useState<'bank' | 'answer' | null>(null)
   useEffect(() => () => {
-    if (matchTimerRef.current) clearTimeout(matchTimerRef.current)
+    matchTimersRef.current.forEach(clearTimeout)
   }, [])
   useEffect(() => {
     if (!wordHintOpen) return
@@ -199,7 +201,7 @@ function LessonScreen({ lesson, navigate, progress, complete }: { lesson: Lesson
   const response = selected.map(index => bank[index])
   const titles = ['Выберите верную картинку', 'Что значит слово?', 'Соберите фразу', 'Нажмите на пары', 'Выберите слово']
   const correctAnswer = step === 1 ? words[0].russian : step === 2 ? words[1].russian : step === 3 ? phrase.komi : words[2].komi
-  const fail = () => { setCorrect(false); setChecked(true); setMistakes(value => value + 1) }
+  const fail = () => { setCorrect(false); setChecked(true) }
   const evaluate = () => {
     const success = step === 1 ? selected[0] === 0 : step === 2 ? selected[0] === 1 : step === 3 ? JSON.stringify(response) === JSON.stringify(phrase.tokens) : selected[0] === 2
     if (success) { setCorrect(true); setChecked(true) } else fail()
@@ -209,36 +211,33 @@ function LessonScreen({ lesson, navigate, progress, complete }: { lesson: Lesson
     if (correct && stepQueue.length === 1) {
       const first = !progress.completed.includes(lesson.id)
       complete(lesson.id)
-      navigate(`/result/${lesson.id}?mistakes=${mistakes}&first=${first ? 1 : 0}`)
+      navigate(`/result/${lesson.id}?first=${first ? 1 : 0}`)
       return
     }
     if (correct) setSolvedSteps(value => [...value, step])
     setStepQueue(value => correct ? value.slice(1) : [...value.slice(1), value[0]])
-    if (matchTimerRef.current) clearTimeout(matchTimerRef.current)
-    matchTimerRef.current = null
-    setSelected([]); setMatched([]); setLeft(null); setRight(null); setMatchFlash(null); setChecked(false); setCorrect(false); setWordHintOpen(false)
+    matchTimersRef.current.forEach(clearTimeout)
+    matchTimersRef.current.clear()
+    setSelected([]); setMatched([]); setLeft(null); setRight(null); setMatchFlashes([]); setChecked(false); setCorrect(false); setWordHintOpen(false); setSoundAnimation(0)
   }
   const chooseMatch = (side: 'left' | 'right', index: number) => {
-    if (checked || matchFlash || matched.includes(index)) return
+    if (checked || matched.includes(index) || matchFlashes.some(flash => flash[side] === index)) return
     const newLeft = side === 'left' ? index : left
     const newRight = side === 'right' ? index : right
     if (newLeft !== null && newRight !== null) {
       setLeft(null); setRight(null)
-      if (newLeft === newRight) {
+      const isCorrect = newLeft === newRight
+      const flash = { id: nextMatchFlashId.current++, left: newLeft, right: newRight, correct: isCorrect }
+      setMatchFlashes(value => [...value, flash])
+      const timer = setTimeout(() => {
+        setMatchFlashes(value => value.filter(item => item.id !== flash.id))
+        matchTimersRef.current.delete(timer)
+      }, 1000)
+      matchTimersRef.current.add(timer)
+      if (isCorrect) {
         const updated = [...matched, newLeft]
         setMatched(updated)
-        setMatchFlash({ left: newLeft, right: newRight, correct: true })
-        matchTimerRef.current = setTimeout(() => {
-          setMatchFlash(null)
-          matchTimerRef.current = null
-          if (updated.length === matchWords.length) { setCorrect(true); setChecked(true) }
-        }, 1000)
-      } else {
-        setMatchFlash({ left: newLeft, right: newRight, correct: false })
-        matchTimerRef.current = setTimeout(() => {
-          setMatchFlash(null)
-          matchTimerRef.current = null
-        }, 1000)
+        if (updated.length === matchWords.length) { setCorrect(true); setChecked(true) }
       }
     } else { setLeft(newLeft); setRight(newRight) }
   }
@@ -289,7 +288,7 @@ function LessonScreen({ lesson, navigate, progress, complete }: { lesson: Lesson
   const ignoreDraggedClick = () => performance.now() < ignoreClickUntil.current
   const revealWord = () => setWordHintOpen(value => !value)
   const newWordPrompt = (word: Lesson['words'][number]) => <div className="newWordBlock" ref={newWordBlockRef}>
-    <div className="wordPrompt"><button className="soundButton" aria-label="Озвучить слово"><img src={image('sound-icon')} alt="" /></button><button className="newWord" onClick={revealWord} aria-expanded={wordHintOpen} aria-label={`Показать перевод слова ${word.komi}`}>{word.komi}</button></div>
+    <div className="wordPrompt"><button className="soundButton" aria-label="Озвучить слово" onClick={() => setSoundAnimation(value => value + 1)}><span className={`soundIcon ${soundAnimation ? 'playing' : ''}`} key={soundAnimation} aria-hidden="true"><img className="soundSpeaker" src={image('sound-icon')} alt="" /><img className="soundWaveInner" src={image('sound-icon')} alt="" /><img className="soundWaveOuter" src={image('sound-icon')} alt="" /></span></button><button className="newWord" onClick={revealWord} aria-expanded={wordHintOpen} aria-label={`Показать перевод слова ${word.komi}`}>{word.komi}</button></div>
     {wordHintOpen && <div className="wordHint" role="status"><strong>{word.russian}</strong></div>}
   </div>
   return <div className={`fullScreen lessonScreen ${step <= 2 ? 'newWordLesson' : ''} ${step === 1 ? 'pictureLesson' : ''} ${checked ? correct ? 'answerCorrect' : 'answerWrong' : ''}`}>
@@ -300,13 +299,14 @@ function LessonScreen({ lesson, navigate, progress, complete }: { lesson: Lesson
       {step === 1 && <>
         {newWordPrompt(words[0])}
         <div className="pictureGrid">{pictureWords.map((word, index) => {
-          const greetingChoice = lesson.id === 'hello_words' && index === 0
+          const greetingChoice = (lesson.id === 'hello_words' && index === 0) || (lesson.id === 'name_words' && index === 3)
+          const placeholderChoice = lesson.id === 'name_words' && index < 3
           const sunChoice = lesson.id === 'hello_words' && index === 1
           const breadChoice = lesson.id === 'hello_words' && index === 2
           const forestChoice = lesson.id === 'hello_words' && index === 3
           const artName = greetingChoice ? 'greeting-choice' : sunChoice ? 'sun-choice' : breadChoice ? 'bread-choice' : forestChoice ? 'forest-choice' : null
           return <button key={index} className={`pictureChoice ${selected[0] === index ? 'chosen' : ''}`} onClick={() => !checked && setSelected([index])} aria-pressed={selected[0] === index}>
-            {artName ? <img className={`pictureArt ${greetingChoice ? 'greetingArt' : ''} ${breadChoice ? 'breadArt' : ''}`} src={image(artName)} alt="" /> : <span className="pictureEmoji" aria-hidden="true">{artEmoji[word.art]}</span>}
+            {placeholderChoice ? <span className="picturePlaceholder" aria-hidden="true" /> : artName ? <img className={`pictureArt ${greetingChoice ? 'greetingArt' : ''} ${breadChoice ? 'breadArt' : ''}`} src={image(artName)} alt="" /> : <span className="pictureEmoji" aria-hidden="true">{artEmoji[word.art]}</span>}
             <span className="pictureLabel">{cardLabel(greetingChoice ? 'Привет' : sunChoice ? 'Солнце' : breadChoice ? 'Хлеб' : forestChoice ? 'Лес' : word.russian)}</span>
           </button>
         })}</div>
@@ -321,7 +321,7 @@ function LessonScreen({ lesson, navigate, progress, complete }: { lesson: Lesson
         <div className={`wordBank ${dropZone === 'bank' ? 'dropActive' : ''}`} data-word-drop="bank">{bank.map((word, index) => <button className={`wordChip ${selected.includes(index) ? 'used' : ''} ${dragPreview?.source === 'bank' && dragPreview.bankIndex === index ? 'dragSource' : ''}`} key={index} data-bank-index={index} disabled={selected.includes(index) || checked} onPointerDown={event => startWordDrag(event, 'bank', index)} {...wordPointerHandlers} onClick={() => { if (!ignoreDraggedClick()) setSelected(old => [...old, index]) }}><span>{cardLabel(word)}</span></button>)}</div>
       </>}
       {step === 4 && <>
-        <div className="matchGrid"><div>{matchWords.map((word, index) => <button key={index} className={`matchChoice ${matched.includes(index) ? 'matched' : ''} ${left === index ? 'chosen' : ''} ${matchFlash?.left === index ? matchFlash.correct ? 'correctFlash' : 'wrongFlash' : ''}`} disabled={matched.includes(index) || checked || !!matchFlash} onClick={() => chooseMatch('left', index)}>{cardLabel(word.komi)}</button>)}</div><div>{answerOrder.map(index => <button key={index} className={`matchChoice ${matched.includes(index) ? 'matched' : ''} ${right === index ? 'chosen' : ''} ${matchFlash?.right === index ? matchFlash.correct ? 'correctFlash' : 'wrongFlash' : ''}`} disabled={matched.includes(index) || checked || !!matchFlash} onClick={() => chooseMatch('right', index)}>{cardLabel(matchWords[index].russian)}</button>)}</div></div>
+        <div className="matchGrid"><div>{matchWords.map((word, index) => { const flash = matchFlashes.find(item => item.left === index); return <button key={index} className={`matchChoice ${matched.includes(index) ? 'matched' : ''} ${left === index ? 'chosen' : ''} ${flash ? flash.correct ? 'correctFlash' : 'wrongFlash' : ''}`} disabled={matched.includes(index) || checked || !!flash} onClick={() => chooseMatch('left', index)}>{cardLabel(word.komi)}</button> })}</div><div>{answerOrder.map(index => { const flash = matchFlashes.find(item => item.right === index); return <button key={index} className={`matchChoice ${matched.includes(index) ? 'matched' : ''} ${right === index ? 'chosen' : ''} ${flash ? flash.correct ? 'correctFlash' : 'wrongFlash' : ''}`} disabled={matched.includes(index) || checked || !!flash} onClick={() => chooseMatch('right', index)}>{cardLabel(matchWords[index].russian)}</button> })}</div></div>
       </>}
       {step === 5 && <>
         <h2 className="phrasePrompt">{words[2].russian}</h2>
@@ -339,16 +339,39 @@ function LessonScreen({ lesson, navigate, progress, complete }: { lesson: Lesson
 }
 
 function ResultScreen({ query, navigate }: { query: URLSearchParams; navigate: (path: string) => void }) {
-  const mistakes = Math.max(0, Number(query.get('mistakes')) || 0)
-  const accuracy = Math.round(5 / (5 + mistakes) * 100)
   const reward = query.get('first') === '0' ? 0 : 15
-  return <div className="fullScreen resultScreen"><div className="resultBody"><img className="resultStar" src={image('result-sparkles')} alt="" /><h1>Урок пройден!</h1><div className="resultAwards"><div><small>ТОЧНОСТЬ</small><b>{accuracy}%</b></div><div><small>ОПЫТ</small><b>+{reward}</b></div></div></div><div className="screenFooter"><PrimaryButton tone="blue" onClick={() => navigate('/home')}>НА КАРТУ</PrimaryButton></div></div>
+  const [shareStatus, setShareStatus] = useState('')
+  const shareResult = async () => {
+    const text = `Я прошёл урок в ФОЛК и получил ${reward} очков опыта.`
+    try {
+      if (navigator.share) await navigator.share({ text })
+      else { await navigator.clipboard.writeText(text); setShareStatus('Результат скопирован') }
+    } catch { /* Пользователь закрыл системное окно обмена. */ }
+  }
+  return <div className="fullScreen resultScreen">
+    <div className="resultBody">
+      <h1>Конец урока!</h1>
+      <div className="resultAwards">
+        <div className="resultAward experience"><span>ОЧКИ ОПЫТА</span><div className="resultAwardValue"><img className="resultLightning" src={image('result-lightning')} alt="" /><strong>{reward}</strong></div></div>
+      </div>
+    </div>
+    <div className="screenFooter resultFooter"><button className="shareResultButton" onClick={shareResult} aria-label="Поделиться результатом"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 21V4m0 0-6 6m6-6 6 6M7 17v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg></button><PrimaryButton tone="blue" onClick={() => navigate('/home')}>{reward ? 'ЗАБРАТЬ ОПЫТ' : 'НА КАРТУ'}</PrimaryButton><span className="srOnly" role="status">{shareStatus}</span></div>
+  </div>
 }
 
 function PlaceScreen({ topic, navigate }: { topic: number; navigate: (path: string) => void }) {
   const shanga = topic === 1
   const title = shanga ? 'Шаньга' : 'Маньпупунёр'
-  return <div className={`fullScreen ${shanga ? '' : 'placeScreenManpupuner'}`}><PageHeader onClose={() => navigate('/home')} /><div className="placeBody"><img className="placeHero" src={image(shanga ? 'place-shanga-card' : 'place-manpupuner-card')} alt={title} /><h1>{title}</h1><div className="placeRating"><img className={shanga ? undefined : 'dim'} src={image('map-star')} alt="" /><img className="dim raised" src={image('map-star')} alt="" /><img className="dim" src={image('map-star')} alt="" /></div><p>{shanga ? 'Вместе приготовим традиционные пирожки' : topics[0].description}</p></div><div className="screenFooter">{shanga ? <PrimaryButton tone="blue" onClick={() => navigate('/home')}>НА КАРТУ</PrimaryButton> : <button className="primaryButton" disabled>СКОРО</button>}</div></div>
+  if (!shanga) return <div className="fullScreen placeScreenManpupuner">
+    <PageHeader title={title} onClose={() => navigate('/home')} lessonStyle />
+    <div className="placeBody">
+      <div className="placeRating"><img className="dim" src={image('map-star')} alt="" /><img className="dim raised" src={image('map-star')} alt="" /><img className="dim" src={image('map-star')} alt="" /></div>
+      <p>{topics[0].description}</p>
+      <button className="primaryButton" disabled>СКОРО</button>
+      <img className="placeHero" src={image('place-manpupuner-card')} alt="" />
+    </div>
+  </div>
+  return <div className="fullScreen"><PageHeader onClose={() => navigate('/home')} lessonStyle /><div className="placeBody"><img className="placeHero" src={image('place-shanga-card')} alt={title} /><h1>{title}</h1><div className="placeRating"><img src={image('map-star')} alt="" /><img className="dim raised" src={image('map-star')} alt="" /><img className="dim" src={image('map-star')} alt="" /></div><p>Вместе приготовим традиционные пирожки</p></div><div className="screenFooter"><PrimaryButton tone="blue" onClick={() => navigate('/home')}>НА КАРТУ</PrimaryButton></div></div>
 }
 
 function ChestScreen({ topic, progress, openChest, navigate }: { topic: number; progress: Progress; openChest: (topic: number) => void; navigate: (path: string) => void }) {
@@ -383,7 +406,7 @@ export default function App() {
   const parts = path.split('/').filter(Boolean)
   const lesson = lessons.find(item => item.id === parts[1])
 
-  return <div className="desktopCanvas"><div className="phoneFrame"><main className="appShell"><div className="phoneStatusBar" aria-hidden="true" />
+  return <div className="desktopCanvas"><div className="phoneFrame"><main className={`appShell ${parts[0] === 'place' && (Number(parts[1]) || 0) === 0 ? 'placeStatusShell' : ''}`}><div className="phoneStatusBar" aria-hidden="true" />
     {parts[0] === 'language' && <LanguageScreen navigate={navigate} selectLanguage={selectLanguage} />}
     {(parts[0] === 'home' || parts.length === 0) && <MapScreen progress={progress} navigate={navigate} />}
     {parts[0] === 'lesson' && lesson && <LessonScreen key={lesson.id} lesson={lesson} navigate={navigate} progress={progress} complete={complete} />}
